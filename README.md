@@ -1,2 +1,2 @@
 # TrivialLLM
-Plpaying Trivial with LLMs
+Playing Trivial with LLMs
