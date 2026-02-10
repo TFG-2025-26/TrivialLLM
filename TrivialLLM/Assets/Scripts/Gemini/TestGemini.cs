@@ -6,6 +6,7 @@ public class TestGemini : MonoBehaviour
     public GeminiService geminiService;
     public TMP_InputField inputField; // donde escribe el usuario
     public TMP_Text responseText;     // donde se mostrará la respuesta
+    public Models.ModelTypes modelType;
 
     void Start()
     {
@@ -15,14 +16,19 @@ public class TestGemini : MonoBehaviour
     public void onClick()
     {
         string prompt = inputField.text;
-        Debug.Log("Prompt enviado: " + prompt);
+        Debug.Log("Prompt enviado al backend: " + prompt);
 
-        // Llamamos a Gemini y pasamos un callback para actualizar la UI
-        geminiService.sendPrompt(prompt, (string result) =>
+        geminiService.PedirPregunta(prompt,modelType.ToString(), (string result) =>
         {
-            responseText.text = result; // mostramos solo la respuesta generada
-            Debug.Log("Respuesta mostrada en TMP_Text");
-        });
-    }
+            if (result == null)
+            {
+                responseText.text = "Error al obtener la pregunta";
+                return;
+            }
 
+            responseText.text = result;
+            Debug.Log("Respuesta recibida del backend");
+        });
+
+    }
 }
