@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 public class GeminiService : MonoBehaviour
 {
     private const string url = "http://127.0.0.1:8000/trivial";
+    public UIController uiController;
    
 
 
@@ -16,7 +17,7 @@ public class GeminiService : MonoBehaviour
 
     private IEnumerator RequestPregunta(string prompt,string model, System.Action<string> callback)
     {
-        string json = $"{{\"prompt\":\"{Escape(prompt)}\", \"modelo\":\"{model}\"}}";
+        string json = $"{{\"prompt\":\"{Escape(prompt)}\", \"model\":\"{model}\"}}";
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");
         request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
@@ -35,7 +36,9 @@ public class GeminiService : MonoBehaviour
         {
             Debug.Log("Respuesta backend:");
             Debug.Log(request.downloadHandler.text);
-            callback?.Invoke(request.downloadHandler.text);
+            string answer = request.downloadHandler.text;
+            PreguntaOpciones ask=JsonUtility.FromJson<PreguntaOpciones>(answer);
+            uiController.MostrarPregunta(ask);
         }
     }
 

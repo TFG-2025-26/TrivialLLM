@@ -9,6 +9,8 @@ public class UIController : MonoBehaviour
 
     private int respuestaCorrecta;
 
+    public TextMeshProUGUI txt;
+
     public void MostrarPregunta(PreguntaOpciones p)
     {
         textPregunta.text = p.pregunta;
@@ -31,10 +33,12 @@ public class UIController : MonoBehaviour
         if (index == respuestaCorrecta)
         {
             Debug.Log("Respuesta correcta");
+            txt.text = "Correcto";
         }
         else
         {
             Debug.Log("Respuesta incorrecta");
+            txt.text = "Incorrecto";
         }
         // Aqui se puede cargar otra pregunta, sumar puntos...
     }
