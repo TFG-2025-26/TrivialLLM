@@ -1,6 +1,6 @@
 [System.Serializable]
-public class PromptRequest
+public class PromptData
 {
     public string prompt;
-    public string model;
+   
 }

@@ -43,7 +43,7 @@ public class CopilotService : MonoBehaviour
 
     private System.Collections.IEnumerator EnviarPrompt(string prompt)
     {
-        PromptRequest req = new PromptRequest { prompt = prompt };
+        PromptRequest req = new PromptRequest { prompt = prompt,model="Copilot" };
         string jsonBody = JsonUtility.ToJson(req);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
