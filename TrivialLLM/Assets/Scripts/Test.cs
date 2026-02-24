@@ -22,17 +22,7 @@ public class Test : MonoBehaviour
         {
             string promptText = $"Genera una pregunta tipo test con 4 opciones y solo una opción correcta de categoría {category.options[category.value].text} y dificultad máxima {difficult.options[difficult.value].text}";
             Debug.Log("Prompt enviado al backend por Gemini: " + promptText);
-            geminiService.PedirPregunta(promptText, modelType.options[modelType.value].text, (string result) =>
-            {
-                if (result == null)
-                {
-                    responseText.text = "Error al obtener la pregunta";
-                    return;
-                }
-
-                responseText.text = result;
-                Debug.Log("Respuesta recibida del backend");
-            });
+            geminiService.PedirPregunta(promptText, modelType.options[modelType.value].text);
         }
         else if (modelType.options[modelType.value].text == "Copilot")
         {

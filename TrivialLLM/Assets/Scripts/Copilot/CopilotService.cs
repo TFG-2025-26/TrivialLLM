@@ -14,7 +14,12 @@ public class CopilotService : MonoBehaviour
     public void PedirPregunta(string tema, string dificultad)
     {
         string prompt = CrearPromptPregunta(tema, dificultad);
-        StartCoroutine(EnviarPrompt(prompt));
+        StartCoroutine(EnviarPrompt(prompt,true));
+    }
+
+    public void ContestarPregunta(string prompt, System.Action<int> callback)
+    {
+        StartCoroutine(EnviarPrompt(prompt,false,callback));
     }
 
     private string CrearPromptPregunta(string tema, string dificultad)
@@ -41,9 +46,9 @@ public class CopilotService : MonoBehaviour
         No añadas comentarios, explicaciones ni texto fuera del JSON.";
     }
 
-    private System.Collections.IEnumerator EnviarPrompt(string prompt)
+    private System.Collections.IEnumerator EnviarPrompt(string prompt, bool esPregunta, System.Action<int> callback = null)
     {
-        PromptRequest req = new PromptRequest { prompt = prompt,model="Copilot" };
+        PromptRequest req = new PromptRequest { prompt = prompt,model="Copilot", isAnswering=!esPregunta };
         string jsonBody = JsonUtility.ToJson(req);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
@@ -66,11 +71,22 @@ public class CopilotService : MonoBehaviour
             string responseText = www.downloadHandler.text;
             Debug.Log("Respuesta LLM: " + responseText);
 
-            // Asumir que la respuesta es directamente el JSON de PreguntaOpciones
-            PreguntaOpciones pregunta = JsonUtility.FromJson<PreguntaOpciones>(responseText);
+            if (esPregunta)
+            {
+                // Asumir que la respuesta es directamente el JSON de PreguntaOpciones
+                PreguntaOpciones pregunta = JsonUtility.FromJson<PreguntaOpciones>(responseText);
 
-            // Ahora se puede pasar a la UI/ logica del juego
-            MostrarPregunta(pregunta);
+                // Ahora se puede pasar a la UI/ logica del juego
+                MostrarPregunta(pregunta);
+                uiController.mandarPregunta("Gemini");
+            }
+            else
+            {
+                if (int.TryParse(responseText.Trim(), out int indexRespuesta))
+                {
+                    callback?.Invoke(indexRespuesta);
+                }
+            }
         }
     }
     private void MostrarPregunta(PreguntaOpciones pregunta)
