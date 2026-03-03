@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-    public GeminiService geminiService;
+    /*public GeminiService geminiService;
     public CopilotService copilotService;
-    public ChatGPTService chatGPTService;
+    public ChatGPTService chatGPTService;*/
+    public AIService service;
     public TMP_Dropdown category; //Categoria de la pregunta
     public TMP_Dropdown difficult; //Dificultad de la pregunta 
     public TMP_Text responseText;     // donde se mostrará la respuesta
@@ -18,8 +19,25 @@ public class Test : MonoBehaviour
 
     public void onClick()
     {
-      
-        if (modelType.options[modelType.value].text == "Gemini")
+        AIService.Models modeloSeleccionado;
+        switch (modelType.options[modelType.value].text)
+        {
+            case "Gemini":
+                modeloSeleccionado=AIService.Models.Gemini; 
+                break;
+            case "Copilot":
+                modeloSeleccionado=AIService.Models.Copilot; 
+                break;
+            case "ChatGPT":
+                modeloSeleccionado =AIService.Models.ChatGPT;
+                break;
+            default:
+                modeloSeleccionado = AIService.Models.Copilot;
+                break;
+        }
+
+        service.PedirPregunta(modeloSeleccionado,category.options[category.value].text, difficult.options[difficult.value].text);
+       /* if (modelType.options[modelType.value].text == "Gemini")
         {
             string promptText = $"Genera una pregunta tipo test con 4 opciones y solo una opción correcta de categoría {category.options[category.value].text} y dificultad máxima {difficult.options[difficult.value].text}";
             Debug.Log("Prompt enviado al backend por Gemini: " + promptText);
@@ -34,7 +52,7 @@ public class Test : MonoBehaviour
             string promptText = $"Genera una pregunta tipo test con 4 opciones y solo una opción correcta de categoría {category.options[category.value].text} y dificultad máxima {difficult.options[difficult.value].text}";
             Debug.Log("Prompt enviado al backend por ChatGPT: " + promptText);
             chatGPTService.PedirPregunta(category.options[category.value].text, difficult.options[difficult.value].text);
-        }
+        }*/
 
     }
 }

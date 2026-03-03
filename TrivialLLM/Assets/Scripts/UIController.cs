@@ -11,9 +11,10 @@ public class UIController : MonoBehaviour
 
     public TextMeshProUGUI txt;
 
-    public CopilotService copilot;
-    public GeminiService gemini;
-    public ChatGPTService chatGPT;
+    /* public CopilotService copilot;
+     public GeminiService gemini;
+     public ChatGPTService chatGPT;*/
+    public AIService ai;
 
     public void MostrarPregunta(PreguntaOpciones p)
     {
@@ -32,7 +33,7 @@ public class UIController : MonoBehaviour
         respuestaCorrecta = p.respuesta_correcta;
     }
 
-    public void mandarPregunta(string modelo)
+    public void mandarPregunta(AIService.Models modeloSeleccionado)
     {
         string prompt = textPregunta.text + "\nOpciones:\n";
         for (int i = 0; i < botonesOpciones.Length; i++)
@@ -40,51 +41,19 @@ public class UIController : MonoBehaviour
             string opcion = botonesOpciones[i].GetComponentInChildren<TextMeshProUGUI>().text;
             prompt += $"{i}) {opcion}\n";
         }
-        switch (modelo)
+
+        ai.ContestarPregunta(modeloSeleccionado,prompt, (int indexRespuesta) =>
         {
-            case "Gemini":
-                gemini.ContestarPregunta(prompt, (int indexRespuesta) =>
-                {
-                    if (indexRespuesta >= 0)
-                    {
-                        SeleccionarRespuesta(indexRespuesta);
-                    }
-                    else
-                    {
-                        txt.text = "Error al obtener la respuesta de Copilot";
-                    }
-                });
-                
-                break;
-            case "Copilot":
-                copilot.ContestarPregunta(prompt, (int indexRespuesta) =>
-                {
-                    if (indexRespuesta >= 0)
-                    {
-                        SeleccionarRespuesta(indexRespuesta);
-                    }
-                    else
-                    {
-                        txt.text = "Error al obtener la respuesta de Copilot";
-                    }
-                });
-                break;
-            case "ChatGPT":
-                chatGPT.ContestarPregunta(prompt, (int indexRespuesta) =>
-                {
-                    if (indexRespuesta >= 0)
-                    {
-                        SeleccionarRespuesta(indexRespuesta);
-                    }
-                    else
-                    {
-                        txt.text = "Error al obtener la respuesta de Copilot";
-                    }
-                });
-                break;
-            default:
-                break;
-        }
+            if (indexRespuesta >= 0)
+            {
+                Debug.Log("UICONTROLLER");
+                SeleccionarRespuesta(indexRespuesta);
+            }
+            else
+            {
+                txt.text = "Error al obtener la respuesta de "+ modeloSeleccionado.ToString();
+            }
+        });
     }
 
     public void SeleccionarRespuesta(int index)

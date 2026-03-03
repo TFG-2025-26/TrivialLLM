@@ -1426,10 +1426,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 871429214}
-  - component: {fileID: 871429213}
-  - component: {fileID: 871429215}
   - component: {fileID: 871429216}
-  - component: {fileID: 871429217}
+  - component: {fileID: 871429215}
   m_Layer: 0
   m_Name: GameObjectPruebasLLMS
   m_TagString: Untagged
@@ -1437,19 +1435,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &871429213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 871429212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4bda1f7908b609489ab8b8c172e10e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  uiController: {fileID: 871429216}
 --- !u!4 &871429214
 Transform:
   m_ObjectHideFlags: 0
@@ -1474,11 +1459,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 871429212}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a7e5a69724edfe4a95905d3ff9849e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 9d50f385115188940a31ccd1a1b71b11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  apiUrl: http://127.0.0.1:8000/trivial
   uiController: {fileID: 871429216}
+  modeloPregunta: 0
+  modeloRespuesta: 0
 --- !u!114 &871429216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1498,23 +1484,7 @@ MonoBehaviour:
   - {fileID: 314215629}
   - {fileID: 1860857808}
   txt: {fileID: 316659729}
-  copilot: {fileID: 871429215}
-  gemini: {fileID: 871429213}
-  chatGPT: {fileID: 871429217}
---- !u!114 &871429217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 871429212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efea8d1cc8064c2429d78599698dfbc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  apiUrl: http://127.0.0.1:8000/trivial
-  uiController: {fileID: 0}
+  ai: {fileID: 871429215}
 --- !u!1 &904021022
 GameObject:
   m_ObjectHideFlags: 0
@@ -3327,9 +3297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93358746b440f3f4cbfb85edef2c2b70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  geminiService: {fileID: 871429213}
-  copilotService: {fileID: 871429215}
-  chatGPTService: {fileID: 871429217}
+  service: {fileID: 871429215}
   category: {fileID: 1778355632}
   difficult: {fileID: 1755668763}
   responseText: {fileID: 1184535644}
