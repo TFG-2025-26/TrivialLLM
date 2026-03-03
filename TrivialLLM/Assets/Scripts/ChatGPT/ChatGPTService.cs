@@ -49,7 +49,13 @@ public class ChatGPTService : MonoBehaviour
 
     private System.Collections.IEnumerator EnviarPrompt(string prompt, bool esPregunta, System.Action<int> callback = null)
     {
-        PromptGPTData req = new PromptGPTData { prompt = prompt, model = "gpt-3.5-turbo-instruct", max_tokens = 1, temperature = 0 };
+        PromptGPTData req = new PromptGPTData { 
+            prompt = prompt,
+            model = "ChatGPT", 
+            max_tokens = 700, 
+            temperature = 0,
+            isAnswering=true
+        };
         string jsonBody = JsonUtility.ToJson(req);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
@@ -104,4 +110,5 @@ public class PromptGPTData
     public string prompt;
     public int max_tokens;
     public int temperature;
+    public bool isAnswering;
 }

@@ -13,6 +13,7 @@ public class UIController : MonoBehaviour
 
     public CopilotService copilot;
     public GeminiService gemini;
+    public ChatGPTService chatGPT;
 
     public void MostrarPregunta(PreguntaOpciones p)
     {
@@ -69,6 +70,17 @@ public class UIController : MonoBehaviour
                 });
                 break;
             case "ChatGPT":
+                chatGPT.ContestarPregunta(prompt, (int indexRespuesta) =>
+                {
+                    if (indexRespuesta >= 0)
+                    {
+                        SeleccionarRespuesta(indexRespuesta);
+                    }
+                    else
+                    {
+                        txt.text = "Error al obtener la respuesta de Copilot";
+                    }
+                });
                 break;
             default:
                 break;
