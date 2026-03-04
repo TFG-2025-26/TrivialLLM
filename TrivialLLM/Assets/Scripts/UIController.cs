@@ -20,13 +20,24 @@ public class UIController : MonoBehaviour
     {
         textPregunta.text = p.pregunta;
 
+        // Comprobar el modo de juego
+        bool esTurnoHumano = true; // por defecto
+
+        if (GameManager.GetInstance() != null)
+        {
+            esTurnoHumano = (GameManager.GetInstance().currentMode == GameManager.GameMode.HumanGame);
+        }
+
         for (int i = 0; i < botonesOpciones.Length; i++)
         {
             botonesOpciones[i].GetComponentInChildren<TextMeshProUGUI>().text = p.opciones[i];
 
+            // Los botones son interactuables dependiendo del modo de juego
+            botonesOpciones[i].interactable = esTurnoHumano;
+
             int index = i;
-            //botonesOpciones[i].onClick.RemoveAllListeners();
-            //botonesOpciones[i].onClick.AddListener(() => SeleccionarRespuesta(index));
+            botonesOpciones[i].onClick.RemoveAllListeners();
+            botonesOpciones[i].onClick.AddListener(() => SeleccionarRespuesta(index));
 
         }
 

@@ -82,9 +82,20 @@ public class AIService : MonoBehaviour
                 // Asumir que la respuesta es directamente el JSON de PreguntaOpciones
                 PreguntaOpciones pregunta = JsonUtility.FromJson<PreguntaOpciones>(responseText);
 
-                // Ahora se puede pasar a la UI/ logica del juego
+                // Mostrar la pregunta en pantalla
                 MostrarPregunta(pregunta);
-                uiController.mandarPregunta(modeloRespuesta);
+
+                // Comprobar el modo de juego
+                if (GameManager.GetInstance() != null &&
+                    GameManager.GetInstance().currentMode == GameManager.GameMode.AIGame)
+                {
+                    Debug.Log("Esperando la respuesta de la IA.");
+                    uiController.mandarPregunta(modeloRespuesta);
+                }
+                else
+                {
+                    Debug.Log("Esperando la respuesta del jugador.");
+                }
             }
             else
             {
