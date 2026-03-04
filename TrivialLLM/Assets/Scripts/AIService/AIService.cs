@@ -13,11 +13,12 @@ public class AIService : MonoBehaviour
     public Models modeloPregunta;
     public Models modeloRespuesta;
 
-    public void PedirPregunta(Models model,string tema, string dificultad)
+    public void PedirPregunta(Models modeloPregunta, Models modeloRespuesta, string tema, string dificultad)
     {
-        modeloPregunta = model;
+        this.modeloPregunta = modeloPregunta;
+        this.modeloRespuesta = modeloRespuesta;
         string prompt = CrearPromptPregunta(tema, dificultad);
-        StartCoroutine(EnviarPrompt(modeloPregunta,prompt, true));
+        StartCoroutine(EnviarPrompt(this.modeloPregunta,prompt, true));
     }
 
     public void ContestarPregunta(Models model,string prompt, System.Action<int> callback)

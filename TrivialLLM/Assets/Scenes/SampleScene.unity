@@ -1601,6 +1601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55e70792c6f42554c8ac5a26fabae7d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentMode: 0
 --- !u!4 &926118149
 Transform:
   m_ObjectHideFlags: 0
@@ -3343,7 +3344,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   service: {fileID: 871429215}
   category: {fileID: 1778355632}
-  difficult: {fileID: 1755668763}
+  difficulty: {fileID: 0}
   responseText: {fileID: 1184535644}
   modelType: {fileID: 936664430}
 --- !u!1 &1367654208
@@ -4636,7 +4637,7 @@ GameObject:
   - component: {fileID: 1755668764}
   - component: {fileID: 1755668763}
   m_Layer: 5
-  m_Name: Difficult
+  m_Name: Difficulty
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
