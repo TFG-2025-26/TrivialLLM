@@ -8,7 +8,7 @@ public class AIService : MonoBehaviour
     // si lo subo a un servidor https://mi-backend.com/trivial
     public UIController uiController;
 
-    public enum Models {Gemini,Copilot,ChatGPT};
+    public enum Models {Gemini,Copilot,ChatGPT, Azure};
 
     public Models modeloPregunta;
     public Models modeloRespuesta;
@@ -75,7 +75,7 @@ public class AIService : MonoBehaviour
         {
             
             string responseText = www.downloadHandler.text;
-            Debug.Log("Respuesta LLM: " + responseText);
+            Debug.Log("LLM: " + responseText);
 
             if (esPregunta)
             {
@@ -101,29 +101,39 @@ public class AIService : MonoBehaviour
             else
             {
                 Debug.Log("Respuesta generada por: "+ model.ToString());
-                if (model != Models.Gemini)
+                string cleanAnswer = responseText.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "");
+                if (int.TryParse(cleanAnswer, out int indexRespuesta))
                 {
-                    if (int.TryParse(responseText.Trim(), out int indexRespuesta))
-                    {
-                        callback?.Invoke(indexRespuesta);
-                    }
-                    else
-                    {
-                        Debug.Log("Error al obtener la respuesta por " + model.ToString());
-                    }
+                    callback?.Invoke(indexRespuesta);
                 }
                 else
                 {
-                    string cleanAnswer = responseText.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "");
-                    if (int.TryParse(cleanAnswer, out int indexRespuesta))
-                    {
-                        callback?.Invoke(indexRespuesta);
-                    }
-                    else
-                    {
-                        Debug.LogError("No se pudo parsear incluso después de limpiar: '" + responseText + "'");
-                    }
+                    Debug.LogError("No se pudo parsear incluso después de limpiar: '" + responseText + "'");
                 }
+
+                //if (model != Models.Gemini)
+                //{
+                //    if (int.TryParse(responseText.Trim(), out int indexRespuesta))
+                //    {
+                //        callback?.Invoke(indexRespuesta);
+                //    }
+                //    else
+                //    {
+                //        Debug.Log("Error al obtener la respuesta por " + model.ToString());
+                //    }
+                //}
+                //else
+                //{
+                //    string cleanAnswer = responseText.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "");
+                //    if (int.TryParse(cleanAnswer, out int indexRespuesta))
+                //    {
+                //        callback?.Invoke(indexRespuesta);
+                //    }
+                //    else
+                //    {
+                //        Debug.LogError("No se pudo parsear incluso después de limpiar: '" + responseText + "'");
+                //    }
+                //}
             }
         }
     }
@@ -151,6 +161,14 @@ public class AIService : MonoBehaviour
                 };
 
             case Models.Copilot:
+                return new PromptRequest
+                {
+                    prompt = prompt,
+                    model = model.ToString(),
+                    isAnswering = !esPregunta
+                };
+
+            case Models.Azure:
                 return new PromptRequest
                 {
                     prompt = prompt,

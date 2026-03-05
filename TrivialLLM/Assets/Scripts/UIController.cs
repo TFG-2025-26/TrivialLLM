@@ -18,6 +18,12 @@ public class UIController : MonoBehaviour
 
     public void MostrarPregunta(PreguntaOpciones p)
     {
+        if(p == null || p.opciones == null || p.opciones.Length < botonesOpciones.Length)
+        {
+            Debug.LogError("Error: La IA no devolvio las opciones correctamente.");
+            textPregunta.text = "Error al generar la pregunta. Vuelve a intentarlo";
+            return;
+        }
         textPregunta.text = p.pregunta;
 
         // Comprobar el modo de juego
@@ -57,7 +63,7 @@ public class UIController : MonoBehaviour
         {
             if (indexRespuesta >= 0)
             {
-                Debug.Log("UICONTROLLER");
+                //Debug.Log("UICONTROLLER");
                 SeleccionarRespuesta(indexRespuesta);
             }
             else

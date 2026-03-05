@@ -29,7 +29,6 @@ public class Test : MonoBehaviour
         if(modelAnswerType != null )
         {
             modeloRespuesta = ObtenerModeloDropdown(modelAnswerType);
-            Debug.Log("Responde: " + service.modeloRespuesta);
         }
         
         // Se pide la pregunta
@@ -71,6 +70,8 @@ public class Test : MonoBehaviour
                 return AIService.Models.Copilot;
             case "ChatGPT":
                 return AIService.Models.ChatGPT;
+            case "Azure":
+                return AIService.Models.Azure;
             default:
                 return AIService.Models.Copilot;
         }
