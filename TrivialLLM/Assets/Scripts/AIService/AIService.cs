@@ -30,25 +30,25 @@ public class AIService : MonoBehaviour
     private string CrearPromptPregunta(string tema, string dificultad)
     {
         return
-            $@"Actúa como un generador de peguntas de trivial.
+            $@"Actï¿½a como un generador de peguntas de trivial.
 
             Tema: {tema}
             Dificultad: {dificultad}
 
-            Devuélveme SOLO un JSON válido con este formato exacto:
+            Devuï¿½lveme SOLO un JSON vï¿½lido con este formato exacto:
 
             {{
                 ""pregunta"": ""texto de la pregunta"",
                 ""opciones"": [
-                    ""opción 0"",
-                    ""opción 1"",
-                    ""opción 2"",
-                    ""opción 3""
+                    ""opciï¿½n 0"",
+                    ""opciï¿½n 1"",
+                    ""opciï¿½n 2"",
+                    ""opciï¿½n 3""
                  ],
                  ""respuesta_correcta"": INDICE_CORRECTO
             }}
 
-        No añadas comentarios, explicaciones ni texto fuera del JSON.";
+        No aï¿½adas comentarios, explicaciones ni texto fuera del JSON.";
     }
 
     private System.Collections.IEnumerator EnviarPrompt(Models model,string prompt, bool esPregunta, System.Action<int> callback = null)
@@ -76,6 +76,12 @@ public class AIService : MonoBehaviour
             
             string responseText = www.downloadHandler.text;
             Debug.Log("LLM: " + responseText);
+
+            if(responseText.Contains("\"error\""))
+            {
+                Debug.LogError("Error devuelto por backend: " + responseText);
+                yield break;
+            }
 
             if (esPregunta)
             {
@@ -108,7 +114,7 @@ public class AIService : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("No se pudo parsear incluso después de limpiar: '" + responseText + "'");
+                    Debug.LogError("No se pudo parsear incluso despuï¿½s de limpiar: '" + responseText + "'");
                 }
 
                 //if (model != Models.Gemini)
@@ -131,7 +137,7 @@ public class AIService : MonoBehaviour
                 //    }
                 //    else
                 //    {
-                //        Debug.LogError("No se pudo parsear incluso después de limpiar: '" + responseText + "'");
+                //        Debug.LogError("No se pudo parsear incluso despuï¿½s de limpiar: '" + responseText + "'");
                 //    }
                 //}
             }
@@ -140,45 +146,47 @@ public class AIService : MonoBehaviour
 
     private PromptRequest CreateRequest(Models model, string prompt, bool esPregunta)
     {
-        switch (model)
+        return new PromptRequest
         {
-            case Models.ChatGPT:
-                return new PromptGPTData
-                {
-                    prompt = prompt,
-                    model = model.ToString(),
-                    max_tokens = 700,
-                    temperature = 0,
-                    isAnswering = !esPregunta
-                };
+            prompt = prompt,
+            model = model.ToString(),
+            isAnswering = !esPregunta
+        };
+        //switch (model)
+        //{
+        //    case Models.ChatGPT:
+        //        return new PromptGPTData
+        //        {
+                   
+        //        };
 
-            case Models.Gemini:
-                return new PromptRequest
-                {
-                    prompt = prompt,
-                    model = model.ToString(),
-                    isAnswering = !esPregunta
-                };
+        //    case Models.Gemini:
+        //        return new PromptRequest
+        //        {
+        //            prompt = prompt,
+        //            model = model.ToString(),
+        //            isAnswering = !esPregunta
+        //        };
 
-            case Models.Copilot:
-                return new PromptRequest
-                {
-                    prompt = prompt,
-                    model = model.ToString(),
-                    isAnswering = !esPregunta
-                };
+        //    case Models.Copilot:
+        //        return new PromptRequest
+        //        {
+        //            prompt = prompt,
+        //            model = model.ToString(),
+        //            isAnswering = !esPregunta
+        //        };
 
-            case Models.Azure:
-                return new PromptRequest
-                {
-                    prompt = prompt,
-                    model = model.ToString(),
-                    isAnswering = !esPregunta
-                };
+        //    case Models.Azure:
+        //        return new PromptRequest
+        //        {
+        //            prompt = prompt,
+        //            model = model.ToString(),
+        //            isAnswering = !esPregunta
+        //        };
 
-            default:
-                throw new System.Exception("Modelo no soportado");
-        }
+        //    default:
+        //        throw new System.Exception("Modelo no soportado");
+        //}
     }
 
     private void MostrarPregunta(PreguntaOpciones pregunta)
