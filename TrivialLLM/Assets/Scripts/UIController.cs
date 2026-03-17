@@ -11,10 +11,12 @@ public class UIController : MonoBehaviour
 
     public TextMeshProUGUI txt;
 
+
     /* public CopilotService copilot;
      public GeminiService gemini;
      public ChatGPTService chatGPT;*/
     public AIService ai;
+    public FichaTrivial fichaJugador; 
 
     public void MostrarPregunta(PreguntaOpciones p)
     {
@@ -75,11 +77,31 @@ public class UIController : MonoBehaviour
 
     public void SeleccionarRespuesta(int index)
     {
-        txt.text =index+") "+botonesOpciones[index].GetComponentInChildren<TextMeshProUGUI>().text;
+        if(txt != null)
+        {
+            txt.text = index + ") " + botonesOpciones[index].GetComponentInChildren<TextMeshProUGUI>().text;
+        }
+        
         if (index == respuestaCorrecta)
         {
             Debug.Log("Respuesta correcta");
             //txt.text = "Correcto";
+            if (fichaJugador != null)
+            {
+                if(ai != null && !string.IsNullOrEmpty(ai.categoriaActual))
+                {
+                    fichaJugador.GanarQuesito(ai.categoriaActual);
+                }
+                else
+                {
+                    Debug.LogWarning("El tema actual no esta guardado en AIService.");
+                }
+                
+            }
+            else
+            {
+                Debug.LogError("¡Falta asignar la Ficha Jugador en el Inspector del UIController!");
+            }
         }
         else
         {

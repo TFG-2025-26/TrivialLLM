@@ -13,10 +13,13 @@ public class AIService : MonoBehaviour
     public Models modeloPregunta;
     public Models modeloRespuesta;
 
+    public string categoriaActual;
+
     public void PedirPregunta(Models modeloPregunta, Models modeloRespuesta, string tema, string dificultad)
     {
         this.modeloPregunta = modeloPregunta;
         this.modeloRespuesta = modeloRespuesta;
+        this.categoriaActual = tema;
         string prompt = CrearPromptPregunta(tema, dificultad);
         StartCoroutine(EnviarPrompt(this.modeloPregunta,prompt, true));
     }
