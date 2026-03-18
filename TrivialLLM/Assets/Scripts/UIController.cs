@@ -16,7 +16,9 @@ public class UIController : MonoBehaviour
      public GeminiService gemini;
      public ChatGPTService chatGPT;*/
     public AIService ai;
-    public FichaTrivial fichaJugador; 
+    public FichaTrivial fichaJugador;
+
+    private bool esTurnoHumano;
 
     public void MostrarPregunta(PreguntaOpciones p)
     {
@@ -29,19 +31,19 @@ public class UIController : MonoBehaviour
         textPregunta.text = p.pregunta;
 
         // Comprobar el modo de juego
-        bool esTurnoHumano = true; // por defecto
+        esTurnoHumano = true; // por defecto
 
-       /* if (GameManager.GetInstance() != null)
+       if (GameManager.GetInstance() != null)
         {
-            esTurnoHumano = (GameManager.GetInstance().currentMode == GameManager.GameMode.HumanGame);
-        }*/
+            esTurnoHumano = (GameManager.GetInstance().getJugTurnoActual().esHumano);
+        }
 
         for (int i = 0; i < botonesOpciones.Length; i++)
         {
             botonesOpciones[i].GetComponentInChildren<TextMeshProUGUI>().text = p.opciones[i];
 
             // Los botones son interactuables dependiendo del modo de juego
-            botonesOpciones[i].interactable = esTurnoHumano;
+            botonesOpciones[i].interactable = true;
 
             int index = i;
             botonesOpciones[i].onClick.RemoveAllListeners();
@@ -61,18 +63,21 @@ public class UIController : MonoBehaviour
             prompt += $"{i}) {opcion}\n";
         }
 
-        ai.ContestarPregunta(modeloSeleccionado,prompt, (int indexRespuesta) =>
+        if (!esTurnoHumano)
         {
-            if (indexRespuesta >= 0)
+            ai.ContestarPregunta(modeloSeleccionado, prompt, (int indexRespuesta) =>
             {
-                Debug.Log("UICONTROLLER");
-                SeleccionarRespuesta(indexRespuesta);
-            }
-            else
-            {
-                txt.text = "Error al obtener la respuesta de "+ modeloSeleccionado.ToString();
-            }
-        });
+                if (indexRespuesta >= 0)
+                {
+                    Debug.Log("UICONTROLLER");
+                    SeleccionarRespuesta(indexRespuesta);
+                }
+                else
+                {
+                    txt.text = "Error al obtener la respuesta de " + modeloSeleccionado.ToString();
+                }
+            });
+        }
     }
 
     public void SeleccionarRespuesta(int index)
@@ -102,10 +107,12 @@ public class UIController : MonoBehaviour
             {
                 Debug.LogError("¡Falta asignar la Ficha Jugador en el Inspector del UIController!");
             }
+            GameManager.GetInstance().sigTurno();
         }
         else
         {
             Debug.Log("Respuesta incorrecta");
+            GameManager.GetInstance().sigTurno();
             //txt.text = "Incorrecto";
         }
         // Aqui se puede cargar otra pregunta, sumar puntos...

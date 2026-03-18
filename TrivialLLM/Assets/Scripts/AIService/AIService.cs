@@ -115,7 +115,7 @@ public class AIService : MonoBehaviour
 
                 // Comprobar el modo de juego
                 if (GameManager.GetInstance() != null &&
-                    GameManager.GetInstance().currentMode == GameManager.GameMode.AIGame)
+                    !GameManager.GetInstance().getJugTurnoActual().esHumano)
                 {
                     Debug.Log("Esperando la respuesta de la IA.");
                     uiController.mandarPregunta(modeloRespuesta);
@@ -133,7 +133,7 @@ public class AIService : MonoBehaviour
                 {
                     Debug.Log("AIService");
                     callback?.Invoke(indexRespuesta);
-                    GameManager.GetInstance().sigTurno();
+                   // GameManager.GetInstance().sigTurno();
                 }
                 else
                 {

@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
             numTotalJugadores = 0;
             turno = 1;
             descriptorJug = new List<DescriptorJugador>();
-            currentMode = GameMode.AIGame;
+           // currentMode = GameMode.AIGame;
         }
         else
         {
@@ -210,6 +210,7 @@ public class GameManager : MonoBehaviour
     public void sigTurno()
     {
         turno++;
+      
     }
     
 }
