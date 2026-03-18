@@ -42,11 +42,19 @@ public class AIService : MonoBehaviour
 
     private string CrearPromptPregunta(string tema, string dificultad)
     {
+        int seed = Random.Range(0, 100000);
         return
             $@"Act�a como un generador de peguntas de trivial.
 
             Tema: {tema}
             Dificultad: {dificultad}
+
+            Instrucciones:
+                - Genera UNA pregunta original y única, no repitas preguntas comunes
+                - La pregunta debe ser relevante para la categoría y la dificultad
+                - Varía el estilo: puede ser de opción múltiple directa, de deducción, de comparación, curiosidades...
+                - Añade un toque creativo o curioso para que no se repita
+                - Usa la semilla de variación: {seed}
 
             Devu�lveme SOLO un JSON v�lido con este formato exacto:
 
