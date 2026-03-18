@@ -7,6 +7,7 @@ public class AIService : MonoBehaviour
     private const string url = "http://127.0.0.1:8000/trivial";
     // si lo subo a un servidor https://mi-backend.com/trivial
     public UIController uiController;
+    public GameManager gameManager;
 
     public enum Models {Gemini,Copilot,ChatGPT, Azure};
 
@@ -14,6 +15,11 @@ public class AIService : MonoBehaviour
     public Models modeloRespuesta;
 
     public string categoriaActual;
+
+    private void Start()
+    {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+    }
 
     public void PedirPregunta(Models modeloPregunta, Models modeloRespuesta, string tema, string dificultad)
     {
@@ -26,8 +32,12 @@ public class AIService : MonoBehaviour
 
     public void ContestarPregunta(Models model,string prompt, System.Action<int> callback)
     {
-        modeloRespuesta = model;
-        StartCoroutine(EnviarPrompt(modeloRespuesta,prompt, false, callback));
+        //modeloRespuesta = model;
+        modeloRespuesta = GameManager.GetInstance().getJugTurnoActual().modelo;
+        Debug.Log("Respuesta generada por: "+ modeloRespuesta.ToString());
+        Debug.Log(GameManager.GetInstance().getJugTurnoActual().prompt + ". " + prompt);
+
+        StartCoroutine(EnviarPrompt(modeloRespuesta, GameManager.GetInstance().getJugTurnoActual().prompt+". "+prompt, false, callback));
     }
 
     private string CrearPromptPregunta(string tema, string dificultad)
@@ -113,7 +123,9 @@ public class AIService : MonoBehaviour
                 string cleanAnswer = responseText.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "");
                 if (int.TryParse(cleanAnswer, out int indexRespuesta))
                 {
+                    Debug.Log("AIService");
                     callback?.Invoke(indexRespuesta);
+                    GameManager.GetInstance().sigTurno();
                 }
                 else
                 {

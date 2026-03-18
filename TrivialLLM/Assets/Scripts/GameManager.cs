@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     public int numMaxJugadores=1;
     public int numMaxLLMS = 3;
+    private int numTotalJugadores;
+    private int turno;
 
     private int numJug;
     private int numLLMS;
@@ -36,7 +38,10 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             numJug = 0;
             numLLMS = 0;
+            numTotalJugadores = 0;
+            turno = 1;
             descriptorJug = new List<DescriptorJugador>();
+            currentMode = GameMode.AIGame;
         }
         else
         {
@@ -76,6 +81,7 @@ public class GameManager : MonoBehaviour
         {
             descriptorJug.Add(new DescriptorJugador { esHumano = true });
             numJug++;
+            numTotalJugadores++;
             textoNumHumanos.text = numJug.ToString();
         }
     }
@@ -85,6 +91,7 @@ public class GameManager : MonoBehaviour
         {
             //descriptorJug.Add(new DescriptorJugador { esHumano = false, modelo=model, prompt=promptDes });
             numLLMS++;
+            numTotalJugadores++;
             textoNumLLMS.text = numLLMS.ToString();
             if(!panel.activeSelf && numLLMS > 0)
             {
@@ -141,6 +148,7 @@ public class GameManager : MonoBehaviour
                     enc = true;
                     descriptorJug.RemoveAt(i);
                     numJug--;
+                    numTotalJugadores--;
                     textoNumHumanos.text= numJug.ToString();
                 }
                 else
@@ -163,6 +171,7 @@ public class GameManager : MonoBehaviour
                     enc = true;
                     descriptorJug.RemoveAt(i);
                     numLLMS--;
+                    numTotalJugadores--;
                     textoNumLLMS.text= numLLMS.ToString();
                     if (numLLMS <= 0)
                     {
@@ -191,6 +200,16 @@ public class GameManager : MonoBehaviour
     public int getNumLLMS()
     {
         return numLLMS;
+    }
+
+    public DescriptorJugador getJugTurnoActual()
+    {
+        return descriptorJug[(turno - 1) % numTotalJugadores];
+    }
+
+    public void sigTurno()
+    {
+        turno++;
     }
     
 }

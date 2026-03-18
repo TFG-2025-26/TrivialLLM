@@ -1359,7 +1359,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &249735707
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2988,8 +2988,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiController: {fileID: 871429216}
+  gameManager: {fileID: 0}
   modeloPregunta: 0
   modeloRespuesta: 0
+  categoriaActual: 
 --- !u!114 &871429216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3010,6 +3012,7 @@ MonoBehaviour:
   - {fileID: 1860857808}
   txt: {fileID: 316659729}
   ai: {fileID: 871429215}
+  fichaJugador: {fileID: 0}
 --- !u!1 &898811548
 GameObject:
   m_ObjectHideFlags: 0

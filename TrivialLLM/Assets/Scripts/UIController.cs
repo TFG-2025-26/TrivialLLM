@@ -31,10 +31,10 @@ public class UIController : MonoBehaviour
         // Comprobar el modo de juego
         bool esTurnoHumano = true; // por defecto
 
-        if (GameManager.GetInstance() != null)
+       /* if (GameManager.GetInstance() != null)
         {
             esTurnoHumano = (GameManager.GetInstance().currentMode == GameManager.GameMode.HumanGame);
-        }
+        }*/
 
         for (int i = 0; i < botonesOpciones.Length; i++)
         {
@@ -65,7 +65,7 @@ public class UIController : MonoBehaviour
         {
             if (indexRespuesta >= 0)
             {
-                //Debug.Log("UICONTROLLER");
+                Debug.Log("UICONTROLLER");
                 SeleccionarRespuesta(indexRespuesta);
             }
             else
