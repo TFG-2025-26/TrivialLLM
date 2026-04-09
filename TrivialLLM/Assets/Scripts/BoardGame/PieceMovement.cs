@@ -3,7 +3,11 @@ using System.Collections;
 
 public class PieceMovement : MonoBehaviour
 {
-    public SquareNode actualSquare;
+
+    [SerializeField]
+    private SquareNode actualSquare;
+    [SerializeField]
+    private AIService aiService;
 
     [SerializeField]
     private float speed = 15f;
@@ -63,5 +67,16 @@ public class PieceMovement : MonoBehaviour
         transform.position = targetPos;
         actualSquare = targetSquare;
         isMoving = false;
+
+        // Enviar peticion de la pregunta dependiendo de la casilla
+        if (aiService != null)
+        {
+            Debug.Log($"La ficha ha caido en {actualSquare.topic}. Solicitando pregunta...");
+            aiService.PedirPregunta(aiService.modeloPregunta, aiService.modeloRespuesta, actualSquare.getTopicString(), "Media");
+        }
+        else
+        {
+            Debug.LogError("AIService no esta asignado en el script PieceMovement.");
+        }
     }
 }
