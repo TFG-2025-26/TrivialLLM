@@ -10,7 +10,7 @@ public class PieceMovement : MonoBehaviour
     private AIService aiService;
 
     [SerializeField]
-    private float speed = 15f;
+    private float speed = 30f;
 
     private bool isMoving = false;
 
@@ -72,7 +72,7 @@ public class PieceMovement : MonoBehaviour
         if (aiService != null)
         {
             Debug.Log($"La ficha ha caido en {actualSquare.topic}. Solicitando pregunta...");
-            aiService.PedirPregunta(aiService.modeloPregunta, aiService.modeloRespuesta, actualSquare.getTopicString(), "Media");
+           // aiService.PedirPregunta(aiService.modeloPregunta, aiService.modeloRespuesta, actualSquare.getTopicString(), "Media");
         }
         else
         {

@@ -4,8 +4,10 @@ using UnityEngine.Networking;
 
 public class AIService : MonoBehaviour
 {
-    private const string url = "http://127.0.0.1:8000/trivial";
+// private const string url = "http://127.0.0.1:8000/trivial";
     // si lo subo a un servidor https://mi-backend.com/trivial
+
+    private const string url = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net/trivial";
     public UIController uiController;
     public GameManager gameManager;
 
