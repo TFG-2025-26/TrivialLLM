@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public TMP_Dropdown model;
     public TMP_InputField promptText;
 
+    //public UIController uiController;
+
     public int numMaxJugadores=1;
     public int numMaxLLMS = 3;
     private int numTotalJugadores;
@@ -210,7 +212,9 @@ public class GameManager : MonoBehaviour
     public void sigTurno()
     {
         turno++;
-      
+
+        //FichaTrivial nextPiece = piecesList[(turno - 1) % numTotalJugadores];
+        //uiController.setCurrentPiece(nextPiece);
     }
     
 }

@@ -14,6 +14,8 @@ public class PieceMovement : MonoBehaviour
 
     private bool isMoving = false;
 
+    FichaTrivial ficha;
+
     void Start()
     {
         // Colocar la ficha exactamente en la casilla inicial al darle a Play
@@ -22,6 +24,8 @@ public class PieceMovement : MonoBehaviour
             Vector3 iniPos = new Vector3(actualSquare.transform.position.x, transform.position.y, actualSquare.transform.position.z);
             transform.position = iniPos;
         }
+
+        ficha = GetComponent<FichaTrivial>();
     }
     void Update()
     {
@@ -45,6 +49,48 @@ public class PieceMovement : MonoBehaviour
         else if(Input.GetKeyDown(KeyCode.D) && actualSquare.right != null)
         {
             StartCoroutine(MovePiece(actualSquare.right));
+        }
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
+            if(ficha != null)
+            {
+                ficha.GanarQuesito("ciencias");
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.H))
+        {
+            if (ficha != null)
+            {
+                ficha.GanarQuesito("historia");
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.G))
+        {
+            if (ficha != null)
+            {
+                ficha.GanarQuesito("geografía");
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (ficha != null)
+            {
+                ficha.GanarQuesito("entretenimiento");
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (ficha != null)
+            {
+                ficha.GanarQuesito("deportes y pasatiempos");
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.L))
+        {
+            if (ficha != null)
+            {
+                ficha.GanarQuesito("arte y literatura");
+            }
         }
 
     }

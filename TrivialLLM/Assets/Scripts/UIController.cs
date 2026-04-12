@@ -117,4 +117,9 @@ public class UIController : MonoBehaviour
         }
         // Aqui se puede cargar otra pregunta, sumar puntos...
     }
+
+    public void setCurrentPiece(FichaTrivial newPiece)
+    {
+        fichaJugador = newPiece;    
+    }
 }
