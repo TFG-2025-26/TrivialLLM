@@ -82,6 +82,7 @@ public class GameManager : MonoBehaviour
         if (numJug < numMaxJugadores)
         {
             descriptorJug.Add(new DescriptorJugador { esHumano = true });
+            gameObject.GetComponent<AudioSource>().Play();
             numJug++;
             numTotalJugadores++;
             textoNumHumanos.text = numJug.ToString();
@@ -93,6 +94,7 @@ public class GameManager : MonoBehaviour
         {
             //descriptorJug.Add(new DescriptorJugador { esHumano = false, modelo=model, prompt=promptDes });
             numLLMS++;
+            gameObject.GetComponent<AudioSource>().Play();
             numTotalJugadores++;
             textoNumLLMS.text = numLLMS.ToString();
             if(!panel.activeSelf && numLLMS > 0)
@@ -149,6 +151,7 @@ public class GameManager : MonoBehaviour
                 {
                     enc = true;
                     descriptorJug.RemoveAt(i);
+                    gameObject.GetComponent<AudioSource>().Play();
                     numJug--;
                     numTotalJugadores--;
                     textoNumHumanos.text= numJug.ToString();
@@ -172,6 +175,7 @@ public class GameManager : MonoBehaviour
                 {
                     enc = true;
                     descriptorJug.RemoveAt(i);
+                    gameObject.GetComponent<AudioSource>().Play();
                     numLLMS--;
                     numTotalJugadores--;
                     textoNumLLMS.text= numLLMS.ToString();

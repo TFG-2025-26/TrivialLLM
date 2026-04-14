@@ -7,6 +7,12 @@ public class CambiaEscena : MonoBehaviour
 
     public void onClick()
     {
+        gameObject.GetComponent<AudioSource>().Play();
+        Invoke("cambiaEscena", 0.2f);
+    }
+
+    private void cambiaEscena()
+    {
         SceneManager.LoadScene(sceneName);
     }
 }
