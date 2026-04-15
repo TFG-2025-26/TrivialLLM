@@ -44,6 +44,7 @@ public class DiceTrows : MonoBehaviour
                 countToChange += Time.deltaTime;
             }
         }
+        showMovementsText();
     }
     public void releaseNumber()
     {
@@ -51,13 +52,18 @@ public class DiceTrows : MonoBehaviour
         {
             throwed = true;
             int diceNum = Random.Range(1, 7);
-            //Guardar el nº para el avance del jugador
-            resultado.text = "Avanzas " + diceNum.ToString() + " casillas";
+            GameManager.GetInstance().setTurnMoves(diceNum);
+            //resultado.text = "Puedes avanzar " + GameManager.GetInstance().getRemainingMoves() + " casilla/s";
+
             diceImage.sprite= dicefaces[diceNum-1];
         }
         else
         {
             throwed = false;
         }
+    }
+    void showMovementsText()
+    {
+        resultado.text = "Puedes avanzar " + GameManager.GetInstance().getRemainingMoves() + " casilla/s";
     }
 }

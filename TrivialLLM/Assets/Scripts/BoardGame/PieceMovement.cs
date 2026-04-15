@@ -97,43 +97,49 @@ public class PieceMovement : MonoBehaviour
 
     IEnumerator MovePiece(SquareNode targetSquare)
     {
-        isMoving = true;    
 
-        // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
-        Vector3 targetPos = new Vector3(targetSquare.transform.position.x, transform.position.y, targetSquare.transform.position.z);
-
-        // Mover la ficha poco a poco
-        while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+        int movesLeft = GameManager.GetInstance().getRemainingMoves();
+        if (movesLeft > 0)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-            yield return null; // Esperar al siguiente frame
-        }
+            GameManager.GetInstance().wasteMovement();
+            isMoving = true;
 
-        // Ajustar al final 
-        transform.position = targetPos;
-        actualSquare = targetSquare;
-        isMoving = false;
+            // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
+            Vector3 targetPos = new Vector3(targetSquare.transform.position.x, transform.position.y, targetSquare.transform.position.z);
 
-        // Enviar peticion de la pregunta dependiendo de la casilla
-        if (aiService != null)
-        {
-            Debug.Log($"La ficha ha caido en {actualSquare.topic}. Solicitando pregunta...");
-
-            // Copilot por defecto para probar
-            AIService.Models modeloPregunta = AIService.Models.Copilot;
-            AIService.Models modeloRespuesta = AIService.Models.Copilot;
-
-            // Si hay GameManager, se obtienen el modelo de respuesta del jugador actual
-            if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
+            // Mover la ficha poco a poco
+            while (Vector3.Distance(transform.position, targetPos) > 0.01f)
             {
-                modeloPregunta = GameManager.GetInstance().getJugTurnoActual().modelo;
+                transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+                yield return null; // Esperar al siguiente frame
             }
 
-            aiService.PedirPregunta(modeloPregunta, modeloRespuesta, actualSquare.getTopicString(), "Media");
-        }
-        else
-        {
-            Debug.LogError("AIService no esta asignado en el script PieceMovement.");
+            // Ajustar al final 
+            transform.position = targetPos;
+            actualSquare = targetSquare;
+            isMoving = false;
+
+            // Enviar peticion de la pregunta dependiendo de la casilla
+            if (aiService != null)
+            {
+                Debug.Log($"La ficha ha caido en {actualSquare.topic}. Solicitando pregunta...");
+
+                // Copilot por defecto para probar
+                AIService.Models modeloPregunta = AIService.Models.Copilot;
+                AIService.Models modeloRespuesta = AIService.Models.Copilot;
+
+                // Si hay GameManager, se obtienen el modelo de respuesta del jugador actual
+                if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
+                {
+                    modeloPregunta = GameManager.GetInstance().getJugTurnoActual().modelo;
+                }
+
+                aiService.PedirPregunta(modeloPregunta, modeloRespuesta, actualSquare.getTopicString(), "Media");
+            }
+            else
+            {
+                Debug.LogError("AIService no esta asignado en el script PieceMovement.");
+            }
         }
     }
 }

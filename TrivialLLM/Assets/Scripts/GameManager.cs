@@ -33,6 +33,10 @@ public class GameManager : MonoBehaviour
 
     // Modo de juego actual
     public GameMode currentMode;
+
+    //Manejo de movimientos
+    int actMoves=0;
+    int turnMoves = 0;
     private void Awake()
     {
         if(instance == null)
@@ -237,4 +241,19 @@ public class GameManager : MonoBehaviour
         return (turno - 1) % numTotalJugadores;
     }
     
+    public void setTurnMoves(int moves)
+    {
+        turnMoves= moves;
+        actMoves = moves;
+
+    }
+    public void wasteMovement()
+    {
+        actMoves--;
+    }
+
+    public int getRemainingMoves()
+    {
+        return actMoves;
+    }
 }
