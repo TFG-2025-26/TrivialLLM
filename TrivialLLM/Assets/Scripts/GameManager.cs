@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI textoNumHumanos;
     public TextMeshProUGUI textoNumLLMS;
+
+    public TextMeshProUGUI textConfirmacion;
 
     public GameObject panel;
     public TMP_Dropdown model;
@@ -49,6 +52,11 @@ public class GameManager : MonoBehaviour
             numTotalJugadores = 0;
             turno = 1;
             descriptorJug = new List<DescriptorJugador>();
+
+            if (panel != null )
+            {
+                panel.gameObject.SetActive(false);
+            }
             // currentMode = GameMode.AIGame;
 
             // Pruebas en la escena del tablero
@@ -148,7 +156,18 @@ public class GameManager : MonoBehaviour
             Debug.Log("Último LLM agregado -> Modelo: " + ultimo.modelo
                       + ", Prompt: " + ultimo.prompt
                       + ", EsHumano: " + ultimo.esHumano);
+
             numLLMSRegistrados++;
+
+            gameObject.GetComponent<AudioSource>().Play();
+
+            if (textConfirmacion != null)
+            {
+                StopAllCoroutines();
+                textConfirmacion.text = ultimo.modelo.ToString() + " registrado correctamente";
+                textConfirmacion.gameObject.SetActive(true);
+                StartCoroutine(OcultarTexto(1.5f));
+            }
         }
     }
 
@@ -256,4 +275,16 @@ public class GameManager : MonoBehaviour
     {
         return actMoves;
     }
+    
+    // Corrutina para desactivar el texto despues de X segundos
+    private IEnumerator OcultarTexto(float tiempo)
+    {
+        yield return new WaitForSeconds(tiempo);
+        if(textConfirmacion != null)
+        {
+            textConfirmacion.gameObject.SetActive(false);
+        }
+    }
+
+
 }
