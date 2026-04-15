@@ -19,7 +19,7 @@ public class FichaTrivial : MonoBehaviour
             case "ciencias":
                 q_verde.SetActive(true);
                 break;
-            case "geografía":
+            case "geografia":
                 q_azul.SetActive(true);
                 break;
             case "historia":
