@@ -9,25 +9,26 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager instance;
 
+    [Header ("UI del Menu")]
     public TextMeshProUGUI textoNumHumanos;
     public TextMeshProUGUI textoNumLLMS;
-
     public TextMeshProUGUI textConfirmacion;
-
-    public GameObject panel;
+    public TextMeshProUGUI textLimite;
+    public GameObject panelLLM;
+    public GameObject panelHumano;
     public TMP_Dropdown model;
     public TMP_InputField promptText;
 
     //public UIController uiController;
 
-    public int numMaxJugadores=1;
-    public int numMaxLLMS = 3;
-    private int numTotalJugadores;
+    [Header ("Variables de jugadores")]
+    //public int numMaxJugadores=1;
+    //public int numMaxLLMS = 3;
     private int turno;
-
-    private int numJug;
+    private int numTotalJugadores;
+    private int numJugHumanos;
     private int numLLMS;
-    private int numLLMSRegistrados;
+   // private int numLLMSRegistrados;
 
     public List<DescriptorJugador> descriptorJug;
 
@@ -40,30 +41,29 @@ public class GameManager : MonoBehaviour
     //Manejo de movimientos
     int actMoves=0;
     int turnMoves = 0;
+
     private void Awake()
     {
         if(instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-            numJug = 0;
+            numJugHumanos = 0;
             numLLMS = 0;
-            numLLMSRegistrados = 0;
+           // numLLMSRegistrados = 0;
             numTotalJugadores = 0;
             turno = 1;
             descriptorJug = new List<DescriptorJugador>();
 
-            if (panel != null )
+            if (panelLLM != null )
             {
-                panel.gameObject.SetActive(false);
+                panelLLM.gameObject.SetActive(false);
+            }
+            if (panelHumano != null)
+            {
+                panelHumano.gameObject.SetActive(false);
             }
             // currentMode = GameMode.AIGame;
-
-            // Pruebas en la escena del tablero
-            // Le forzamos 1 jugador humano automáticamente para que no dé error
-            //descriptorJug.Add(new DescriptorJugador { esHumano = true });
-           // numJug = 1;
-            //numTotalJugadores = 1;
         }
         else
         {
@@ -99,81 +99,101 @@ public class GameManager : MonoBehaviour
 
     public void addHuman()
     {
-        if (numJug < numMaxJugadores)
+        if (numTotalJugadores >= 6)
         {
-            descriptorJug.Add(new DescriptorJugador { esHumano = true });
-            gameObject.GetComponent<AudioSource>().Play();
-            numJug++;
-            numTotalJugadores++;
-            textoNumHumanos.text = numJug.ToString();
+            Debug.Log("No se pueden añadir más de 6 jugadores");
+            if (textLimite != null && !textLimite.gameObject.activeSelf )
+            {
+                textLimite.gameObject.SetActive(true);
+            }
+            return;
         }
+        descriptorJug.Add(new DescriptorJugador { esHumano = true });
+        gameObject.GetComponent<AudioSource>().Play();
+        numJugHumanos++;
+        numTotalJugadores++;
+        textoNumHumanos.text = numJugHumanos.ToString();
+        MostrarMensajeConfirmacion("Humano registrado correctamente");
     }
     public void addLLM()
     {
-        if (numLLMS < numMaxLLMS && numLLMS <= numLLMSRegistrados)
+        if (numTotalJugadores >= 6)
         {
-            //descriptorJug.Add(new DescriptorJugador { esHumano = false, modelo=model, prompt=promptDes });
-            numLLMS++;
-            gameObject.GetComponent<AudioSource>().Play();
-            numTotalJugadores++;
-            textoNumLLMS.text = numLLMS.ToString();
-            if(!panel.activeSelf && numLLMS > 0)
+            Debug.Log("No se pueden añadir más de 6 jugadores");
+            if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
-                panel.SetActive(true);
+                textLimite.gameObject.SetActive(true);
             }
-          
+            return;
+        }
+
+        gameObject.GetComponent<AudioSource>().Play();
+        textoNumLLMS.text = numLLMS.ToString();
+        if (!panelLLM.activeSelf && numLLMS > 0)
+        {
+            panelLLM.SetActive(true);
         }
     }
 
     public void registrarLLM()
     {
-        if (numLLMS < numMaxLLMS)
+        string modelo = model.options[model.value].text;
+        AIService.Models modeloSeleccionado;
+        switch (modelo)
         {
-            string modelo = model.options[model.value].text;
-            AIService.Models modeloSeleccionado;
-            switch (modelo)
-            {
-                case "Gemini":
-                    modeloSeleccionado = AIService.Models.Gemini; 
-                    break;
-                case "Copilot":
-                    modeloSeleccionado = AIService.Models.Copilot;
-                    break;
-                case "ChatGPT":
-                    modeloSeleccionado = AIService.Models.ChatGPT;
-                    break;
-                case "Azure":
-                    modeloSeleccionado = AIService.Models.Azure;
-                    break;
-                default:
-                    modeloSeleccionado = AIService.Models.Copilot;
-                    break;
+            case "Gemini":
+                modeloSeleccionado = AIService.Models.Gemini; 
+                break;
+            case "Copilot":
+                modeloSeleccionado = AIService.Models.Copilot;
+                break;
+            case "ChatGPT":
+                modeloSeleccionado = AIService.Models.ChatGPT;
+                break;
+            case "Azure":
+                modeloSeleccionado = AIService.Models.Azure;
+                break;
+            default:
+                modeloSeleccionado = AIService.Models.Copilot;
+                break;
                     
-            }
-            descriptorJug.Add(new DescriptorJugador { esHumano = false, modelo =modeloSeleccionado, prompt=promptText.text });
-            // Debug del último jugador agregado
-            DescriptorJugador ultimo = descriptorJug[descriptorJug.Count - 1];
-            Debug.Log("Último LLM agregado -> Modelo: " + ultimo.modelo
-                      + ", Prompt: " + ultimo.prompt
-                      + ", EsHumano: " + ultimo.esHumano);
-
-            numLLMSRegistrados++;
-
-            gameObject.GetComponent<AudioSource>().Play();
-
-            if (textConfirmacion != null)
-            {
-                StopAllCoroutines();
-                textConfirmacion.text = ultimo.modelo.ToString() + " registrado correctamente";
-                textConfirmacion.gameObject.SetActive(true);
-                StartCoroutine(OcultarTexto(1.5f));
-            }
         }
+        descriptorJug.Add(new DescriptorJugador { esHumano = false, modelo = modeloSeleccionado, prompt=promptText.text });
+        numLLMS++;
+        numTotalJugadores++;
+        // Debug del último jugador agregado
+        DescriptorJugador ultimo = descriptorJug[descriptorJug.Count - 1];
+        Debug.Log("Último LLM agregado -> Modelo: " + ultimo.modelo
+                    + ", Prompt: " + ultimo.prompt
+                    + ", EsHumano: " + ultimo.esHumano);
+
+        MostrarMensajeConfirmacion(ultimo.modelo.ToString() + " registrado correctamente");
+
+        gameObject.GetComponent<AudioSource>().Play();
     }
 
+    private void MostrarMensajeConfirmacion (string mensaje)
+    {
+        if (textConfirmacion != null)
+        {
+            StopAllCoroutines();
+            textConfirmacion.text = mensaje;
+            textConfirmacion.gameObject.SetActive(true);
+            StartCoroutine(OcultarTexto(1.5f));
+        }
+    }
+    // Corrutina para desactivar el texto despues de X segundos
+    private IEnumerator OcultarTexto(float tiempo)
+    {
+        yield return new WaitForSeconds(tiempo);
+        if (textConfirmacion != null)
+        {
+            textConfirmacion.gameObject.SetActive(false);
+        }
+    }
     public void quitarHum()
     {
-        if (numJug > 0)
+        if (numJugHumanos > 0)
         {
             int i = descriptorJug.Count - 1;
             bool enc = false;
@@ -183,9 +203,9 @@ public class GameManager : MonoBehaviour
                     enc = true;
                     descriptorJug.RemoveAt(i);
                     gameObject.GetComponent<AudioSource>().Play();
-                    numJug--;
+                    numJugHumanos--;
                     numTotalJugadores--;
-                    textoNumHumanos.text= numJug.ToString();
+                    textoNumHumanos.text= numJugHumanos.ToString();
                 }
                 else
                 {
@@ -208,13 +228,11 @@ public class GameManager : MonoBehaviour
                     descriptorJug.RemoveAt(i);
                     gameObject.GetComponent<AudioSource>().Play();
                     numLLMS--;
-                    if(numLLMSRegistrados>0)
-                        numLLMSRegistrados--;
                     numTotalJugadores--;
                     textoNumLLMS.text= numLLMS.ToString();
                     if (numLLMS <= 0)
                     {
-                        panel.SetActive(false);
+                        panelLLM.SetActive(false);
                     }
                 }
                 else
@@ -226,14 +244,14 @@ public class GameManager : MonoBehaviour
             {
                 numLLMS = 0;
                 textoNumLLMS.text = numLLMS.ToString();
-                panel.SetActive(false);
+                panelLLM.SetActive(false);
             }
         }
     }
 
     public int getNumHuman()
     {
-        return numJug;
+        return numJugHumanos;
     }
 
     public int getNumLLMS()
@@ -244,6 +262,13 @@ public class GameManager : MonoBehaviour
     public DescriptorJugador getJugTurnoActual()
     {
         return descriptorJug[(turno - 1) % numTotalJugadores];
+
+        //// Por seguridad, si la lista esta vacia devuelve un humano generico
+        //if (descriptorJug.Count == 0)
+        //{
+        //    return new DescriptorJugador { esHumano = true };
+        //}
+        //return descriptorJug[GetTurnoIndex()];
     }
 
     public void sigTurno()
@@ -259,7 +284,7 @@ public class GameManager : MonoBehaviour
         if(numTotalJugadores == 0) return 0;
         return (turno - 1) % numTotalJugadores;
     }
-    
+
     public void setTurnMoves(int moves)
     {
         turnMoves= moves;
@@ -275,16 +300,4 @@ public class GameManager : MonoBehaviour
     {
         return actMoves;
     }
-    
-    // Corrutina para desactivar el texto despues de X segundos
-    private IEnumerator OcultarTexto(float tiempo)
-    {
-        yield return new WaitForSeconds(tiempo);
-        if(textConfirmacion != null)
-        {
-            textConfirmacion.gameObject.SetActive(false);
-        }
-    }
-
-
 }
