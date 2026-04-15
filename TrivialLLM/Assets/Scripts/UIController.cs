@@ -21,6 +21,10 @@ public class UIController : MonoBehaviour
     public Sprite spriteBotonNormal;
     public Sprite spriteBotonCorrecto;
     public Sprite spriteBotonIncorrecto;
+    [Header("Sonidos respuesta")]
+    public AudioClip sonidoCorrecto;
+    public AudioClip sonidoIncorrecto;
+
 
     public AIService ai;
     private int respuestaCorrecta;
@@ -155,6 +159,7 @@ public class UIController : MonoBehaviour
         {
             // Cambiar a sprite correcto
             imgBotonElegido.sprite = spriteBotonCorrecto;
+            gameObject.GetComponent<AudioSource>().PlayOneShot(sonidoCorrecto);
 
             // Siguiente turno
             int turnoIndex = 0;
@@ -177,6 +182,7 @@ public class UIController : MonoBehaviour
         {
             // Cambiar a sprite incorrecto
             imgBotonElegido.sprite = spriteBotonIncorrecto;
+            gameObject.GetComponent<AudioSource>().PlayOneShot(sonidoIncorrecto);
 
             // Mostrar cual era la correcta
             botonesOpciones[respuestaCorrecta].GetComponent<Image>().sprite = spriteBotonCorrecto;
