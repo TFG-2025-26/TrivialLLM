@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     private int numJug;
     private int numLLMS;
+    private int numLLMSRegistrados;
 
     public List<DescriptorJugador> descriptorJug;
 
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             numJug = 0;
             numLLMS = 0;
+            numLLMSRegistrados = 0;
             numTotalJugadores = 0;
             turno = 1;
             descriptorJug = new List<DescriptorJugador>();
@@ -47,9 +49,9 @@ public class GameManager : MonoBehaviour
 
             // Pruebas en la escena del tablero
             // Le forzamos 1 jugador humano automáticamente para que no dé error
-            descriptorJug.Add(new DescriptorJugador { esHumano = true });
-            numJug = 1;
-            numTotalJugadores = 1;
+            //descriptorJug.Add(new DescriptorJugador { esHumano = true });
+           // numJug = 1;
+            //numTotalJugadores = 1;
         }
         else
         {
@@ -96,7 +98,7 @@ public class GameManager : MonoBehaviour
     }
     public void addLLM()
     {
-        if (numLLMS < numMaxLLMS)
+        if (numLLMS < numMaxLLMS && numLLMS <= numLLMSRegistrados)
         {
             //descriptorJug.Add(new DescriptorJugador { esHumano = false, modelo=model, prompt=promptDes });
             numLLMS++;
@@ -142,7 +144,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Último LLM agregado -> Modelo: " + ultimo.modelo
                       + ", Prompt: " + ultimo.prompt
                       + ", EsHumano: " + ultimo.esHumano);
-
+            numLLMSRegistrados++;
         }
     }
 
@@ -183,6 +185,8 @@ public class GameManager : MonoBehaviour
                     descriptorJug.RemoveAt(i);
                     gameObject.GetComponent<AudioSource>().Play();
                     numLLMS--;
+                    if(numLLMSRegistrados>0)
+                        numLLMSRegistrados--;
                     numTotalJugadores--;
                     textoNumLLMS.text= numLLMS.ToString();
                     if (numLLMS <= 0)
