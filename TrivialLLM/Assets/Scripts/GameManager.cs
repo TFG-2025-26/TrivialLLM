@@ -43,7 +43,13 @@ public class GameManager : MonoBehaviour
             numTotalJugadores = 0;
             turno = 1;
             descriptorJug = new List<DescriptorJugador>();
-           // currentMode = GameMode.AIGame;
+            // currentMode = GameMode.AIGame;
+
+            // Pruebas en la escena del tablero
+            // Le forzamos 1 jugador humano automáticamente para que no dé error
+            descriptorJug.Add(new DescriptorJugador { esHumano = true });
+            numJug = 1;
+            numTotalJugadores = 1;
         }
         else
         {
@@ -219,6 +225,12 @@ public class GameManager : MonoBehaviour
 
         //FichaTrivial nextPiece = piecesList[(turno - 1) % numTotalJugadores];
         //uiController.setCurrentPiece(nextPiece);
+    }
+
+    public int GetTurnoIndex()
+    {
+        if(numTotalJugadores == 0) return 0;
+        return (turno - 1) % numTotalJugadores;
     }
     
 }

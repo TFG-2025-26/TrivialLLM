@@ -1,25 +1,36 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections;
 
 public class UIController : MonoBehaviour
 {
+    [Header("Panel del Quiz")]
+    public GameObject quizPanel;
+
+    [Header("Textos y botones")]
     public TextMeshProUGUI textPregunta;
     public Button[] botonesOpciones;
+    public TextMeshProUGUI textRespuesta;
 
-    private int respuestaCorrecta;
+    [Header("Fichas de los jugadores")]
+    public FichaTrivial[] fichasTablero; // Fichas que se mueven por el tablero
+    public FichaTrivial[] fichasMarcadores; // Las de la interfaz
 
-    public TextMeshProUGUI txt;
+    [Header("Sprites feedback botones")]
+    public Sprite spriteBotonNormal;
+    public Sprite spriteBotonCorrecto;
+    public Sprite spriteBotonIncorrecto;
 
-
-    /* public CopilotService copilot;
-     public GeminiService gemini;
-     public ChatGPTService chatGPT;*/
     public AIService ai;
-    public FichaTrivial fichaJugador;
-
+    private int respuestaCorrecta;
     private bool esTurnoHumano;
 
+    private void Start()
+    {
+        // Panel de preguntas aparece apagado
+        if(quizPanel != null) quizPanel.SetActive(false);
+    }
     public void MostrarPregunta(PreguntaOpciones p)
     {
         if(p == null || p.opciones == null || p.opciones.Length < botonesOpciones.Length)
@@ -28,12 +39,21 @@ public class UIController : MonoBehaviour
             textPregunta.text = "Error al generar la pregunta. Vuelve a intentarlo";
             return;
         }
-        textPregunta.text = p.pregunta;
 
+        // Mostrar panel del quiz
+        quizPanel.SetActive(true);
+
+
+        textPregunta.text = p.pregunta;
         // Comprobar el modo de juego
         esTurnoHumano = true; // por defecto
 
-       if (GameManager.GetInstance() != null)
+        //if (GameManager.GetInstance() != null)
+        //{
+        //    esTurnoHumano = (GameManager.GetInstance().getJugTurnoActual().esHumano);
+        //}
+
+        if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
         {
             esTurnoHumano = (GameManager.GetInstance().getJugTurnoActual().esHumano);
         }
@@ -42,8 +62,11 @@ public class UIController : MonoBehaviour
         {
             botonesOpciones[i].GetComponentInChildren<TextMeshProUGUI>().text = p.opciones[i];
 
+            // Resetear sprite normal al cargar nueva pregunta
+            botonesOpciones[i].GetComponent<Image>().sprite = spriteBotonNormal;
+
             // Los botones son interactuables dependiendo del modo de juego
-            botonesOpciones[i].interactable = true;
+            botonesOpciones[i].interactable = esTurnoHumano;
 
             int index = i;
             botonesOpciones[i].onClick.RemoveAllListeners();
@@ -74,7 +97,7 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    txt.text = "Error al obtener la respuesta de " + modeloSeleccionado.ToString();
+                    if (textRespuesta != null) textRespuesta.text = "Error al obtener la respuesta de " + modeloSeleccionado.ToString();
                 }
             });
         }
@@ -82,44 +105,98 @@ public class UIController : MonoBehaviour
 
     public void SeleccionarRespuesta(int index)
     {
-        if(txt != null)
+        if(textRespuesta != null)
         {
-            txt.text = index + ") " + botonesOpciones[index].GetComponentInChildren<TextMeshProUGUI>().text;
+            textRespuesta.text = index + ") " + botonesOpciones[index].GetComponentInChildren<TextMeshProUGUI>().text;
         }
+
+        StartCoroutine(MostrarResultadoVisual(index));
         
+        //if (index == respuestaCorrecta)
+        //{
+        //    Debug.Log("Respuesta correcta");
+        //    //txt.text = "Correcto";
+        //    if (fichaJugador != null)
+        //    {
+        //        if(ai != null && !string.IsNullOrEmpty(ai.categoriaActual))
+        //        {
+        //            fichaJugador.GanarQuesito(ai.categoriaActual);
+        //        }
+        //        else
+        //        {
+        //            Debug.LogWarning("El tema actual no esta guardado en AIService.");
+        //        }
+                
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("¡Falta asignar la Ficha Jugador en el Inspector del UIController!");
+        //    }
+        //    GameManager.GetInstance().sigTurno();
+        //}
+        //else
+        //{
+        //    Debug.Log("Respuesta incorrecta");
+        //    GameManager.GetInstance().sigTurno();
+        //    //txt.text = "Incorrecto";
+        //}
+        //// Aqui se puede cargar otra pregunta, sumar puntos...
+    }
+
+    private IEnumerator MostrarResultadoVisual(int index)
+    {
+        // Bloquear botones
+        foreach (var boton in botonesOpciones) boton.interactable = false;
+
+        Image imgBotonElegido = botonesOpciones[index].GetComponent<Image>();
+
+        // Comprobar acierto
         if (index == respuestaCorrecta)
         {
-            Debug.Log("Respuesta correcta");
-            //txt.text = "Correcto";
-            if (fichaJugador != null)
+            // Cambiar a sprite correcto
+            imgBotonElegido.sprite = spriteBotonCorrecto;
+
+            // Siguiente turno
+            int turnoIndex = 0;
+            if (GameManager.GetInstance() != null) turnoIndex = GameManager.GetInstance().GetTurnoIndex();
+
+            // Dar los quesitos a las fichas
+            if (ai != null && !string.IsNullOrEmpty(ai.categoriaActual))
             {
-                if(ai != null && !string.IsNullOrEmpty(ai.categoriaActual))
+                if (fichasTablero.Length > turnoIndex && fichasTablero[turnoIndex] != null)
                 {
-                    fichaJugador.GanarQuesito(ai.categoriaActual);
+                    fichasTablero[turnoIndex].GanarQuesito(ai.categoriaActual);
                 }
-                else
+                if (fichasMarcadores.Length > turnoIndex && fichasMarcadores[turnoIndex] != null)
                 {
-                    Debug.LogWarning("El tema actual no esta guardado en AIService.");
+                    fichasMarcadores[turnoIndex].GanarQuesito(ai.categoriaActual);
                 }
-                
             }
-            else
-            {
-                Debug.LogError("¡Falta asignar la Ficha Jugador en el Inspector del UIController!");
-            }
-            GameManager.GetInstance().sigTurno();
         }
         else
         {
-            Debug.Log("Respuesta incorrecta");
-            GameManager.GetInstance().sigTurno();
-            //txt.text = "Incorrecto";
+            // Cambiar a sprite incorrecto
+            imgBotonElegido.sprite = spriteBotonIncorrecto;
+
+            // Mostrar cual era la correcta
+            botonesOpciones[respuestaCorrecta].GetComponent<Image>().sprite = spriteBotonCorrecto;
+
         }
-        // Aqui se puede cargar otra pregunta, sumar puntos...
+
+        // Esperar para ver el resultado
+        yield return new WaitForSeconds(3.0f);
+
+        // Desactivar el panel del quiz y pasar el turno
+        quizPanel.SetActive(false);
+
+        // Borrar texto de la pregunta y  de respuesta de la IA
+        if (textPregunta != null) textPregunta.text = "";
+        if (textRespuesta != null) textRespuesta.text = "";
+        if (GameManager.GetInstance() != null) GameManager.GetInstance().sigTurno();
     }
 
-    public void setCurrentPiece(FichaTrivial newPiece)
-    {
-        fichaJugador = newPiece;    
-    }
+    //public void setCurrentPiece(FichaTrivial newPiece)
+    //{
+    //    fichaJugador = newPiece;    
+    //}
 }

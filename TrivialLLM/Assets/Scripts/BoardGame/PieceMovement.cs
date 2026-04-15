@@ -118,7 +118,18 @@ public class PieceMovement : MonoBehaviour
         if (aiService != null)
         {
             Debug.Log($"La ficha ha caido en {actualSquare.topic}. Solicitando pregunta...");
-           // aiService.PedirPregunta(aiService.modeloPregunta, aiService.modeloRespuesta, actualSquare.getTopicString(), "Media");
+
+            // Copilot por defecto para probar
+            AIService.Models modeloPregunta = AIService.Models.Copilot;
+            AIService.Models modeloRespuesta = AIService.Models.Copilot;
+
+            // Si hay GameManager, se obtienen el modelo de respuesta del jugador actual
+            if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
+            {
+                modeloPregunta = GameManager.GetInstance().getJugTurnoActual().modelo;
+            }
+
+            aiService.PedirPregunta(modeloPregunta, modeloRespuesta, actualSquare.getTopicString(), "Media");
         }
         else
         {
