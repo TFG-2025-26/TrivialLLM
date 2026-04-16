@@ -28,7 +28,7 @@ public class UIController : MonoBehaviour
 
     public AIService ai;
     private int respuestaCorrecta;
-    private bool esTurnoHumano;
+    //private bool esTurnoHumano;
 
     private void Start()
     {
@@ -46,21 +46,23 @@ public class UIController : MonoBehaviour
 
         // Mostrar panel del quiz
         quizPanel.SetActive(true);
-
-
         textPregunta.text = p.pregunta;
+
+        DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
+        Debug.Log($"Turno de: {jugActual.nombre} | ¿Es humano?: {jugActual.esHumano}");
+
         // Comprobar el modo de juego
-        esTurnoHumano = true; // por defecto
+        // esTurnoHumano = true; // por defecto
 
         //if (GameManager.GetInstance() != null)
         //{
         //    esTurnoHumano = (GameManager.GetInstance().getJugTurnoActual().esHumano);
         //}
 
-        if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
-        {
-            esTurnoHumano = (GameManager.GetInstance().getJugTurnoActual().esHumano);
-        }
+        //if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
+        //{
+        //    esTurnoHumano = (GameManager.GetInstance().getJugTurnoActual().esHumano);
+        //}
 
         for (int i = 0; i < botonesOpciones.Length; i++)
         {
@@ -69,8 +71,8 @@ public class UIController : MonoBehaviour
             // Resetear sprite normal al cargar nueva pregunta
             botonesOpciones[i].GetComponent<Image>().sprite = spriteBotonNormal;
 
-            // Los botones son interactuables dependiendo del modo de juego
-            botonesOpciones[i].interactable = esTurnoHumano;
+            // Los botones son interactuables solo para jugadores humanos
+            botonesOpciones[i].interactable = jugActual.esHumano;
 
             int index = i;
             botonesOpciones[i].onClick.RemoveAllListeners();
@@ -78,10 +80,22 @@ public class UIController : MonoBehaviour
 
         }
 
+        // La IA responde automaticamente
+        if(!jugActual.esHumano)
+        {
+            Debug.Log("Turno de la IA: " + jugActual.nombre + ". Contestando automaticamente...");
+            StartCoroutine(EsperarYContestarIA(jugActual.modelo));
+        }
         respuestaCorrecta = p.respuesta_correcta;
     }
 
-    public void mandarPregunta(AIService.Models modeloSeleccionado)
+    private IEnumerator EsperarYContestarIA(AIService.Models modelo)
+    {
+        yield return new WaitForSeconds(2.0f);
+        MandarPregunta(modelo);
+    }
+
+    public void MandarPregunta(AIService.Models modeloSeleccionado)
     {
         string prompt = textPregunta.text + "\nOpciones:\n";
         for (int i = 0; i < botonesOpciones.Length; i++)
@@ -90,21 +104,19 @@ public class UIController : MonoBehaviour
             prompt += $"{i}) {opcion}\n";
         }
 
-        if (!esTurnoHumano)
+        ai.ContestarPregunta(modeloSeleccionado, prompt, (int indexRespuesta) =>
         {
-            ai.ContestarPregunta(modeloSeleccionado, prompt, (int indexRespuesta) =>
+            if (indexRespuesta >= 0)
             {
-                if (indexRespuesta >= 0)
-                {
-                    Debug.Log("UICONTROLLER");
-                    SeleccionarRespuesta(indexRespuesta);
-                }
-                else
-                {
-                    if (textRespuesta != null) textRespuesta.text = "Error al obtener la respuesta de " + modeloSeleccionado.ToString();
-                }
-            });
-        }
+                Debug.Log("UICONTROLLER");
+                SeleccionarRespuesta(indexRespuesta);
+            }
+            else
+            {
+                if (textRespuesta != null) textRespuesta.text = "Error al obtener la respuesta de " + modeloSeleccionado.ToString();
+            }
+        });
+        
     }
 
     public void SeleccionarRespuesta(int index)

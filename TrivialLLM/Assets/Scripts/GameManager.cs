@@ -40,10 +40,10 @@ public class GameManager : MonoBehaviour
     private bool[] fichasOcupadas;  // true si ya se ha seleccionado
 
     // Modos de juego posible
-    public enum GameMode { HumanGame, AIGame }
+   // public enum GameMode { HumanGame, AIGame }
 
     // Modo de juego actual
-    public GameMode currentMode;
+   // public GameMode currentMode;
 
     //Manejo de movimientos
     int actMoves=0;
@@ -91,24 +91,24 @@ public class GameManager : MonoBehaviour
     }
 
     // Establece el modo de juego desde los botones del menu principal
-    public void SetGameMode(GameMode mode)
-    {
-        currentMode = mode;
-        Debug.Log("Modo de juego actual: " + currentMode);
-    }
+    //public void SetGameMode(GameMode mode)
+    //{
+    //    currentMode = mode;
+    //    Debug.Log("Modo de juego actual: " + currentMode);
+    //}
 
     // Metodos para los botones de StartScene
-    public void PlayHumanMode()
-    {
-        SetGameMode(GameMode.HumanGame);
-        SceneManager.LoadScene("HumanGameScene");
-    }
+    //public void PlayHumanMode()
+    //{
+    //    SetGameMode(GameMode.HumanGame);
+    //    SceneManager.LoadScene("HumanGameScene");
+    //}
 
-    public void PlayAIMode()
-    {
-        SetGameMode(GameMode.AIGame);
-        SceneManager.LoadScene("IAGameScene");
-    }
+    //public void PlayAIMode()
+    //{
+    //    SetGameMode(GameMode.AIGame);
+    //    SceneManager.LoadScene("IAGameScene");
+    //}
 
     // Metodo que se asigna a los botones de las fichas en la UI
     // 0 al 5 (6 botones(
@@ -443,7 +443,7 @@ public class GameManager : MonoBehaviour
     public void sigTurno()
     {
         turno++;
-
+        Debug.Log("Siguiente turno: " + getJugTurnoActual().nombre);
         //FichaTrivial nextPiece = piecesList[(turno - 1) % numTotalJugadores];
         //uiController.setCurrentPiece(nextPiece);
     }
