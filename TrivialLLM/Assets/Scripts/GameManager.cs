@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI textLimite;
     public GameObject panelLLM;
     public GameObject panelHumano;
-    public TMP_Dropdown model;
+    public TMP_Dropdown modelRespuesta;
+    public TMP_Dropdown modelPregunta;
     public TMP_InputField promptText;
     public TMP_InputField inputNombre;
 
@@ -75,6 +76,10 @@ public class GameManager : MonoBehaviour
             if (inputNombre != null)
             {
                 inputNombre.gameObject.SetActive(false);
+            }
+            if (modelPregunta != null)
+            {
+                modelPregunta.gameObject.SetActive(false);
             }
             // currentMode = GameMode.AIGame;
         }
@@ -218,6 +223,12 @@ public class GameManager : MonoBehaviour
         {
             inputNombre.gameObject.SetActive(true);
         }
+        if (modelPregunta != null)
+        {
+            modelPregunta.value = 0;
+            modelPregunta.RefreshShownValue();
+            modelPregunta.gameObject.SetActive(true);
+        }
     }
 
     public void registrarHumano()
@@ -236,16 +247,22 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // VALIDACIÓN NUEVA: Comprobar que ha elegido una ficha
+        //  Comprobar que ha elegido una ficha
         if (fichaSeleccionadaActual == -1)
         {
             MostrarMensaje("Selecciona una ficha");
             return;
         }
 
+        // Guardar que IA le preguntara
+        AIService.Models quienPregunta = AIService.Models.Gemini; // Por defecto
+        if (modelPregunta != null)
+        {
+            quienPregunta = (AIService.Models)modelPregunta.value;
+        }
         if (ValidarNombre(out string nombreValido))
         {
-            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = true, fichaIndex = fichaSeleccionadaActual });
+            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = true, fichaIndex = fichaSeleccionadaActual, modeloPreguntas = quienPregunta});
             numJugHumanos++;
             numTotalJugadores++;
             textoNumHumanos.text = numJugHumanos.ToString();
@@ -259,6 +276,8 @@ public class GameManager : MonoBehaviour
             inputNombre.text = "";
             if (panelHumano != null) panelHumano.SetActive(false);
             if (inputNombre != null) inputNombre.gameObject.SetActive(false);
+            if (modelPregunta != null) modelPregunta.gameObject.SetActive(false);
+
         }
     }
     public void addLLM()
@@ -283,7 +302,18 @@ public class GameManager : MonoBehaviour
         {
             inputNombre.gameObject.SetActive(true);
         }
-        
+        if (modelPregunta != null)
+        {
+            modelPregunta.value = 0;
+            modelPregunta.RefreshShownValue();
+            modelPregunta.gameObject.SetActive(true);
+        }
+        if(modelRespuesta != null)
+        {
+            modelRespuesta.value = 0;
+            modelRespuesta.RefreshShownValue();
+        }
+
     }
 
     public void registrarLLM()
@@ -299,30 +329,42 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if(ValidarNombre(out string nombreValido))
+        // Guardar que IA le preguntara
+        AIService.Models quienPregunta = AIService.Models.Gemini; // Por defecto
+        if (modelPregunta != null)
         {
-            string modelo = model.options[model.value].text;
-            AIService.Models modeloSeleccionado;
-            switch (modelo)
-            {
-                case "Gemini":
-                    modeloSeleccionado = AIService.Models.Gemini;
-                    break;
-                case "Copilot":
-                    modeloSeleccionado = AIService.Models.Copilot;
-                    break;
-                case "ChatGPT":
-                    modeloSeleccionado = AIService.Models.ChatGPT;
-                    break;
-                case "Azure":
-                    modeloSeleccionado = AIService.Models.Azure;
-                    break;
-                default:
-                    modeloSeleccionado = AIService.Models.Copilot;
-                    break;
+            quienPregunta = (AIService.Models)modelPregunta.value;
+        }
 
+        if (ValidarNombre(out string nombreValido))
+        {
+            //string modelo = modelRespuesta.options[modelRespuesta.value].text;
+            //AIService.Models modeloSeleccionado;
+            //switch (modelo)
+            //{
+            //    case "Gemini":
+            //        modeloSeleccionado = AIService.Models.Gemini;
+            //        break;
+            //    case "Copilot":
+            //        modeloSeleccionado = AIService.Models.Copilot;
+            //        break;
+            //    case "ChatGPT":
+            //        modeloSeleccionado = AIService.Models.ChatGPT;
+            //        break;
+            //    case "Azure":
+            //        modeloSeleccionado = AIService.Models.Azure;
+            //        break;
+            //    default:
+            //        modeloSeleccionado = AIService.Models.Copilot;
+            //        break;
+
+            //}
+            AIService.Models quienResponde = AIService.Models.Gemini; // Por defecto
+            if (modelRespuesta != null)
+            {
+                quienResponde = (AIService.Models)modelRespuesta.value;
             }
-            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = false, modelo = modeloSeleccionado, prompt = promptText.text, fichaIndex = -1 });
+            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = false, modelo = quienResponde, prompt = promptText.text, fichaIndex = -1, modeloPreguntas = quienPregunta });
             numLLMS++;
             numTotalJugadores++;
             textoNumLLMS.text = numLLMS.ToString();
@@ -338,6 +380,7 @@ public class GameManager : MonoBehaviour
             inputNombre.text = "";
             if (panelLLM != null) panelLLM.SetActive(false);
             if (inputNombre != null) inputNombre.gameObject.SetActive(false);
+            if (modelPregunta != null) modelPregunta.gameObject.SetActive(false);
         }
     }
 

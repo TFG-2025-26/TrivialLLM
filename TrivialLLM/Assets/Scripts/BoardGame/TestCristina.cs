@@ -15,6 +15,6 @@ public class TestCristina : MonoBehaviour
 
         // Pedimos la pregunta. 
         // Usamos Copilot para generar y el modelo del jugador para responder
-        ai.PedirPregunta(AIService.Models.Copilot, jugActual.modelo, tema, "Media");
+        ai.PedirPregunta(jugActual.modeloPreguntas, jugActual.modelo, tema, "Media");
     }
 }
