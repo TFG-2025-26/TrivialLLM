@@ -1,10 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
 
 public class BoardGameManager : MonoBehaviour
 {
     public UIController uiController;
-    
+
+    [Header("Marcadores UI")]
+    public FichaTrivial[] marcadores;
+
     void Start()
     {
         if (GameManager.GetInstance() != null)
@@ -19,6 +23,13 @@ public class BoardGameManager : MonoBehaviour
         int totalJugadores = gm.descriptorJug.Count;
 
         List<FichaTrivial> fichasInstanciadas = new List<FichaTrivial>();
+        List<FichaTrivial> marcadoresActivos = new List<FichaTrivial>();
+
+        // Desactivar todos los marcadores por seguridad
+        foreach (var marcador in marcadores)
+        {
+            if (marcador != null) marcador.gameObject.SetActive(false);
+        }
 
         for (int i = 0; i < totalJugadores; i++)
         {
@@ -53,12 +64,36 @@ public class BoardGameManager : MonoBehaviour
             {
                 Debug.LogError($"El prefab de la ficha índice {datos.fichaIndex} no tiene asignada una actualSquare en el Inspector.");
             }
+
+            // Marcadores interfaz
+            if (datos.fichaIndex >= 0 && datos.fichaIndex < marcadores.Length)
+            {
+                // Buscar marcador que corresponde a esta ficha
+                FichaTrivial marcadorUI = marcadores[datos.fichaIndex];
+
+                if (marcadorUI != null)
+                {
+                    // Activar en la jerarquia
+                    marcadorUI.gameObject.SetActive(true);
+
+                    // Añadir a la lista ordanada para el UIController
+                    marcadoresActivos.Add(marcadorUI);
+
+                    // Añadir nombre del jugador
+                    TextMeshProUGUI textoNombre = marcadorUI.GetComponentInChildren<TextMeshProUGUI>();
+                    if ( textoNombre != null )
+                    {
+                        textoNombre.text = datos.nombre;
+                    }
+                }
+            }
         }
 
-        // Pasar las fichas instanciadas al UIController
+        // Pasar las fichas instanciadas y los marcadores activos ordenados al UIController
         if (uiController != null)
         {
             uiController.fichasTablero = fichasInstanciadas.ToArray();
+            uiController.fichasMarcadores = marcadoresActivos.ToArray();
         }
     }
 }
