@@ -175,6 +175,8 @@ MonoBehaviour:
   q_morado: {fileID: 3518146366722403218}
   q_naranja: {fileID: 6822670346072522750}
   q_rosa: {fileID: 8939275369128774288}
+  esMarcadorUI: 1
+  luzTurno: {fileID: 0}
 --- !u!1 &3153549381854995840
 GameObject:
   m_ObjectHideFlags: 0

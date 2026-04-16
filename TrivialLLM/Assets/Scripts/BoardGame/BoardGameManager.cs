@@ -94,6 +94,9 @@ public class BoardGameManager : MonoBehaviour
         {
             uiController.fichasTablero = fichasInstanciadas.ToArray();
             uiController.fichasMarcadores = marcadoresActivos.ToArray();
+
+            // Resaltar primer turno al empezar
+            uiController.ActualizarIndicadoresTurno();
         }
     }
 }

@@ -211,10 +211,27 @@ public class UIController : MonoBehaviour
         if (textPregunta != null) textPregunta.text = "";
         if (textRespuesta != null) textRespuesta.text = "";
         if (GameManager.GetInstance() != null) GameManager.GetInstance().sigTurno();
+        ActualizarIndicadoresTurno();
     }
 
-    //public void setCurrentPiece(FichaTrivial newPiece)
-    //{
-    //    fichaJugador = newPiece;    
-    //}
+    public void ActualizarIndicadoresTurno()
+    {
+        int turnoIndex = GameManager.GetInstance().GetTurnoIndex();
+
+        for (int i = 0; i < fichasTablero.Length; i++)
+        {
+            bool esTurno = (i == turnoIndex);
+
+            if (fichasTablero[i] != null)
+            {
+                fichasTablero[i].SetTurnoActivo(esTurno);
+            }
+
+            if (fichasMarcadores[i] != null && fichasMarcadores.Length > i && fichasMarcadores[i] != null)
+            {
+                fichasMarcadores[i].SetTurnoActivo(esTurno);
+            }
+
+        }
+    }
 }
