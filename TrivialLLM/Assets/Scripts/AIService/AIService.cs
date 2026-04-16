@@ -115,17 +115,17 @@ public class AIService : MonoBehaviour
                 // Mostrar la pregunta en pantalla
                 MostrarPregunta(pregunta);
 
-                // Comprobar el modo de juego
-                if (GameManager.GetInstance() != null &&
-                    !GameManager.GetInstance().getJugTurnoActual().esHumano)
-                {
-                    Debug.Log("Esperando la respuesta de la IA.");
-                    uiController.MandarPregunta(modeloRespuesta);
-                }
-                else
-                {
-                    Debug.Log("Esperando la respuesta del jugador.");
-                }
+                //// Comprobar el modo de juego
+                //if (GameManager.GetInstance() != null &&
+                //    !GameManager.GetInstance().getJugTurnoActual().esHumano)
+                //{
+                //    Debug.Log("Esperando la respuesta de la IA.");
+                //    uiController.MandarPregunta(modeloRespuesta);
+                //}
+                //else
+                //{
+                //    Debug.Log("Esperando la respuesta del jugador.");
+                //}
             }
             else
             {

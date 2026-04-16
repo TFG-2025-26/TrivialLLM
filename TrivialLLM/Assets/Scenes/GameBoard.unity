@@ -285,7 +285,7 @@ Canvas:
   m_GameObject: {fileID: 50904834}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 1676378696}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -6174,7 +6174,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3828664160873374806, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5222314746474637019, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
       propertyPath: m_SizeDelta.x
@@ -7514,7 +7514,7 @@ PrefabInstance:
       objectReference: {fileID: 560259163}
     - target: {fileID: 1184905852983473875, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1867791605689104435, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_LocalScale.x
@@ -7570,7 +7570,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2147288016735875432, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2877249046730997229, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_Name
@@ -7578,23 +7578,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2877249046730997229, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4096247085424822496, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4395717665030291430, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7429022364951041564, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9108104974572174489, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
