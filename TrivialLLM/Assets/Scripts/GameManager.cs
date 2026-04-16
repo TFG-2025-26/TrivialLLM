@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
 
 public class GameManager : MonoBehaviour
 {
@@ -34,6 +33,12 @@ public class GameManager : MonoBehaviour
 
     public List<DescriptorJugador> descriptorJug;
 
+    [Header("Fichas")]
+    public Button[] botonesFichas;
+    public GameObject[] prefabsFichas;
+    private int fichaSeleccionadaActual;       // boton seleccionado sin haberlo confirmado
+    private bool[] fichasOcupadas;  // true si ya se ha seleccionado
+
     // Modos de juego posible
     public enum GameMode { HumanGame, AIGame }
 
@@ -56,6 +61,8 @@ public class GameManager : MonoBehaviour
             numTotalJugadores = 0;
             turno = 1;
             descriptorJug = new List<DescriptorJugador>();
+            fichaSeleccionadaActual = -1;        
+            fichasOcupadas = new bool[6];
 
             if (panelLLM != null )
             {
@@ -103,6 +110,70 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("IAGameScene");
     }
 
+    // Metodo que se asigna a los botones de las fichas en la UI
+    // 0 al 5 (6 botones(
+    public void ClickEnFicha(int index)
+    {
+        if (fichasOcupadas[index]) return; // si la ha seleccionado otro jugador
+
+        fichaSeleccionadaActual = index;
+        ActualizarVisualBotonesFichas();
+    }
+
+    private void ActualizarVisualBotonesFichas()
+    {
+        for (int i = 0; i < botonesFichas.Length; i++)
+        {
+            if (botonesFichas[i] == null) continue;
+
+            Image img = botonesFichas[i].GetComponent<Image>();
+
+            if (fichasOcupadas[i])
+            {
+                // Escogida por alguien, oscura y no pulsable
+                botonesFichas[i].interactable = false;
+                img.color = new Color(0.4f, 0.4f, 0.4f, 1f); // Gris oscuro
+                botonesFichas[i].transform.localScale = Vector3.one;
+            }
+            else if (i == fichaSeleccionadaActual)
+            {
+                botonesFichas[i].interactable = true;
+                img.color = Color.white;
+                botonesFichas[i].transform.localScale = new Vector3(1.15f, 1.15f, 1.15f);
+            }
+            else
+            {
+                // Libre pero no seleccionada
+                botonesFichas[i].interactable = true;
+                img.color = Color.white;
+                botonesFichas[i].transform.localScale = Vector3.one;
+            }
+        }
+    }
+
+    // Asignar fichas sobrantes a los jugadores de las IA
+    public void AsignarFichasLLM()
+    {
+        foreach (var jug in descriptorJug)
+        {
+            // Si es IA y no tiene ficha
+            if (!jug.esHumano && jug.fichaIndex == -1)
+            {
+                // Dar la primera ficha libre
+                for (int i = 0; i < fichasOcupadas.Length; i++)
+                {
+                    if (!fichasOcupadas[i])
+                    {
+                        jug.fichaIndex = i;
+                        fichasOcupadas[i] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        Debug.Log("Todas las fichas asignadas correctamente.");
+    }
+
     // metodo para validar el nombre
     private bool ValidarNombre(out string resultadoNombre)
     {
@@ -135,6 +206,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        fichaSeleccionadaActual = -1;
+        ActualizarVisualBotonesFichas();
         gameObject.GetComponent<AudioSource>().Play();
 
         if (!panelHumano.activeSelf)
@@ -163,12 +236,24 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        // VALIDACIÓN NUEVA: Comprobar que ha elegido una ficha
+        if (fichaSeleccionadaActual == -1)
+        {
+            MostrarMensaje("Selecciona una ficha");
+            return;
+        }
+
         if (ValidarNombre(out string nombreValido))
         {
-            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = true });
+            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = true, fichaIndex = fichaSeleccionadaActual });
             numJugHumanos++;
             numTotalJugadores++;
             textoNumHumanos.text = numJugHumanos.ToString();
+
+            fichasOcupadas[fichaSeleccionadaActual] = true;
+            fichaSeleccionadaActual = -1;
+            ActualizarVisualBotonesFichas();
+
             gameObject.GetComponent<AudioSource>().Play();
             MostrarMensaje(nombreValido + " registrado correctamente");
             inputNombre.text = "";
@@ -237,7 +322,7 @@ public class GameManager : MonoBehaviour
                     break;
 
             }
-            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = false, modelo = modeloSeleccionado, prompt = promptText.text });
+            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = false, modelo = modeloSeleccionado, prompt = promptText.text, fichaIndex = -1 });
             numLLMS++;
             numTotalJugadores++;
             textoNumLLMS.text = numLLMS.ToString();

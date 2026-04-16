@@ -8,4 +8,5 @@ public class DescriptorJugador
     //Si no es humano
     public AIService.Models modelo;
     public string prompt;
+    public int fichaIndex = -1;
 }
