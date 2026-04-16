@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     public GameObject panelHumano;
     public TMP_Dropdown model;
     public TMP_InputField promptText;
+    public TMP_InputField inputNombre;
 
     //public UIController uiController;
 
@@ -63,6 +65,10 @@ public class GameManager : MonoBehaviour
             {
                 panelHumano.gameObject.SetActive(false);
             }
+            if (inputNombre != null)
+            {
+                inputNombre.gameObject.SetActive(false);
+            }
             // currentMode = GameMode.AIGame;
         }
         else
@@ -97,23 +103,78 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene("IAGameScene");
     }
 
+    // metodo para validar el nombre
+    private bool ValidarNombre(out string resultadoNombre)
+    {
+        resultadoNombre = inputNombre.text;
+
+        if(string.IsNullOrEmpty(resultadoNombre))
+        {
+            MostrarMensaje("Introduce un nombre primero");
+            return false;
+        }
+
+        //// Maximo 27
+        //if (resultadoNombre.Length > 27)
+        //{
+        //    resultadoNombre = resultadoNombre.Substring(0,27);  
+        //    inputNombre.text = resultadoNombre; 
+        //}
+
+        return true;
+    }
     public void addHuman()
     {
         if (numTotalJugadores >= 6)
         {
             Debug.Log("No se pueden añadir más de 6 jugadores");
-            if (textLimite != null && !textLimite.gameObject.activeSelf )
+            if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
             }
             return;
         }
-        descriptorJug.Add(new DescriptorJugador { esHumano = true });
+
         gameObject.GetComponent<AudioSource>().Play();
-        numJugHumanos++;
-        numTotalJugadores++;
-        textoNumHumanos.text = numJugHumanos.ToString();
-        MostrarMensajeConfirmacion("Humano registrado correctamente");
+
+        if (!panelHumano.activeSelf)
+        {
+            panelHumano.SetActive(true);
+        }
+        if (!inputNombre.gameObject.activeSelf)
+        {
+            inputNombre.gameObject.SetActive(true);
+        }
+    }
+
+    public void registrarHumano()
+    {
+        if (numTotalJugadores >= 6)
+        {
+            Debug.Log("No se pueden añadir más de 6 jugadores");
+            if (textLimite != null && !textLimite.gameObject.activeSelf)
+            {
+                textLimite.gameObject.SetActive(true);
+            }
+            if (panelHumano != null)
+            {
+                panelHumano.SetActive(false);
+            }
+            return;
+        }
+
+        if (ValidarNombre(out string nombreValido))
+        {
+            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = true });
+            numJugHumanos++;
+            numTotalJugadores++;
+            textoNumHumanos.text = numJugHumanos.ToString();
+            gameObject.GetComponent<AudioSource>().Play();
+            MostrarMensaje(nombreValido + " registrado correctamente");
+            inputNombre.text = "";
+            if (panelHumano != null) panelHumano.SetActive(false);
+            if (inputNombre != null) inputNombre.gameObject.SetActive(false);
+        }
     }
     public void addLLM()
     {
@@ -128,51 +189,74 @@ public class GameManager : MonoBehaviour
         }
 
         gameObject.GetComponent<AudioSource>().Play();
-        textoNumLLMS.text = numLLMS.ToString();
-        if (!panelLLM.activeSelf && numLLMS > 0)
+        
+        if (!panelLLM.activeSelf)
         {
             panelLLM.SetActive(true);
         }
+        if(!inputNombre.gameObject.activeSelf)
+        {
+            inputNombre.gameObject.SetActive(true);
+        }
+        
     }
 
     public void registrarLLM()
     {
-        string modelo = model.options[model.value].text;
-        AIService.Models modeloSeleccionado;
-        switch (modelo)
+        if (numTotalJugadores >= 6)
         {
-            case "Gemini":
-                modeloSeleccionado = AIService.Models.Gemini; 
-                break;
-            case "Copilot":
-                modeloSeleccionado = AIService.Models.Copilot;
-                break;
-            case "ChatGPT":
-                modeloSeleccionado = AIService.Models.ChatGPT;
-                break;
-            case "Azure":
-                modeloSeleccionado = AIService.Models.Azure;
-                break;
-            default:
-                modeloSeleccionado = AIService.Models.Copilot;
-                break;
-                    
+            Debug.Log("No se pueden añadir más de 6 jugadores");
+            if (textLimite != null && !textLimite.gameObject.activeSelf)
+            {
+                textLimite.gameObject.SetActive(true);
+            }
+            if (panelLLM != null) panelLLM.SetActive(false);
+            return;
         }
-        descriptorJug.Add(new DescriptorJugador { esHumano = false, modelo = modeloSeleccionado, prompt=promptText.text });
-        numLLMS++;
-        numTotalJugadores++;
-        // Debug del último jugador agregado
-        DescriptorJugador ultimo = descriptorJug[descriptorJug.Count - 1];
-        Debug.Log("Último LLM agregado -> Modelo: " + ultimo.modelo
-                    + ", Prompt: " + ultimo.prompt
-                    + ", EsHumano: " + ultimo.esHumano);
 
-        MostrarMensajeConfirmacion(ultimo.modelo.ToString() + " registrado correctamente");
+        if(ValidarNombre(out string nombreValido))
+        {
+            string modelo = model.options[model.value].text;
+            AIService.Models modeloSeleccionado;
+            switch (modelo)
+            {
+                case "Gemini":
+                    modeloSeleccionado = AIService.Models.Gemini;
+                    break;
+                case "Copilot":
+                    modeloSeleccionado = AIService.Models.Copilot;
+                    break;
+                case "ChatGPT":
+                    modeloSeleccionado = AIService.Models.ChatGPT;
+                    break;
+                case "Azure":
+                    modeloSeleccionado = AIService.Models.Azure;
+                    break;
+                default:
+                    modeloSeleccionado = AIService.Models.Copilot;
+                    break;
 
-        gameObject.GetComponent<AudioSource>().Play();
+            }
+            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = false, modelo = modeloSeleccionado, prompt = promptText.text });
+            numLLMS++;
+            numTotalJugadores++;
+            textoNumLLMS.text = numLLMS.ToString();
+            gameObject.GetComponent<AudioSource>().Play();
+            // Debug del último jugador agregado
+            DescriptorJugador ultimo = descriptorJug[descriptorJug.Count - 1];
+            Debug.Log("Último LLM agregado -> Modelo: " + ultimo.modelo
+                        + ", Prompt: " + ultimo.prompt
+                        + ", EsHumano: " + ultimo.esHumano);
+
+            MostrarMensaje(nombreValido + " registrado correctamente");
+
+            inputNombre.text = "";
+            if (panelLLM != null) panelLLM.SetActive(false);
+            if (inputNombre != null) inputNombre.gameObject.SetActive(false);
+        }
     }
 
-    private void MostrarMensajeConfirmacion (string mensaje)
+    private void MostrarMensaje (string mensaje)
     {
         if (textConfirmacion != null)
         {
