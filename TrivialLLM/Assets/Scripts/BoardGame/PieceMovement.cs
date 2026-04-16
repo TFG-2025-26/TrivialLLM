@@ -4,8 +4,7 @@ using System.Collections;
 public class PieceMovement : MonoBehaviour
 {
 
-    [SerializeField]
-    private SquareNode actualSquare;
+    public SquareNode actualSquare;
     [SerializeField]
     private AIService aiService;
 

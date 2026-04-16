@@ -13,7 +13,9 @@ public enum TrivialTopic
     Historia,
     Arte_y_Literatura,
     Deportes_y_Pasatiempos,
-    Entretenimiento
+    Entretenimiento,
+    Dados,
+    FinalCentro
 }
 public class SquareNode : MonoBehaviour
 {
@@ -41,6 +43,8 @@ public class SquareNode : MonoBehaviour
             case TrivialTopic.Arte_y_Literatura: return "Arte y Literatura";
             case TrivialTopic.Deportes_y_Pasatiempos: return "Deportes y Pasatiempos";
             case TrivialTopic.Entretenimiento: return "Entretenimiento";
+            case TrivialTopic.Dados: return "Dados";
+            case TrivialTopic.FinalCentro: return "FinalCentro";
             default: return "Ciencias"; // Por seguridad
         }
     }
