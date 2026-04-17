@@ -13,6 +13,9 @@ public class UIController : MonoBehaviour
     public Button[] botonesOpciones;
     public TextMeshProUGUI textRespuesta;
 
+    public TextMeshProUGUI textTema;
+    public TextMeshProUGUI textModeloPregunta;
+
     [Header("Fichas de los jugadores")]
     public FichaTrivial[] fichasTablero; // Fichas que se mueven por el tablero
     public FichaTrivial[] fichasMarcadores; // Las de la interfaz
@@ -51,6 +54,15 @@ public class UIController : MonoBehaviour
         DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
         Debug.Log($"Turno de: {jugActual.nombre} | ¿Es humano?: {jugActual.esHumano}");
 
+        // Mostrar tema y modelo que pregunta
+        if (textTema != null && ai != null)
+        {
+            textTema.text = "Tema: " + ai.categoriaActual;
+        }
+        if (textModeloPregunta != null && jugActual != null)
+        {
+            textModeloPregunta.text = "Pregunta: " + jugActual.modeloPreguntas.ToString();
+        }
         // Comprobar el modo de juego
         // esTurnoHumano = true; // por defecto
 
