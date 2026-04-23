@@ -7,7 +7,7 @@ public class TestCristina : MonoBehaviour
     {
         // Obtenemos qué IA debe generar la pregunta (Copilot por ejemplo)
         // Y le pedimos una pregunta de un tema aleatorio
-        string tema = "Ciencias";
+        string tema = "Historia";
 
         DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
 
