@@ -899,7 +899,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55e70792c6f42554c8ac5a26fabae7d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentMode: 0
+  textoNumHumanos: {fileID: 0}
+  textoNumLLMS: {fileID: 0}
+  textConfirmacion: {fileID: 0}
+  textLimite: {fileID: 0}
+  panelLLM: {fileID: 0}
+  panelHumano: {fileID: 0}
+  modelRespuesta: {fileID: 0}
+  modelPregunta: {fileID: 0}
+  promptText: {fileID: 0}
+  inputNombre: {fileID: 0}
+  descriptorJug: []
+  botonesFichas: []
+  prefabsFichas: []
+  placeToMove: {fileID: 4091621245666146647, guid: 1c73d7fae328bd1488694d9a84a1abfc, type: 3}
 --- !u!4 &1311646188
 Transform:
   m_ObjectHideFlags: 0

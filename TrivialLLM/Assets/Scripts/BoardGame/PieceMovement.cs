@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System;
 
 public class PieceMovement : MonoBehaviour
 {
@@ -12,6 +14,9 @@ public class PieceMovement : MonoBehaviour
     private float speed = 30f;
 
     private bool isMoving = false;
+
+    private bool dstShown = false;
+    private bool dstSelected = false;
 
     FichaTrivial ficha;
 
@@ -30,10 +35,25 @@ public class PieceMovement : MonoBehaviour
     {
         if(isMoving) {return; }
 
+        if(!dstShown&&GameManager.GetInstance().IsDiceThrown()) {
+            int movesLeft = GameManager.GetInstance().getRemainingMoves();
+            saveDestinations(GetPossibleDestinations(actualSquare, movesLeft));
+            GameManager.GetInstance().showPosibleDestinations();
+            dstShown = true;
+        }
+
+        if (GameManager.GetInstance().getSelectedStatus())
+        {
+            StartCoroutine(MovePiece(GameManager.GetInstance().GetSelectedDst()));
+            GameManager.GetInstance().setSelectedStatus(false);
+            GameManager.GetInstance().cleanDstBoard(); //borrar las listas y objetos del tablero
+        }
+
+
         // Pruebas con input
 
         // Comprobar el input y si la casilla actual tiene una conexion en esa direccion
-        if(Input.GetKeyDown(KeyCode.W) && actualSquare.centre != null)
+        /*if(Input.GetKeyDown(KeyCode.W) && actualSquare.centre != null)
         {
             StartCoroutine(MovePiece(actualSquare.centre));
         }
@@ -48,8 +68,8 @@ public class PieceMovement : MonoBehaviour
         else if(Input.GetKeyDown(KeyCode.D) && actualSquare.right != null)
         {
             StartCoroutine(MovePiece(actualSquare.right));
-        }
-        else if (Input.GetKeyDown(KeyCode.C))
+        }*/
+        if (Input.GetKeyDown(KeyCode.C))
         {
             if(ficha != null)
             {
@@ -97,10 +117,12 @@ public class PieceMovement : MonoBehaviour
     IEnumerator MovePiece(SquareNode targetSquare)
     {
 
-        int movesLeft = GameManager.GetInstance().getRemainingMoves();
-        if (movesLeft > 0)
-        {
-            GameManager.GetInstance().wasteMovement();
+       
+        //if (movesLeft > 0)
+        //{
+        //GameManager.GetInstance().wasteMovement();
+        //GameManager.GetInstance().showPosibleDestinations();
+        
             isMoving = true;
 
             // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
@@ -117,6 +139,7 @@ public class PieceMovement : MonoBehaviour
             transform.position = targetPos;
             actualSquare = targetSquare;
             isMoving = false;
+
 
             // Enviar peticion de la pregunta dependiendo de la casilla
             if (aiService != null)
@@ -139,6 +162,53 @@ public class PieceMovement : MonoBehaviour
             {
                 Debug.LogError("AIService no esta asignado en el script PieceMovement.");
             }
+        //}
+    }
+
+    void saveDestinations(List<SquareNode> posdst)
+    {
+       foreach (SquareNode dst in posdst) {
+            GameManager.GetInstance().addToPosibleDestination(dst);
         }
+    }
+
+   
+
+    //Funciones para el movimiento imaginario 
+    //BFS para que busque las casillas a x distancia
+    public List<SquareNode> GetPossibleDestinations(SquareNode initialNode, int moves)
+    {
+        List<SquareNode> results = new List<SquareNode>();
+        HashSet<SquareNode> visited = new HashSet<SquareNode>();
+        SearchDestinations(initialNode, moves, visited, results);
+
+        return results;
+    }
+
+    void SearchDestinations(SquareNode current, int movesLeft, HashSet<SquareNode> visited, List<SquareNode> results)
+    {
+       
+        visited.Add(current);
+
+        // Caso base
+        if (movesLeft == 0)
+        {
+            if (!results.Contains(current)) results.Add(current);
+            visited.Remove(current); // Limpiamos al salir para otras ramas
+            return;
+        }
+
+        //Posibles casillas adyacentes (a falta de la casilla central)
+        SquareNode[] neighbors = { current.centre, current.outwards, current.left, current.right };
+
+        foreach (SquareNode nei in neighbors)
+        {
+            
+            if (nei != null && !visited.Contains(nei))
+            {
+                SearchDestinations(nei, movesLeft - 1, visited, results);
+            }
+        }
+        visited.Remove(current);
     }
 }

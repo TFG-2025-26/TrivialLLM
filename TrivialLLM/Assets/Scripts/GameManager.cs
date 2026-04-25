@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -49,6 +50,15 @@ public class GameManager : MonoBehaviour
     //Manejo de movimientos
     int actMoves=0;
     int turnMoves = 0;
+    bool diceThrew = false;
+
+    List<SquareNode> posdst =new List<SquareNode>();
+    [SerializeField]
+    GameObject placeToMove;
+
+    List<GameObject> physPlaceToMove =new List<GameObject>();
+    SquareNode selectedNode = null;
+    bool selectedMove = false;
 
     private void Awake()
     {
@@ -501,15 +511,79 @@ public class GameManager : MonoBehaviour
     {
         turnMoves= moves;
         actMoves = moves;
+        diceThrew = true;
 
     }
     public void wasteMovement()
     {
-        actMoves--;
+        //actMoves--;
+        diceThrew = false;
     }
 
     public int getRemainingMoves()
     {
         return actMoves;
+    }
+
+    public void showPosibleDestinations()
+    {
+        Debug.Log(posdst.Count);
+        foreach(SquareNode nod in posdst)
+        {
+            GameObject resp= Instantiate(placeToMove, nod.transform.position,Quaternion.Euler(90,0,0));
+            resp.transform.position += new Vector3(0, 0.1f, 0);
+            
+            physPlaceToMove.Add(resp);
+        }
+        
+    }
+    public void recieveSelectedTransform(Transform trf)
+    {
+        selectedMove = true;
+        Debug.Log("HOLAAAAA");
+        foreach (SquareNode nod in posdst)
+        {
+            if(nod.transform == trf)
+            {
+                selectedNode = nod;
+                break; 
+            }
+        }
+    }
+    public SquareNode GetSelectedDst()
+    {
+        return selectedNode;
+    }
+
+    public bool IsDiceThrown()
+    {
+        return diceThrew;
+    }
+
+    public void addToPosibleDestination(SquareNode nod)
+    {
+        posdst.Add(nod);
+    }
+    
+
+    public void cleanDstBoard()
+    {
+        foreach(GameObject gobj in physPlaceToMove)
+        {
+            Destroy(gobj);
+        }
+        physPlaceToMove.Clear();
+        posdst.Clear();
+
+    }
+
+    public bool getSelectedStatus()
+    {
+        return selectedMove;
+    }
+
+    public void setSelectedStatus(bool status)
+    {
+        selectedMove = status;
     }
 }

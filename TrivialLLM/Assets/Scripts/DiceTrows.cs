@@ -26,7 +26,7 @@ public class DiceTrows : MonoBehaviour
     {
         if (!throwed)
         {
-            if (startFace >= dicefaces.Length)
+            if (startFace >= dicefaces.Length-1)
             {
                 startFace = 0;
             }
@@ -34,7 +34,7 @@ public class DiceTrows : MonoBehaviour
             {
                 startFace++;
             }
-            if (countToChange > 0.2f)
+            if (countToChange > 0.4f)
             {
                 diceImage.sprite = dicefaces[startFace];
                 countToChange = 0.0f;
