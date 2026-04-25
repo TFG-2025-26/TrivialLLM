@@ -17,6 +17,7 @@ public class PieceMovement : MonoBehaviour
 
     private bool dstShown = false;
     private bool dstSelected = false;
+    List<SquareNode> posibilities = new List<SquareNode>();
 
     FichaTrivial ficha;
 
@@ -37,9 +38,10 @@ public class PieceMovement : MonoBehaviour
 
         if(!dstShown&&GameManager.GetInstance().IsDiceThrown()) {
             int movesLeft = GameManager.GetInstance().getRemainingMoves();
-            saveDestinations(GetPossibleDestinations(actualSquare, movesLeft));
+            posibilities = GetPossibleDestinations(actualSquare, movesLeft);
+            saveDestinations(posibilities);
             GameManager.GetInstance().showPosibleDestinations();
-            dstShown = true;
+            //dstShown = true;
         }
 
         if (GameManager.GetInstance().getSelectedStatus())
@@ -49,7 +51,26 @@ public class PieceMovement : MonoBehaviour
             GameManager.GetInstance().cleanDstBoard(); //borrar las listas y objetos del tablero
         }
 
-
+        if(posibilities.Count>=1&& Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            StartCoroutine(MovePiece(posibilities[0]));
+            GameManager.GetInstance().cleanDstBoard();
+        }
+        else if (posibilities.Count >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            StartCoroutine(MovePiece(posibilities[1]));
+            GameManager.GetInstance().cleanDstBoard();
+        }
+        else if (posibilities.Count >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            StartCoroutine(MovePiece(posibilities[2]));
+            GameManager.GetInstance().cleanDstBoard();
+        }
+        else if (posibilities.Count >= 4 && Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            StartCoroutine(MovePiece(posibilities[3]));
+            GameManager.GetInstance().cleanDstBoard();
+        }
         // Pruebas con input
 
         // Comprobar el input y si la casilla actual tiene una conexion en esa direccion
@@ -142,7 +163,7 @@ public class PieceMovement : MonoBehaviour
 
 
             // Enviar peticion de la pregunta dependiendo de la casilla
-            if (aiService != null)
+            /*if (aiService != null)
             {
                 Debug.Log($"La ficha ha caido en {actualSquare.topic}. Solicitando pregunta...");
 
@@ -161,7 +182,7 @@ public class PieceMovement : MonoBehaviour
             else
             {
                 Debug.LogError("AIService no esta asignado en el script PieceMovement.");
-            }
+            }*/
         //}
     }
 
