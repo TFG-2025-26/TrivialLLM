@@ -283,7 +283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actualSquare: {fileID: 0}
-  aiService: {fileID: 3875627413760238745, guid: 5f90f961c158fb14891d1065d50b0d62, type: 3}
+  aiService: {fileID: 0}
   speed: 30
 --- !u!114 &2397344247026894794
 MonoBehaviour:

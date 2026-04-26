@@ -13,6 +13,7 @@ public class PieceMovement : MonoBehaviour
     [SerializeField]
     private float speed = 30f;
 
+    public int turnoIndex;
     private bool isMoving = false;
 
     private bool dstShown = false;
@@ -31,9 +32,12 @@ public class PieceMovement : MonoBehaviour
         }
 
         ficha = GetComponent<FichaTrivial>();
+        aiService = FindFirstObjectByType<AIService>();
     }
     void Update()
     {
+        // Si no es el turno de esta ficha, se ignora todo lo demas
+        if (GameManager.GetInstance().GetTurnoIndex() != turnoIndex) return;
         if(isMoving) {return; }
 
         if(!dstShown&&GameManager.GetInstance().IsDiceThrown()) {
@@ -163,28 +167,33 @@ public class PieceMovement : MonoBehaviour
             dstShown = false;
             GameManager.GetInstance().wasteMovement();
 
-            // Enviar peticion de la pregunta dependiendo de la casilla
-            /*if (aiService != null)
+        // Enviar peticion de la pregunta dependiendo de la casilla
+        if (aiService != null)
+        {
+            
+            string temaPregunta = actualSquare.getTopicString();
+
+            // Si ha caido en el centro y aun no tiene todos los quesitos, elige un tema aleatorio
+            if (actualSquare.topic == TrivialTopic.FinalCentro)
             {
-                Debug.Log($"La ficha ha caido en {actualSquare.topic}. Solicitando pregunta...");
-
-                // Copilot por defecto para probar
-                AIService.Models modeloPregunta = AIService.Models.Copilot;
-                AIService.Models modeloRespuesta = AIService.Models.Copilot;
-
-                // Si hay GameManager, se obtienen el modelo de respuesta del jugador actual
-                if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
-                {
-                    modeloPregunta = GameManager.GetInstance().getJugTurnoActual().modelo;
-                }
-
-                aiService.PedirPregunta(modeloPregunta, modeloRespuesta, actualSquare.getTopicString(), "Media");
+                string[] temas = { "Ciencias", "Geografia", "Historia", "Arte y Literatura", "Deportes y Pasatiempos", "Entretenimiento" };
+                temaPregunta = temas[UnityEngine.Random.Range(0, temas.Length)];
+                Debug.Log("Tema aleatorio elegido: " + temaPregunta);
             }
-            else
-            {
-                Debug.LogError("AIService no esta asignado en el script PieceMovement.");
-            }*/
-        //}
+
+            // Obtener datos del jugador actual
+            DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
+
+            AIService.Models modeloPregunta = jugActual.modeloPreguntas;
+            AIService.Models modeloRespuesta = jugActual.modelo;
+
+            Debug.Log($"La ficha de {jugActual.nombre} ha caido en {actualSquare.topic}. Solicitando pregunta a {modeloPregunta}...");
+            aiService.PedirPregunta(modeloPregunta, modeloRespuesta, temaPregunta, "Media");
+        }
+        else
+        {
+            Debug.LogError("AIService no esta asignado en el script PieceMovement.");
+        }
     }
 
     void saveDestinations(List<SquareNode> posdst)
@@ -202,6 +211,18 @@ public class PieceMovement : MonoBehaviour
     {
         List<SquareNode> results = new List<SquareNode>();
         HashSet<SquareNode> visited = new HashSet<SquareNode>();
+
+        // El primer movimiento solo te deja salir hacia el radio desde la casilla central
+        // Comprobar que se esta en un nodo de inicio (no tiene centro asignado y no es el final)
+        if (initialNode.centre == null && initialNode.topic != TrivialTopic.FinalCentro)
+        {
+            // Comprobar centro verdadero a traves de la primera casilla del radio
+            if (initialNode.outwards != null && initialNode.outwards.centre != null)
+            {
+                // Agregar a la lista de visitados antes de empezar a moverse
+                visited.Add(initialNode.outwards.centre);
+            }
+        }
         SearchDestinations(initialNode, moves, visited, results);
 
         return results;

@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 798770635632816984, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: aiService
       value: 
-      objectReference: {fileID: 3875627413760238745, guid: 5f90f961c158fb14891d1065d50b0d62, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 798770635632816984, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
       propertyPath: actualSquare
       value: 

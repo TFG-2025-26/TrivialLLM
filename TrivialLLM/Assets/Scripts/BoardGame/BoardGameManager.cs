@@ -61,6 +61,7 @@ public class BoardGameManager : MonoBehaviour
                 if(pmInstacia != null)
                 {
                     pmInstacia.actualSquare = nodeInicio;
+                    pmInstacia.turnoIndex = i;
                 }
 
                 // Guardar la referencia para el UIController
