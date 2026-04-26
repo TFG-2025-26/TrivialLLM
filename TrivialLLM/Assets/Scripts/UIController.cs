@@ -214,7 +214,7 @@ public class UIController : MonoBehaviour
         }
 
         // Esperar para ver el resultado
-        yield return new WaitForSeconds(6.0f);
+        yield return new WaitForSeconds(5.0f);
 
         // Desactivar el panel del quiz y pasar el turno
         quizPanel.SetActive(false);
@@ -224,6 +224,14 @@ public class UIController : MonoBehaviour
         if (textRespuesta != null) textRespuesta.text = "";
         if (GameManager.GetInstance() != null) GameManager.GetInstance().sigTurno();
         ActualizarIndicadoresTurno();
+
+        // Activar boton de lanzar el dado
+
+        DiceTrows dadoUI = FindFirstObjectByType<DiceTrows>();
+        if (dadoUI != null)
+        {
+            dadoUI.ActivarBotonLanzar();
+        }
     }
 
     public void ActualizarIndicadoresTurno()

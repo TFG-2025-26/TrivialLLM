@@ -133,6 +133,17 @@ public class PieceMovement : MonoBehaviour
             bordeAlcanzado = true;
         }
 
+        // Si ha caido en la casilla de los dados
+        if (actualSquare.topic == TrivialTopic.Dados)
+        {
+            DiceTrows dadoUI = FindFirstObjectByType<DiceTrows>();
+            if (dadoUI != null)
+            {
+                dadoUI.squareThrowAgain();
+            }
+            // Abortar corrutina y no pedir pregunta
+            yield break;
+        }
         // Enviar peticion de la pregunta dependiendo de la casilla
         if (aiService != null)
         {

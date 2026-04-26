@@ -139,7 +139,7 @@ public class AIService : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError("No se pudo parsear incluso despu�s de limpiar: '" + responseText + "'");
+                    Debug.LogError("No se pudo parsear incluso despues de limpiar: '" + responseText + "'");
                 }
 
                 //if (model != Models.Gemini)

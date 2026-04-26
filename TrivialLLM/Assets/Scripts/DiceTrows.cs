@@ -11,6 +11,8 @@ public class DiceTrows : MonoBehaviour
     [SerializeField]
     Sprite[] dicefaces;
 
+    public Button botonLanzar;
+
     bool throwed=false;
     int startFace;
     float countToChange = 0.0f;
@@ -51,6 +53,10 @@ public class DiceTrows : MonoBehaviour
         if (!throwed)
         {
             throwed = true;
+
+            // Desactivar boton en cuanto se hace clic
+            if (botonLanzar != null) botonLanzar.interactable = false;
+
             int diceNum = Random.Range(1, 7);
             GameManager.GetInstance().setTurnMoves(diceNum);
             //resultado.text = "Puedes avanzar " + GameManager.GetInstance().getRemainingMoves() + " casilla/s";
@@ -62,6 +68,20 @@ public class DiceTrows : MonoBehaviour
             throwed = false;
         }
     }
+    // Funcion que fuerza la tirada automatica cuando se cae en la casilla de los dados para tirar otra vez
+    public void squareThrowAgain()
+    {
+        throwed = false;
+        releaseNumber();
+    }
+
+    // Activar el boton de lanzar una vez se haya respondido a la pregunta y pase al siguiente turno
+    public void ActivarBotonLanzar()
+    {
+        if (botonLanzar != null) botonLanzar.interactable = true;
+        throwed = false;
+    }
+
     void showMovementsText()
     {
         resultado.text = "Puedes avanzar " + GameManager.GetInstance().getRemainingMoves() + " casilla/s";
