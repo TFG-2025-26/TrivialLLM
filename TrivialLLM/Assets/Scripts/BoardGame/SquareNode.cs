@@ -1,4 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -22,7 +23,7 @@ public class SquareNode : MonoBehaviour
     [Header("Categoria de la casilla")]
     public TrivialTopic topic;
 
-    [Header("Conexiones (Arrastra aqui otras casillas)")]
+    [Header("Conexiones normales(Arrastra aqui otras casillas)")]
     // Casilla hacia el centro
     public SquareNode centre;
     // Casilla alejandose del centro
@@ -32,6 +33,27 @@ public class SquareNode : MonoBehaviour
     // Siguiente casilla a la derecha en el anillo exterior
     public SquareNode right;
 
+    [Header("Conexiones extra(Solo para la casilla central)")]
+    [Tooltip("Agrega aqui los 6 inicios de los caminos si esta es la casilla central")]
+    public List<SquareNode> nodesExtra = new List<SquareNode>();
+
+    // Recopila todas las casillas conectadas a esta de forma limpia
+    public List<SquareNode> ObtenerVecinos()
+    {
+        List<SquareNode> vecinos = new List<SquareNode>();
+
+        if(centre != null) vecinos.Add(centre);
+        if (outwards != null) vecinos.Add(outwards);
+        if (left != null) vecinos.Add(left);
+        if (right != null) vecinos.Add(right);
+
+        // Agregar las extra si las hubiera , para el centro
+        foreach(SquareNode extra in nodesExtra)
+        {
+            if (extra != null) vecinos.Add (extra);
+        }
+        return vecinos;
+    }
     // Obtiene la opcion seleccionada y lo convierte a string
     public string getTopicString()
     {

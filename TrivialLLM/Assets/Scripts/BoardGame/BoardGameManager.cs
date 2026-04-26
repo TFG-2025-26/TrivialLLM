@@ -9,6 +9,10 @@ public class BoardGameManager : MonoBehaviour
     [Header("Marcadores UI")]
     public FichaTrivial[] marcadores;
 
+    [Header("Nodos de inicio (en la escena)")]
+    [Tooltip("Arrastra los 6 nodos centrales de la escena en el mismo orden que los prefabs de las fichas")]
+    public SquareNode[] nodesSalida;
+
     void Start()
     {
         if (GameManager.GetInstance() != null)
@@ -38,19 +42,26 @@ public class BoardGameManager : MonoBehaviour
             // Prefab
             GameObject prefabFicha = gm.prefabsFichas[datos.fichaIndex];
 
-            PieceMovement pmPrefab = prefabFicha.GetComponent<PieceMovement>();
+            // Obtener nodo real de la escena basandose en el indice de la ficha
+            SquareNode nodeInicio = nodesSalida[datos.fichaIndex];
 
-            if(pmPrefab != null && pmPrefab.actualSquare != null)
+            if (nodeInicio != null)
             {
                 // Posicion de salida
-                Vector3 posSalida = pmPrefab.actualSquare.transform.position;
+                Vector3 posSalida = nodeInicio.transform.position;
                 posSalida.y = prefabFicha.transform.position.y;
-
 
                 // Instanciar la ficha en la casilla de salida
                 Quaternion iniRot = Quaternion.Euler(90f, 0f, 0f);
-                GameObject nuevaFicha = Instantiate(prefabFicha, posSalida, iniRot );
+                GameObject nuevaFicha = Instantiate(prefabFicha, posSalida, iniRot);
                 nuevaFicha.name = "Ficha_" + datos.nombre;
+
+                // Inyectar a la ficha instanciada el nodo real
+                PieceMovement pmInstacia = nuevaFicha.GetComponent<PieceMovement>();
+                if(pmInstacia != null)
+                {
+                    pmInstacia.actualSquare = nodeInicio;
+                }
 
                 // Guardar la referencia para el UIController
                 FichaTrivial fichaT = nuevaFicha.GetComponent<FichaTrivial>();
@@ -58,11 +69,10 @@ public class BoardGameManager : MonoBehaviour
                 {
                     fichasInstanciadas.Add(fichaT);
                 }
-
             }
             else
             {
-                Debug.LogError($"El prefab de la ficha índice {datos.fichaIndex} no tiene asignada una actualSquare en el Inspector.");
+                Debug.LogError($"Falta asignar el nodo de salida en el indice {datos.fichaIndex} del BoardGameManager.");
             }
 
             // Marcadores interfaz

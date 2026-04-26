@@ -527,15 +527,26 @@ public class GameManager : MonoBehaviour
 
     public void showPosibleDestinations()
     {
-        Debug.Log(posdst.Count);
+        //Debug.Log(posdst.Count);
         foreach(SquareNode nod in posdst)
         {
             GameObject resp= Instantiate(placeToMove, nod.transform.position,Quaternion.Euler(90,0,0));
             resp.transform.position += new Vector3(0, 0.1f, 0);
             
+            SelectSender sender = resp.GetComponent<SelectSender>();
+            if(sender != null)
+            {
+                sender.nodoDestino = nod;
+            }
             physPlaceToMove.Add(resp);
         }
         
+    }
+
+    public void receiveSelectedNode(SquareNode nod)
+    {
+        selectedMove = true;
+        selectedNode = nod;
     }
     public void recieveSelectedTransform(Transform trf)
     {

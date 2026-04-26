@@ -41,7 +41,7 @@ public class PieceMovement : MonoBehaviour
             posibilities = GetPossibleDestinations(actualSquare, movesLeft);
             saveDestinations(posibilities);
             GameManager.GetInstance().showPosibleDestinations();
-            //dstShown = true;
+            dstShown = true;
         }
 
         if (GameManager.GetInstance().getSelectedStatus())
@@ -160,7 +160,8 @@ public class PieceMovement : MonoBehaviour
             transform.position = targetPos;
             actualSquare = targetSquare;
             isMoving = false;
-
+            dstShown = false;
+            GameManager.GetInstance().wasteMovement();
 
             // Enviar peticion de la pregunta dependiendo de la casilla
             /*if (aiService != null)
@@ -208,7 +209,7 @@ public class PieceMovement : MonoBehaviour
 
     void SearchDestinations(SquareNode current, int movesLeft, HashSet<SquareNode> visited, List<SquareNode> results)
     {
-       
+       // Debug.Log($"Visitando: {current.gameObject.name} | Pasos restantes: {movesLeft}");
         visited.Add(current);
 
         // Caso base
@@ -219,17 +220,18 @@ public class PieceMovement : MonoBehaviour
             return;
         }
 
-        //Posibles casillas adyacentes (a falta de la casilla central)
-        SquareNode[] neighbors = { current.centre, current.outwards, current.left, current.right };
-
+        ////Posibles casillas adyacentes (a falta de la casilla central)
+        //SquareNode[] neighbors = { current.centre, current.outwards, current.left, current.right };
+        // Obtiene todos los vecinos
+        List<SquareNode> neighbors = current.ObtenerVecinos();
         foreach (SquareNode nei in neighbors)
         {
-            
             if (nei != null && !visited.Contains(nei))
             {
                 SearchDestinations(nei, movesLeft - 1, visited, results);
             }
         }
+
         visited.Remove(current);
     }
 }
