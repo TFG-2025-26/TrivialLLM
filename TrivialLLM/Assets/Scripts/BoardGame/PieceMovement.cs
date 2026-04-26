@@ -14,6 +14,7 @@ public class PieceMovement : MonoBehaviour
     private float speed = 30f;
 
     public int turnoIndex;
+    private bool bordeAlcanzado = false;
     private bool isMoving = false;
 
     private bool dstShown = false;
@@ -94,48 +95,6 @@ public class PieceMovement : MonoBehaviour
         {
             StartCoroutine(MovePiece(actualSquare.right));
         }*/
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if(ficha != null)
-            {
-                ficha.GanarQuesito("ciencias");
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.H))
-        {
-            if (ficha != null)
-            {
-                ficha.GanarQuesito("historia");
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.G))
-        {
-            if (ficha != null)
-            {
-                ficha.GanarQuesito("geografía");
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (ficha != null)
-            {
-                ficha.GanarQuesito("entretenimiento");
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.P))
-        {
-            if (ficha != null)
-            {
-                ficha.GanarQuesito("deportes y pasatiempos");
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.L))
-        {
-            if (ficha != null)
-            {
-                ficha.GanarQuesito("arte y literatura");
-            }
-        }
 
     }
 
@@ -148,24 +107,31 @@ public class PieceMovement : MonoBehaviour
         //GameManager.GetInstance().wasteMovement();
         //GameManager.GetInstance().showPosibleDestinations();
         
-            isMoving = true;
+        isMoving = true;
 
-            // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
-            Vector3 targetPos = new Vector3(targetSquare.transform.position.x, transform.position.y, targetSquare.transform.position.z);
+        // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
+        Vector3 targetPos = new Vector3(targetSquare.transform.position.x, transform.position.y, targetSquare.transform.position.z);
 
-            // Mover la ficha poco a poco
-            while (Vector3.Distance(transform.position, targetPos) > 0.01f)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-                yield return null; // Esperar al siguiente frame
-            }
+        // Mover la ficha poco a poco
+        while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+            yield return null; // Esperar al siguiente frame
+        }
 
-            // Ajustar al final 
-            transform.position = targetPos;
-            actualSquare = targetSquare;
-            isMoving = false;
-            dstShown = false;
-            GameManager.GetInstance().wasteMovement();
+        // Ajustar al final 
+        transform.position = targetPos;
+        actualSquare = targetSquare;
+        isMoving = false;
+        dstShown = false;
+        GameManager.GetInstance().wasteMovement();
+
+        // Comprobar si se ha llegado al radio exterior por primera vez desde la casilla de salida central
+        // Si la casilla tiene conexiones a los lados
+        if (actualSquare.left != null || actualSquare.right != null)
+        {
+            bordeAlcanzado = true;
+        }
 
         // Enviar peticion de la pregunta dependiendo de la casilla
         if (aiService != null)
@@ -188,7 +154,10 @@ public class PieceMovement : MonoBehaviour
             AIService.Models modeloRespuesta = jugActual.modelo;
 
             Debug.Log($"La ficha de {jugActual.nombre} ha caido en {actualSquare.topic}. Solicitando pregunta a {modeloPregunta}...");
-            aiService.PedirPregunta(modeloPregunta, modeloRespuesta, temaPregunta, "Media");
+            string[] dificultades = { "Facil", "Media", "Dificil"};
+            string dificultadPregunta = dificultades[UnityEngine.Random.Range(0, dificultades.Length)];
+            Debug.Log("Dificultad aleatoria elegida: " + dificultadPregunta);
+            aiService.PedirPregunta(modeloPregunta, modeloRespuesta, temaPregunta, dificultadPregunta);
         }
         else
         {
@@ -200,7 +169,7 @@ public class PieceMovement : MonoBehaviour
     {
        foreach (SquareNode dst in posdst) {
             GameManager.GetInstance().addToPosibleDestination(dst);
-        }
+       }
     }
 
    
@@ -247,8 +216,15 @@ public class PieceMovement : MonoBehaviour
         List<SquareNode> neighbors = current.ObtenerVecinos();
         foreach (SquareNode nei in neighbors)
         {
+
             if (nei != null && !visited.Contains(nei))
             {
+                // Bloquear ir hacia atras en la primera salida desde el centro hasta el radio exterior
+                // Si aun no se ha llegado al exterior y el vecino es una casilla que va hacia el centro se ignora
+                if (!bordeAlcanzado && nei == current.centre)
+                {
+                    continue;
+                }
                 SearchDestinations(nei, movesLeft - 1, visited, results);
             }
         }
