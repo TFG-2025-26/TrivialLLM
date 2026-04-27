@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -213,7 +213,7 @@ public class GameManager : MonoBehaviour
     {
         if (numTotalJugadores >= 6)
         {
-            Debug.Log("No se pueden aÒadir m·s de 6 jugadores");
+            Debug.Log("No se pueden a√±adir m√°s de 6 jugadores");
             if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour
     {
         if (numTotalJugadores >= 6)
         {
-            Debug.Log("No se pueden aÒadir m·s de 6 jugadores");
+            Debug.Log("No se pueden a√±adir m√°s de 6 jugadores");
             if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
@@ -294,7 +294,7 @@ public class GameManager : MonoBehaviour
     {
         if (numTotalJugadores >= 6)
         {
-            Debug.Log("No se pueden aÒadir m·s de 6 jugadores");
+            Debug.Log("No se pueden a√±adir m√°s de 6 jugadores");
             if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
@@ -330,7 +330,7 @@ public class GameManager : MonoBehaviour
     {
         if (numTotalJugadores >= 6)
         {
-            Debug.Log("No se pueden aÒadir m·s de 6 jugadores");
+            Debug.Log("No se pueden a√±adir m√°s de 6 jugadores");
             if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
@@ -339,59 +339,49 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // Guardar que IA le preguntara
-        AIService.Models quienPregunta = AIService.Models.Gemini; // Por defecto
+        AIService.Models quienPregunta = AIService.Models.Gemini;
         if (modelPregunta != null)
-        {
             quienPregunta = (AIService.Models)modelPregunta.value;
-        }
 
-        if (ValidarNombre(out string nombreValido))
-        {
-            //string modelo = modelRespuesta.options[modelRespuesta.value].text;
-            //AIService.Models modeloSeleccionado;
-            //switch (modelo)
-            //{
-            //    case "Gemini":
-            //        modeloSeleccionado = AIService.Models.Gemini;
-            //        break;
-            //    case "Copilot":
-            //        modeloSeleccionado = AIService.Models.Copilot;
-            //        break;
-            //    case "ChatGPT":
-            //        modeloSeleccionado = AIService.Models.ChatGPT;
-            //        break;
-            //    case "Azure":
-            //        modeloSeleccionado = AIService.Models.Azure;
-            //        break;
-            //    default:
-            //        modeloSeleccionado = AIService.Models.Copilot;
-            //        break;
+        if (!ValidarNombre(out string nombreValido))
+            return;
 
-            //}
-            AIService.Models quienResponde = AIService.Models.Gemini; // Por defecto
-            if (modelRespuesta != null)
+        AIService.Models quienResponde = AIService.Models.Gemini;
+        if (modelRespuesta != null)
+            quienResponde = (AIService.Models)modelRespuesta.value;
+
+        string rol = promptText.text;
+        
+
+        StartCoroutine(
+            GameObject.Find("AIService")
+            .GetComponent<AIService>()
+            .PedirPerfil(rol, (perfil) =>
             {
-                quienResponde = (AIService.Models)modelRespuesta.value;
-            }
-            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = false, modelo = quienResponde, prompt = promptText.text, fichaIndex = -1, modeloPreguntas = quienPregunta });
-            numLLMS++;
-            numTotalJugadores++;
-            textoNumLLMS.text = numLLMS.ToString();
-            gameObject.GetComponent<AudioSource>().Play();
-            // Debug del ˙ltimo jugador agregado
-            DescriptorJugador ultimo = descriptorJug[descriptorJug.Count - 1];
-            Debug.Log("⁄ltimo LLM agregado -> Modelo: " + ultimo.modelo
-                        + ", Prompt: " + ultimo.prompt
-                        + ", EsHumano: " + ultimo.esHumano);
+                numLLMS++;
+                numTotalJugadores++;
+                if (perfil == null)
+                {
+                    Debug.LogError("‚ùå Perfil null ‚Üí LLM NO registrado");
+                    return;
+                }
+                Debug.Log("Llega");
+                descriptorJug.Add(new DescriptorJugador
+                {
+                    nombre = nombreValido,
+                    esHumano = false,
+                    modelo = quienResponde,
+                    modeloPreguntas = quienPregunta,
+                    perfil = perfil,
+                    fichaIndex = -1
+                });
+                
+                
 
-            MostrarMensaje(nombreValido + " registrado correctamente");
-
-            inputNombre.text = "";
-            if (panelLLM != null) panelLLM.SetActive(false);
-            if (inputNombre != null) inputNombre.gameObject.SetActive(false);
-            if (modelPregunta != null) modelPregunta.gameObject.SetActive(false);
-        }
+                Debug.Log("‚úÖ LLM registrado correctamente: " + nombreValido);
+            
+            })
+        );
     }
 
     private void MostrarMensaje (string mensaje)

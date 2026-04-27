@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
@@ -37,6 +37,8 @@ public class UIController : MonoBehaviour
     {
         // Panel de preguntas aparece apagado
         if(quizPanel != null) quizPanel.SetActive(false);
+        ai=GameObject.Find("AIService").GetComponent<AIService>();
+        ai.uiController = this; 
     }
     public void MostrarPregunta(PreguntaOpciones p)
     {
@@ -52,7 +54,7 @@ public class UIController : MonoBehaviour
         textPregunta.text = p.pregunta;
 
         DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
-        Debug.Log($"Turno de: {jugActual.nombre} | �Es humano?: {jugActual.esHumano}");
+        Debug.Log($"Turno de: {jugActual.nombre} | ¿Es humano?: {jugActual.esHumano}");
 
         // Mostrar tema y modelo que pregunta
         if (textTema != null && ai != null)
@@ -96,39 +98,41 @@ public class UIController : MonoBehaviour
         if(!jugActual.esHumano)
         {
             Debug.Log("Turno de la IA: " + jugActual.nombre + ". Contestando automaticamente...");
-            StartCoroutine(EsperarYContestarIA(jugActual.modelo));
+            StartCoroutine(EsperarYContestarIA());
         }
         respuestaCorrecta = p.respuesta_correcta;
     }
 
-    private IEnumerator EsperarYContestarIA(AIService.Models modelo)
+    private IEnumerator EsperarYContestarIA()
     {
         yield return new WaitForSeconds(2.0f);
-        MandarPregunta(modelo);
+        MandarPregunta();
     }
 
-    public void MandarPregunta(AIService.Models modeloSeleccionado)
+    public void MandarPregunta()
     {
         string prompt = textPregunta.text + "\nOpciones:\n";
+
         for (int i = 0; i < botonesOpciones.Length; i++)
         {
             string opcion = botonesOpciones[i].GetComponentInChildren<TextMeshProUGUI>().text;
             prompt += $"{i}) {opcion}\n";
         }
 
-        ai.ContestarPregunta(modeloSeleccionado, prompt, (int indexRespuesta) =>
-        {
-            if (indexRespuesta >= 0)
+        DescriptorJugador jug = GameManager.GetInstance().getJugTurnoActual();
+
+        ai.ContestarPregunta(
+            jug.modelo,        // ✔ modelo del jugador
+            jug.perfil,        // ✔ perfil del jugador
+            prompt,
+            (int indexRespuesta) =>
             {
-                Debug.Log("UICONTROLLER");
-                SeleccionarRespuesta(indexRespuesta);
+                if (indexRespuesta >= 0)
+                {
+                    SeleccionarRespuesta(indexRespuesta);
+                }
             }
-            else
-            {
-                if (textRespuesta != null) textRespuesta.text = "Error al obtener la respuesta de " + modeloSeleccionado.ToString();
-            }
-        });
-        
+        );
     }
 
     public void SeleccionarRespuesta(int index)
@@ -158,7 +162,7 @@ public class UIController : MonoBehaviour
         //    }
         //    else
         //    {
-        //        Debug.LogError("�Falta asignar la Ficha Jugador en el Inspector del UIController!");
+        //        Debug.LogError("¡Falta asignar la Ficha Jugador en el Inspector del UIController!");
         //    }
         //    GameManager.GetInstance().sigTurno();
         //}

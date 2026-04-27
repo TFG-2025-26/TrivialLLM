@@ -1,13 +1,19 @@
+using System.Collections;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
+
 public class AIService : MonoBehaviour
 {
-    private const string url = "http://127.0.0.1:8000/trivial";
+    private const string BASE_URL = "http://127.0.0.1:8000";
     // si lo subo a un servidor https://mi-backend.com/trivial
 
     //private const string url = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net/trivial";
+
+    private string urlTrivial => BASE_URL + "/trivial";
+    private string urlProfile => BASE_URL + "/profile";
+
     public UIController uiController;
     public GameManager gameManager;
 
@@ -17,12 +23,26 @@ public class AIService : MonoBehaviour
     public Models modeloRespuesta;
 
     public string categoriaActual;
+    public static AIService Instance;
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
+    
     public void PedirPregunta(Models modeloPregunta, Models modeloRespuesta, string tema, string dificultad)
     {
         this.modeloPregunta = modeloPregunta;
@@ -32,14 +52,12 @@ public class AIService : MonoBehaviour
         StartCoroutine(EnviarPrompt(this.modeloPregunta,prompt, true));
     }
 
-    public void ContestarPregunta(Models model,string prompt, System.Action<int> callback)
+    public void ContestarPregunta(Models model, PlayerProfile perfil, string pregunta, System.Action<int> callback)
     {
-        //modeloRespuesta = model;
-        modeloRespuesta = GameManager.GetInstance().getJugTurnoActual().modelo;
-        Debug.Log("Respuesta generada por: "+ modeloRespuesta.ToString());
-        Debug.Log(GameManager.GetInstance().getJugTurnoActual().prompt + ". " + prompt);
+        string context = BuildRoleContext(perfil);
+        string prompt = context + "\nPregunta:\n" + pregunta;
 
-        StartCoroutine(EnviarPrompt(modeloRespuesta, GameManager.GetInstance().getJugTurnoActual().prompt+". "+prompt, false, callback));
+        StartCoroutine(EnviarPrompt(model, prompt, false, callback));
     }
 
     private string CrearPromptPregunta(string tema, string dificultad)
@@ -74,6 +92,84 @@ public class AIService : MonoBehaviour
         No a�adas comentarios, explicaciones ni texto fuera del JSON.";
     }
 
+    private string BuildRoleContext(PlayerProfile p)
+    {
+        if (p == null) return "";
+
+        string strong = p.strongCategories != null ? string.Join(", ", p.strongCategories) : "none";
+        string weak = p.weakCategories != null ? string.Join(", ", p.weakCategories) : "none";
+
+        return $@"
+Eres una IA que responde preguntas tipo test.
+
+PERFIL DEL JUGADOR:
+- Precisión base: {p.accuracyBase}
+- Categorías fuertes: {strong}
+- Categorías débiles: {weak}
+
+REGLA CRÍTICA (OBLIGATORIA):
+Debes responder como si lanzaras un dado.
+
+SIMULACIÓN:
+1. Si la categoría es débil → 70% de fallar
+2. Si es fuerte → 70% de acertar
+3. Si accuracyBase < 0.3 → aumenta probabilidad de error
+
+IMPORTANTE:
+NO intentes ser correcto siempre.
+Tu objetivo es simular comportamiento humano imperfecto.
+
+Responde SOLO con el índice (0-3).
+";
+    }
+
+    public IEnumerator PedirPerfil(string role, System.Action<PlayerProfile> callback)
+    {
+        RoleRequest req = new RoleRequest { role = role };
+
+        string jsonBody = JsonUtility.ToJson(req);
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonBody);
+
+        Debug.Log("ENVIANDO PERFIL: " + jsonBody);
+
+        UnityWebRequest www = new UnityWebRequest(urlProfile, "POST");
+        www.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        www.downloadHandler = new DownloadHandlerBuffer();
+        www.SetRequestHeader("Content-Type", "application/json");
+
+        yield return www.SendWebRequest();
+
+        Debug.Log("RESULTADO: " + www.result);
+        Debug.Log("RESPUESTA: " + www.downloadHandler.text);
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("❌ ERROR PERFIL: " + www.error);
+            Debug.LogError("❌ BODY: " + www.downloadHandler.text);
+            yield break;
+        }
+
+        PlayerProfile perfil;
+
+        try
+        {
+            perfil = JsonUtility.FromJson<PlayerProfile>(www.downloadHandler.text);
+        }
+        catch
+        {
+            Debug.LogError(" JSON inválido en perfil");
+            yield break;
+        }
+
+        if (perfil == null)
+        {
+            Debug.LogError(" Perfil NULL");
+            yield break;
+        }
+
+        callback?.Invoke(perfil);
+    }
+
     private System.Collections.IEnumerator EnviarPrompt(Models model,string prompt, bool esPregunta, System.Action<int> callback = null)
     {
         PromptRequest req = CreateRequest(model, prompt, esPregunta);
@@ -81,7 +177,7 @@ public class AIService : MonoBehaviour
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
 
-        UnityWebRequest www = new UnityWebRequest(url, "POST");
+        UnityWebRequest www = new UnityWebRequest(urlTrivial, "POST");
         www.uploadHandler = new UploadHandlerRaw(bodyRaw);
         www.downloadHandler = new DownloadHandlerBuffer();
         www.SetRequestHeader("Content-Type", "application/json");

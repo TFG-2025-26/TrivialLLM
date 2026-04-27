@@ -10,6 +10,7 @@ public class DescriptorJugador
     // Modelo que genera las preguntas a este jugador
     public AIService.Models modeloPreguntas;
 
-    public string prompt;
+    //public string prompt;
+    public PlayerProfile perfil;
     public int fichaIndex = -1;
 }
