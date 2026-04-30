@@ -49,11 +49,16 @@ public class PieceMovement : MonoBehaviour
             dstShown = true;
         }
 
-        if (GameManager.GetInstance().getSelectedStatus())
+        if (GameManager.GetInstance().getSelectedStatus() && !isMoving)
         {
-            StartCoroutine(MovePiece(GameManager.GetInstance().GetSelectedDst()));
+            isMoving = true;
+            SquareNode target = GameManager.GetInstance().GetSelectedDst();
+            
             GameManager.GetInstance().setSelectedStatus(false);
             GameManager.GetInstance().cleanDstBoard(); //borrar las listas y objetos del tablero
+
+            StartCoroutine(MovePiece(target));
+            return;
         }
 
         if(posibilities.Count>=1&& Input.GetKeyDown(KeyCode.Alpha1))
@@ -107,7 +112,7 @@ public class PieceMovement : MonoBehaviour
         //GameManager.GetInstance().wasteMovement();
         //GameManager.GetInstance().showPosibleDestinations();
         
-        isMoving = true;
+        //isMoving = true;
 
         // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
         Vector3 targetPos = new Vector3(targetSquare.transform.position.x, transform.position.y, targetSquare.transform.position.z);

@@ -339,14 +339,14 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        AIService.Models quienPregunta = AIService.Models.Gemini;
+        AIService.Models quienPregunta = AIService.Models.Gemini; // Por defecto
         if (modelPregunta != null)
             quienPregunta = (AIService.Models)modelPregunta.value;
 
         if (!ValidarNombre(out string nombreValido))
             return;
 
-        AIService.Models quienResponde = AIService.Models.Gemini;
+        AIService.Models quienResponde = AIService.Models.Gemini; // Por defecto
         if (modelRespuesta != null)
             quienResponde = (AIService.Models)modelRespuesta.value;
 
@@ -358,13 +358,12 @@ public class GameManager : MonoBehaviour
             .GetComponent<AIService>()
             .PedirPerfil(rol, (perfil) =>
             {
-                numLLMS++;
-                numTotalJugadores++;
-                if (perfil == null)
+                if(perfil == null)
                 {
-                    Debug.LogError("❌ Perfil null → LLM NO registrado");
+                    Debug.LogError("Perfil nulo, LLM no registrado");
                     return;
                 }
+
                 Debug.Log("Llega");
                 descriptorJug.Add(new DescriptorJugador
                 {
@@ -375,10 +374,22 @@ public class GameManager : MonoBehaviour
                     perfil = perfil,
                     fichaIndex = -1
                 });
-                
-                
 
-                Debug.Log("✅ LLM registrado correctamente: " + nombreValido);
+                numLLMS++;
+                numTotalJugadores++;
+                if (textoNumLLMS != null) textoNumLLMS.text = numLLMS.ToString();
+
+                gameObject.GetComponent<AudioSource>().Play();
+                MostrarMensaje(nombreValido + " registrado correctamente");
+                Debug.Log("LLM registrado correctamente: " + nombreValido);
+
+                if (inputNombre != null) inputNombre.text = "";
+                if (promptText != null) promptText.text = "";
+
+                if(panelLLM != null) panelLLM.SetActive(false);
+                if(inputNombre != null) inputNombre.gameObject.SetActive(false);
+                if (modelPregunta != null) modelPregunta.gameObject.SetActive(false);
+
             
             })
         );

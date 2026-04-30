@@ -65,13 +65,6 @@ public class UIController : MonoBehaviour
         {
             textModeloPregunta.text = "Pregunta: " + jugActual.modeloPreguntas.ToString();
         }
-        // Comprobar el modo de juego
-        // esTurnoHumano = true; // por defecto
-
-        //if (GameManager.GetInstance() != null)
-        //{
-        //    esTurnoHumano = (GameManager.GetInstance().getJugTurnoActual().esHumano);
-        //}
 
         //if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
         //{
@@ -122,8 +115,8 @@ public class UIController : MonoBehaviour
         DescriptorJugador jug = GameManager.GetInstance().getJugTurnoActual();
 
         ai.ContestarPregunta(
-            jug.modelo,        // ✔ modelo del jugador
-            jug.perfil,        // ✔ perfil del jugador
+            jug.modelo,        // modelo del jugador
+            jug.perfil,        // perfil del jugador
             prompt,
             (int indexRespuesta) =>
             {
@@ -152,7 +145,7 @@ public class UIController : MonoBehaviour
         //    {
         //        if(ai != null && !string.IsNullOrEmpty(ai.categoriaActual))
         //        {
-        //            fichaJugador.GanarQuesito(ai.categoriaActual);
+        //           fichaJugador.GanarQuesito(ai.categoriaActual);
         //        }
         //        else
         //        {

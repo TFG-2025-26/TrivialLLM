@@ -210,18 +210,6 @@ Responde SOLO con el índice (0-3).
 
                 // Mostrar la pregunta en pantalla
                 MostrarPregunta(pregunta);
-
-                //// Comprobar el modo de juego
-                //if (GameManager.GetInstance() != null &&
-                //    !GameManager.GetInstance().getJugTurnoActual().esHumano)
-                //{
-                //    Debug.Log("Esperando la respuesta de la IA.");
-                //    uiController.MandarPregunta(modeloRespuesta);
-                //}
-                //else
-                //{
-                //    Debug.Log("Esperando la respuesta del jugador.");
-                //}
             }
             else
             {
@@ -237,30 +225,6 @@ Responde SOLO con el índice (0-3).
                 {
                     Debug.LogError("No se pudo parsear incluso despues de limpiar: '" + responseText + "'");
                 }
-
-                //if (model != Models.Gemini)
-                //{
-                //    if (int.TryParse(responseText.Trim(), out int indexRespuesta))
-                //    {
-                //        callback?.Invoke(indexRespuesta);
-                //    }
-                //    else
-                //    {
-                //        Debug.Log("Error al obtener la respuesta por " + model.ToString());
-                //    }
-                //}
-                //else
-                //{
-                //    string cleanAnswer = responseText.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "");
-                //    if (int.TryParse(cleanAnswer, out int indexRespuesta))
-                //    {
-                //        callback?.Invoke(indexRespuesta);
-                //    }
-                //    else
-                //    {
-                //        Debug.LogError("No se pudo parsear incluso despu�s de limpiar: '" + responseText + "'");
-                //    }
-                //}
             }
         }
     }
@@ -273,41 +237,6 @@ Responde SOLO con el índice (0-3).
             model = model.ToString(),
             isAnswering = !esPregunta
         };
-        //switch (model)
-        //{
-        //    case Models.ChatGPT:
-        //        return new PromptGPTData
-        //        {
-                   
-        //        };
-
-        //    case Models.Gemini:
-        //        return new PromptRequest
-        //        {
-        //            prompt = prompt,
-        //            model = model.ToString(),
-        //            isAnswering = !esPregunta
-        //        };
-
-        //    case Models.Copilot:
-        //        return new PromptRequest
-        //        {
-        //            prompt = prompt,
-        //            model = model.ToString(),
-        //            isAnswering = !esPregunta
-        //        };
-
-        //    case Models.Azure:
-        //        return new PromptRequest
-        //        {
-        //            prompt = prompt,
-        //            model = model.ToString(),
-        //            isAnswering = !esPregunta
-        //        };
-
-        //    default:
-        //        throw new System.Exception("Modelo no soportado");
-        //}
     }
 
     private void MostrarPregunta(PreguntaOpciones pregunta)

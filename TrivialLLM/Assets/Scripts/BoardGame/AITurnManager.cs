@@ -1,0 +1,206 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
+/// <summary>
+/// Se encarga de gestionar el turno completo de la IA 
+/// para automatizar las acciones
+/// </summary>
+public class AITurnManager : MonoBehaviour
+{
+    private GameManager gameManager;
+    private PieceMovement currentAIPiece;
+    private DiceTrows diceController;
+
+    private bool isAITurnActive = false;
+    private bool isChoosingDestination = false;
+    private bool hasFinishedMoving = false;
+    private int currentTurnTicket = -1;
+
+    [SerializeField] private SquareNode centralNode;
+
+    void Start()
+    {
+        gameManager = GameManager.GetInstance();
+        diceController = FindFirstObjectByType<DiceTrows>();
+    }
+
+    void Update()
+    {
+        if (gameManager == null)
+        {
+            return;
+        }
+
+        int currentTurnIndex = gameManager.GetTurnoIndex();
+        DescriptorJugador currentPlayer = gameManager.getJugTurnoActual();
+
+        // Si el turno cambia en el GameManager, resetear todos los bloqueos de la IA
+        if (currentTurnTicket != currentTurnIndex)
+        {
+            currentTurnTicket = currentTurnIndex;
+            isAITurnActive = false;
+            isChoosingDestination = false;
+            hasFinishedMoving = false;
+        }
+
+        // Si es el turno de la IA
+        if (!currentPlayer.esHumano)
+        {
+            // Lanzar dado al principio del turno
+            // Solo entra si no ha empezado el turno y el dado no se ha lanzado
+            if(!isAITurnActive && !gameManager.IsDiceThrown())
+            {
+                isAITurnActive = true;
+                StartCoroutine(StartAITurn(currentPlayer));
+            }
+
+            // Elegir el destino
+            // Entra cuando ya se ha tirado el dado pero no ha seleccionado una casilla a la que moverse
+            if (isAITurnActive && gameManager.IsDiceThrown() && !gameManager.getSelectedStatus() && !isChoosingDestination)
+            {
+                isChoosingDestination = true;
+                StartCoroutine(ChooseDestination(currentPlayer));
+            }
+        }
+    }
+
+    IEnumerator StartAITurn(DescriptorJugador jugIA)
+    {
+        Debug.Log($"Iniciando turno de IA: {jugIA.nombre}");
+
+        // Esperar unos segundos para dar fluidez visual al cambio de turno
+        yield return new WaitForSeconds(1.5f);
+
+        // Lanzar el dado automaticamente
+        diceController.ReleaseNumberAutomatic();
+    }
+
+    IEnumerator ChooseDestination(DescriptorJugador jugIA)
+    {
+        // Esperar a que PieceMovement calcule las casillas posibles
+        yield return new WaitForSeconds(1.5f);
+
+        // Pieza de la IA actual en la escena
+        currentAIPiece = FindAIPiece(jugIA.fichaIndex);
+
+        if (currentAIPiece != null)
+        {
+            List<SquareNode> possibleDestinations = currentAIPiece.GetPossibleDestinations(currentAIPiece.actualSquare, gameManager.getRemainingMoves());
+
+            if (possibleDestinations.Count > 0)
+            {
+                // Logica inteligente para elegir destino
+                SquareNode bestDestination = ChooseSmartDestination(currentAIPiece.actualSquare, possibleDestinations, currentAIPiece.GetComponent<FichaTrivial>());
+                gameManager.receiveSelectedNode(bestDestination);
+            }
+            else
+            {
+                Debug.LogWarning("La IA no tiene movimientos posibles");
+                gameManager.wasteMovement();
+                gameManager.sigTurno();
+            }
+        }
+
+       // isChoosingDestination = false;
+    }
+    private SquareNode ChooseSmartDestination(SquareNode currentSquare, List<SquareNode> options, FichaTrivial fichaStatus)
+    {
+        // Al principio salir del centro al radio exterior
+        if (currentSquare.topic == TrivialTopic.FinalCentro && currentSquare.centre == null)
+        {
+            return options[0];
+        }
+
+        // Si la IA ya tiene todos los quesitos, su objetivo es ir hacia el centro
+        if (fichaStatus != null && fichaStatus.HaveAllWedges())
+        {
+            SquareNode nearestNode = null;
+            float minDistance = float.MaxValue;
+
+            // Comprobacion de seguridad
+            if(centralNode == null)
+            {
+                Debug.LogError("Falta asignar la casilla centran en AITurnManager");
+                return options[0];
+            }
+
+            // Evaluar todas las casillas a las que puede ir en este turno
+            foreach (var node in options)
+            {
+                // Si alguna opcion es la casilla final (centro), ir directamente
+                if (node.topic == TrivialTopic.FinalCentro)
+                {
+                    Debug.Log("La IA tiene todos los quesitos y llega EXACTA al centro.");
+                    return node; // Se queda con la primera casilla que le falte
+                }
+
+                // Logica para acercarse al centro si no llega en este turno
+                float currentDistance = Vector3.Distance(node.transform.position, centralNode.transform.position);
+
+                // Si esta opcion esta mas cerca que las anteriores
+                if (currentDistance < minDistance)
+                {
+                    minDistance = currentDistance;
+                    nearestNode = node;
+                }
+                
+            }
+
+            // Una vez evaluadas todas las opciones, devolver la mas cercana
+            if (nearestNode != null)
+            {
+                return nearestNode; 
+            }
+        }
+
+        SquareNode selectedNode = options[0]; // Por defecto, coger el primero
+
+        // Priorizar las casillas las que aun no se tiene el quesito
+        if (fichaStatus != null)
+        {
+            // Lista para guardar destinos validos (que no sean dados)
+            List<SquareNode> validDestinations = new List<SquareNode>();
+
+            foreach (var node in options)
+            {
+                // Evitar caer en la casilla de dados si es posible
+                if (node.topic != TrivialTopic.Dados)
+                {
+                    validDestinations.Add(node);
+
+                    if(node.topic != TrivialTopic.FinalCentro)
+                    {
+                        string topic = node.getTopicString();
+                        if(!fichaStatus.HaveWedge(topic))
+                        {
+                            return node;
+                        }
+                    }
+                }
+            }
+
+            // Si llega aqui es porque ya tiene los quesitos de todos los destinos posibles
+            // o todos los destinos son dados
+
+            // Si hay destinos validos, que no sean dados, escoger uno al azar para otorgar variedad
+            if (validDestinations.Count > 0)
+            {
+                selectedNode = validDestinations[UnityEngine.Random.Range(0, validDestinations.Count)];
+            }
+        }
+        return selectedNode;
+    }
+
+    private PieceMovement FindAIPiece(int index)
+    {
+        // Encontrar la pieza del turno actual en la escena
+        PieceMovement[] allPieces = FindObjectsByType<PieceMovement>(FindObjectsSortMode.None);
+        foreach (var piece in allPieces)
+        {
+            if (piece.turnoIndex == index) return piece;
+        }
+        return null;
+    }
+}

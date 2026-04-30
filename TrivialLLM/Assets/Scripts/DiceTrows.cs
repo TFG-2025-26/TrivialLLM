@@ -86,4 +86,12 @@ public class DiceTrows : MonoBehaviour
     {
         resultado.text = "Puedes avanzar " + GameManager.GetInstance().getRemainingMoves() + " casilla/s";
     }
+
+    public void ReleaseNumberAutomatic()
+    {
+        if (botonLanzar != null && botonLanzar.interactable)
+        {
+            releaseNumber();
+        }
+    }
 }

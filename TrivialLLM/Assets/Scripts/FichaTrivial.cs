@@ -1,3 +1,4 @@
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -79,5 +80,43 @@ public class FichaTrivial : MonoBehaviour
                 luzTurno.SetActive(activo);
             }
         }
+    }
+
+    // Comprueba si la ficha ya tiene un quesito especifico ganado
+    public bool HaveWedge(string topic)
+    {
+        switch (topic.ToLower())
+        {
+            case "ciencias":
+                return q_verde != null && q_verde.activeSelf;
+            case "geografia":
+                return q_azul != null && q_azul.activeSelf;
+            case "historia":
+                return q_amarillo != null && q_amarillo.activeSelf;
+            case "arte y literatura":
+                return q_morado != null && q_morado.activeSelf;
+            case "deportes y pasatiempos":
+                return q_naranja != null && q_naranja.activeSelf;
+            case "entretenimiento":
+                return q_rosa != null && q_rosa.activeSelf;
+
+            default:
+                Debug.LogWarning("Categoria no reconocida al comprobar quesito: " + topic);
+                return false;
+        }
+    }
+
+    // Comprobar si la ficha tiene los 6 quesitos conseguidos
+    public bool HaveAllWedges()
+    {
+        bool winGreen = q_verde != null && q_verde.activeSelf;
+        bool winBlue = q_azul != null && q_azul.activeSelf;
+        bool winYellow = q_amarillo != null && q_amarillo.activeSelf;
+        bool winPurple = q_morado != null && q_morado.activeSelf;
+        bool winOrange = q_naranja != null && q_naranja.activeSelf;
+        bool winPink = q_rosa != null && q_rosa.activeSelf;
+
+        return winGreen && winBlue && winYellow && winPurple && winOrange && winPink;
+
     }
 }
