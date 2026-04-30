@@ -89,7 +89,7 @@ public class DiceTrows : MonoBehaviour
 
     public void ReleaseNumberAutomatic()
     {
-        if (botonLanzar != null && botonLanzar.interactable)
+        if (botonLanzar != null)
         {
             releaseNumber();
         }

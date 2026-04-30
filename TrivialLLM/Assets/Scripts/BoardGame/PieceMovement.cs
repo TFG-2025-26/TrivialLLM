@@ -146,6 +146,16 @@ public class PieceMovement : MonoBehaviour
             {
                 dadoUI.squareThrowAgain();
             }
+
+            // Avisar AITurnManager de que puede volver a elegir destino
+            if (!GameManager.GetInstance().getJugTurnoActual().esHumano)
+            {
+                AITurnManager aiManager = FindFirstObjectByType<AITurnManager>();
+                if(aiManager != null)
+                {
+                    aiManager.AllowNewMovement();
+                }
+            }
             // Abortar corrutina y no pedir pregunta
             yield break;
         }
@@ -172,7 +182,13 @@ public class PieceMovement : MonoBehaviour
             Debug.Log($"La ficha de {jugActual.nombre} ha caido en {actualSquare.topic}. Solicitando pregunta a {modeloPregunta}...");
             string[] dificultades = { "Facil", "Media", "Dificil"};
             string dificultadPregunta = dificultades[UnityEngine.Random.Range(0, dificultades.Length)];
-            Debug.Log("Dificultad aleatoria elegida: " + dificultadPregunta);
+            //Debug.Log("Dificultad aleatoria elegida: " + dificultadPregunta);
+
+            UIController ui = FindFirstObjectByType<UIController>();
+            if (ui != null )
+            {
+                ui.ShowTextLoading();
+            }
             aiService.PedirPregunta(modeloPregunta, modeloRespuesta, temaPregunta, dificultadPregunta);
         }
         else

@@ -8278,6 +8278,7 @@ MonoBehaviour:
   modelPregunta: {fileID: 1624890995}
   promptText: {fileID: 42866845}
   inputNombre: {fileID: 612372490}
+  buttonStartGame: {fileID: 339074469}
   descriptorJug: []
   botonesFichas:
   - {fileID: 18687595}

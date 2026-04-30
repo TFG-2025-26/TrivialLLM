@@ -13,9 +13,9 @@ public class AITurnManager : MonoBehaviour
     private PieceMovement currentAIPiece;
     private DiceTrows diceController;
 
-    private bool isAITurnActive = false;
+    // private bool isAITurnActive = false;
+    private bool diceThrown = false;
     private bool isChoosingDestination = false;
-    private bool hasFinishedMoving = false;
     private int currentTurnTicket = -1;
 
     [SerializeField] private SquareNode centralNode;
@@ -33,16 +33,15 @@ public class AITurnManager : MonoBehaviour
             return;
         }
 
-        int currentTurnIndex = gameManager.GetTurnoIndex();
+        int currentTurnIndex = gameManager.GetTurnoAbsoluto();
         DescriptorJugador currentPlayer = gameManager.getJugTurnoActual();
 
         // Si el turno cambia en el GameManager, resetear todos los bloqueos de la IA
         if (currentTurnTicket != currentTurnIndex)
         {
             currentTurnTicket = currentTurnIndex;
-            isAITurnActive = false;
+            diceThrown = false;
             isChoosingDestination = false;
-            hasFinishedMoving = false;
         }
 
         // Si es el turno de la IA
@@ -50,15 +49,15 @@ public class AITurnManager : MonoBehaviour
         {
             // Lanzar dado al principio del turno
             // Solo entra si no ha empezado el turno y el dado no se ha lanzado
-            if(!isAITurnActive && !gameManager.IsDiceThrown())
+            if(!diceThrown && !gameManager.IsDiceThrown())
             {
-                isAITurnActive = true;
+                diceThrown = true;
                 StartCoroutine(StartAITurn(currentPlayer));
             }
 
             // Elegir el destino
             // Entra cuando ya se ha tirado el dado pero no ha seleccionado una casilla a la que moverse
-            if (isAITurnActive && gameManager.IsDiceThrown() && !gameManager.getSelectedStatus() && !isChoosingDestination)
+            if (diceThrown && gameManager.IsDiceThrown() && !gameManager.getSelectedStatus() && !isChoosingDestination)
             {
                 isChoosingDestination = true;
                 StartCoroutine(ChooseDestination(currentPlayer));
@@ -70,11 +69,19 @@ public class AITurnManager : MonoBehaviour
     {
         Debug.Log($"Iniciando turno de IA: {jugIA.nombre}");
 
+        // Bloquear boton del dado
+        if (diceController != null && diceController.botonLanzar != null)
+        {
+            diceController.botonLanzar.interactable = false;
+        }
         // Esperar unos segundos para dar fluidez visual al cambio de turno
         yield return new WaitForSeconds(1.5f);
 
         // Lanzar el dado automaticamente
-        diceController.ReleaseNumberAutomatic();
+        if (diceController != null)
+        {
+            diceController.ReleaseNumberAutomatic();
+        }
     }
 
     IEnumerator ChooseDestination(DescriptorJugador jugIA)
@@ -83,7 +90,7 @@ public class AITurnManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         // Pieza de la IA actual en la escena
-        currentAIPiece = FindAIPiece(jugIA.fichaIndex);
+        currentAIPiece = FindAIPiece(gameManager.GetTurnoIndex());
 
         if (currentAIPiece != null)
         {
@@ -99,6 +106,8 @@ public class AITurnManager : MonoBehaviour
             {
                 Debug.LogWarning("La IA no tiene movimientos posibles");
                 gameManager.wasteMovement();
+                gameManager.setSelectedStatus(false);
+                gameManager.cleanDstBoard();
                 gameManager.sigTurno();
             }
         }
@@ -202,5 +211,12 @@ public class AITurnManager : MonoBehaviour
             if (piece.turnoIndex == index) return piece;
         }
         return null;
+    }
+
+    // Permite un nuevo movimiento dentro del mismo turno si ha caido en dados y "tira otra vez"
+    public void AllowNewMovement()
+    {
+        isChoosingDestination = false;
+        Debug.Log("La IA ha caido en dados. Desbloqueando nueva eleccion de destino");
     }
 }

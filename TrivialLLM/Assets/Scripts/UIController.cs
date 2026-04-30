@@ -31,13 +31,20 @@ public class UIController : MonoBehaviour
 
     public AIService ai;
     private int respuestaCorrecta;
+
+    [Header("UI del tablero")]
+    public TextMeshProUGUI textWaiting;
+    private Coroutine animationLoading;
     //private bool esTurnoHumano;
 
     private void Start()
     {
         // Panel de preguntas aparece apagado
         if(quizPanel != null) quizPanel.SetActive(false);
-        ai=GameObject.Find("AIService").GetComponent<AIService>();
+        // Texto de esperar aparece apagado
+        if (textWaiting != null) textWaiting.gameObject.SetActive(false);
+
+        ai =GameObject.Find("AIService").GetComponent<AIService>();
         ai.uiController = this; 
     }
     public void MostrarPregunta(PreguntaOpciones p)
@@ -49,12 +56,21 @@ public class UIController : MonoBehaviour
             return;
         }
 
+        // Apagar animacion
+        if (animationLoading != null)
+        {
+            StopCoroutine(animationLoading);
+            animationLoading = null;
+        }
+
+        if(textWaiting != null) textWaiting.gameObject.SetActive(false);
+
         // Mostrar panel del quiz
         quizPanel.SetActive(true);
         textPregunta.text = p.pregunta;
 
         DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
-        Debug.Log($"Turno de: {jugActual.nombre} | ¿Es humano?: {jugActual.esHumano}");
+        //Debug.Log($"Turno de: {jugActual.nombre} | ¿Es humano?: {jugActual.esHumano}");
 
         // Mostrar tema y modelo que pregunta
         if (textTema != null && ai != null)
@@ -98,7 +114,7 @@ public class UIController : MonoBehaviour
 
     private IEnumerator EsperarYContestarIA()
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(3.0f);
         MandarPregunta();
     }
 
@@ -132,7 +148,7 @@ public class UIController : MonoBehaviour
     {
         if(textRespuesta != null)
         {
-            textRespuesta.text = index + ") " + botonesOpciones[index].GetComponentInChildren<TextMeshProUGUI>().text;
+            textRespuesta.text = /*index + ") " + */botonesOpciones[index].GetComponentInChildren<TextMeshProUGUI>().text;
         }
 
         StartCoroutine(MostrarResultadoVisual(index));
@@ -211,7 +227,7 @@ public class UIController : MonoBehaviour
         }
 
         // Esperar para ver el resultado
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(3.0f);
 
         // Desactivar el panel del quiz y pasar el turno
         quizPanel.SetActive(false);
@@ -219,16 +235,26 @@ public class UIController : MonoBehaviour
         // Borrar texto de la pregunta y  de respuesta de la IA
         if (textPregunta != null) textPregunta.text = "";
         if (textRespuesta != null) textRespuesta.text = "";
-        if (GameManager.GetInstance() != null) GameManager.GetInstance().sigTurno();
-        ActualizarIndicadoresTurno();
 
-        // Activar boton de lanzar el dado
-
+        // Resetear el dado y el estado de movimiento antes de cambiar de turno
         DiceTrows dadoUI = FindFirstObjectByType<DiceTrows>();
         if (dadoUI != null)
         {
             dadoUI.ActivarBotonLanzar();
         }
+
+        if (GameManager.GetInstance() != null)
+        {
+            GameManager.GetInstance().wasteMovement();
+            GameManager.GetInstance().setSelectedStatus(false);
+            GameManager.GetInstance().cleanDstBoard();
+        }
+
+        if (GameManager.GetInstance() != null)
+        {
+            GameManager.GetInstance().sigTurno();
+        }
+        ActualizarIndicadoresTurno();
     }
 
     public void ActualizarIndicadoresTurno()
@@ -249,6 +275,33 @@ public class UIController : MonoBehaviour
                 fichasMarcadores[i].SetTurnoActivo(esTurno);
             }
 
+        }
+    }
+
+    public void ShowTextLoading()
+    {
+        if (textWaiting != null)
+        {
+            textWaiting.gameObject.SetActive(true);
+            if(animationLoading != null) StopCoroutine(animationLoading);
+            animationLoading = StartCoroutine(StartAnimationLoading());
+        }
+    }
+
+    private IEnumerator StartAnimationLoading()
+    {
+        string baseText = "Esperando pregunta";
+        int dots = 0;
+
+        while (true)
+        {
+            string textDots = new string('.', dots);
+            textWaiting.text = baseText + textDots;
+
+            dots++;
+            if (dots > 3) dots = 0;
+
+            yield return new WaitForSeconds(0.4f);
         }
     }
 }

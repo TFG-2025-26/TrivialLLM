@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public TMP_Dropdown modelPregunta;
     public TMP_InputField promptText;
     public TMP_InputField inputNombre;
+    public Button buttonStartGame;
 
     //public UIController uiController;
 
@@ -91,6 +92,10 @@ public class GameManager : MonoBehaviour
             {
                 modelPregunta.gameObject.SetActive(false);
             }
+            if (buttonStartGame != null)
+            {
+                buttonStartGame.interactable = false;
+            }
             // currentMode = GameMode.AIGame;
         }
         else
@@ -127,6 +132,15 @@ public class GameManager : MonoBehaviour
 
     // Metodo que se asigna a los botones de las fichas en la UI
     // 0 al 5 (6 botones(
+
+    private void CheckStartButton()
+    {
+        if (buttonStartGame != null)
+        {
+            // El boton solo es interactuable cuando el num de jugadores total es mayor que 0
+            buttonStartGame.interactable = (numTotalJugadores > 0);
+        }
+    }
     public void ClickEnFicha(int index)
     {
         if (fichasOcupadas[index]) return; // si la ha seleccionado otro jugador
@@ -277,6 +291,8 @@ public class GameManager : MonoBehaviour
             numTotalJugadores++;
             textoNumHumanos.text = numJugHumanos.ToString();
 
+            CheckStartButton();
+
             fichasOcupadas[fichaSeleccionadaActual] = true;
             fichaSeleccionadaActual = -1;
             ActualizarVisualBotonesFichas();
@@ -379,9 +395,11 @@ public class GameManager : MonoBehaviour
                 numTotalJugadores++;
                 if (textoNumLLMS != null) textoNumLLMS.text = numLLMS.ToString();
 
+                CheckStartButton();
+
                 gameObject.GetComponent<AudioSource>().Play();
                 MostrarMensaje(nombreValido + " registrado correctamente");
-                Debug.Log("LLM registrado correctamente: " + nombreValido);
+                //Debug.Log("LLM registrado correctamente: " + nombreValido);
 
                 if (inputNombre != null) inputNombre.text = "";
                 if (promptText != null) promptText.text = "";
@@ -429,6 +447,8 @@ public class GameManager : MonoBehaviour
                     numJugHumanos--;
                     numTotalJugadores--;
                     textoNumHumanos.text= numJugHumanos.ToString();
+
+                    CheckStartButton();
                 }
                 else
                 {
@@ -457,6 +477,8 @@ public class GameManager : MonoBehaviour
                     {
                         panelLLM.SetActive(false);
                     }
+
+                    CheckStartButton();
                 }
                 else
                 {
@@ -506,6 +528,11 @@ public class GameManager : MonoBehaviour
     {
         if(numTotalJugadores == 0) return 0;
         return (turno - 1) % numTotalJugadores;
+    }
+
+    public int GetTurnoAbsoluto()
+    {
+        return turno;
     }
 
     public void setTurnMoves(int moves)

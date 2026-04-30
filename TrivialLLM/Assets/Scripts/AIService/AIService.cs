@@ -194,7 +194,7 @@ Responde SOLO con el índice (0-3).
         {
             
             string responseText = www.downloadHandler.text;
-            Debug.Log("LLM: " + responseText);
+           // Debug.Log("LLM: " + responseText);
 
             if(responseText.Contains("\"error\""))
             {
@@ -217,7 +217,7 @@ Responde SOLO con el índice (0-3).
                 string cleanAnswer = responseText.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "");
                 if (int.TryParse(cleanAnswer, out int indexRespuesta))
                 {
-                    Debug.Log("AIService");
+                    //Debug.Log("AIService");
                     callback?.Invoke(indexRespuesta);
                    // GameManager.GetInstance().sigTurno();
                 }
