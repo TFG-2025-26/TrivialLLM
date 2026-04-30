@@ -171,29 +171,41 @@ public class AITurnManager : MonoBehaviour
         {
             // Lista para guardar destinos validos (que no sean dados)
             List<SquareNode> validDestinations = new List<SquareNode>();
+            SquareNode squareDice = null;   
 
+            // Buscar quesitos que falten o casilla de dados
             foreach (var node in options)
             {
-                // Evitar caer en la casilla de dados si es posible
-                if (node.topic != TrivialTopic.Dados)
+                if (node.topic == TrivialTopic.Dados)
+                {
+                    squareDice = node;
+                    continue;
+                }
+
+                // Si no es centro ni dados, comprobar si le falta el quesito
+                if (node.topic != TrivialTopic.FinalCentro && node.topic != TrivialTopic.Dados)
                 {
                     validDestinations.Add(node);
 
-                    if(node.topic != TrivialTopic.FinalCentro)
+                    string topic = node.getTopicString();
+                    if(!fichaStatus.HaveWedge(topic))
                     {
-                        string topic = node.getTopicString();
-                        if(!fichaStatus.HaveWedge(topic))
-                        {
-                            return node;
-                        }
+                        // Prioridad si no tiene el quesito
+                        return node;
                     }
+                    
                 }
             }
 
             // Si llega aqui es porque ya tiene los quesitos de todos los destinos posibles
             // o todos los destinos son dados
 
-            // Si hay destinos validos, que no sean dados, escoger uno al azar para otorgar variedad
+            // Si hay casilla de dados disponible, la escoge
+            if (squareDice != null)
+            {
+                return squareDice;
+            }
+            // Escoger uno al azar para otorgar variedad
             if (validDestinations.Count > 0)
             {
                 selectedNode = validDestinations[UnityEngine.Random.Range(0, validDestinations.Count)];

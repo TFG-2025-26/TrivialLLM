@@ -367,7 +367,8 @@ public class GameManager : MonoBehaviour
             quienResponde = (AIService.Models)modelRespuesta.value;
 
         string rol = promptText.text;
-        
+
+        ShowLoadingMessage("Registrando jugador. Puede tardar unos segundos.");
 
         StartCoroutine(
             GameObject.Find("AIService")
@@ -377,6 +378,7 @@ public class GameManager : MonoBehaviour
                 if(perfil == null)
                 {
                     Debug.LogError("Perfil nulo, LLM no registrado");
+                    MostrarMensaje("Error al registrar LLM");
                     return;
                 }
 
@@ -421,6 +423,16 @@ public class GameManager : MonoBehaviour
             textConfirmacion.text = mensaje;
             textConfirmacion.gameObject.SetActive(true);
             StartCoroutine(OcultarTexto(1.5f));
+        }
+    }
+
+    private void ShowLoadingMessage(string mensaje)
+    {
+        if (textConfirmacion != null)
+        {
+            StopAllCoroutines();
+            textConfirmacion.text = mensaje;
+            textConfirmacion.gameObject.SetActive(true);
         }
     }
     // Corrutina para desactivar el texto despues de X segundos

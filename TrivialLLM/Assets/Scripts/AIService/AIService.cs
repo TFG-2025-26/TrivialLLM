@@ -6,10 +6,11 @@ using UnityEngine.Networking;
 
 public class AIService : MonoBehaviour
 {
-    private const string BASE_URL = "http://127.0.0.1:8000";
-    // si lo subo a un servidor https://mi-backend.com/trivial
+    // LOCAL
+    //private const string BASE_URL = "http://127.0.0.1:8000";
 
-    //private const string url = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net/trivial";
+    // SERVIDOR AZURE
+    private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";
 
     private string urlTrivial => BASE_URL + "/trivial";
     private string urlProfile => BASE_URL + "/profile";
@@ -75,6 +76,7 @@ public class AIService : MonoBehaviour
                 - Varía el estilo: puede ser de opción múltiple directa, de deducción, de comparación, curiosidades...
                 - Añade un toque creativo o curioso para que no se repita
                 - Usa la semilla de variación: {seed}
+                
 
             Devu�lveme SOLO un JSON v�lido con este formato exacto:
 
@@ -144,8 +146,8 @@ Responde SOLO con el índice (0-3).
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("❌ ERROR PERFIL: " + www.error);
-            Debug.LogError("❌ BODY: " + www.downloadHandler.text);
+            Debug.LogError("ERROR PERFIL: " + www.error);
+            Debug.LogError("BODY: " + www.downloadHandler.text);
             yield break;
         }
 
