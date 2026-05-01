@@ -2,6 +2,9 @@
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using NUnit.Framework;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class UIController : MonoBehaviour
 {
@@ -35,6 +38,11 @@ public class UIController : MonoBehaviour
     [Header("UI del tablero")]
     public TextMeshProUGUI textWaiting;
     private Coroutine animationLoading;
+
+    private bool isFinalRound = false;
+    private int numCorrectAnswerFinal = 0;
+    private int currentQuestionFinal = 0;
+    private List<string> topicsFinalRound = new List<string>();
     //private bool esTurnoHumano;
 
     private void Start()
@@ -114,7 +122,7 @@ public class UIController : MonoBehaviour
 
     private IEnumerator EsperarYContestarIA()
     {
-        yield return new WaitForSeconds(3.0f);
+        yield return new WaitForSeconds(5.0f);
         MandarPregunta();
     }
 
@@ -198,6 +206,9 @@ public class UIController : MonoBehaviour
             imgBotonElegido.sprite = spriteBotonCorrecto;
             gameObject.GetComponent<AudioSource>().PlayOneShot(sonidoCorrecto);
 
+            // Si es ronda final, se suma acierto
+            if (isFinalRound) numCorrectAnswerFinal++;
+
             // Siguiente turno
             int turnoIndex = 0;
             if (GameManager.GetInstance() != null) turnoIndex = GameManager.GetInstance().GetTurnoIndex();
@@ -229,13 +240,45 @@ public class UIController : MonoBehaviour
         // Esperar para ver el resultado
         yield return new WaitForSeconds(3.0f);
 
-        // Desactivar el panel del quiz y pasar el turno
-        quizPanel.SetActive(false);
+
 
         // Borrar texto de la pregunta y  de respuesta de la IA
         if (textPregunta != null) textPregunta.text = "";
         if (textRespuesta != null) textRespuesta.text = "";
 
+        if (isFinalRound)
+        {
+            currentQuestionFinal++;
+            if(currentQuestionFinal < 6)
+            {
+                // Quedan preguntas, pasar a la siguiente
+                NextQuestionFinalRound();
+                yield break;
+            }
+            else
+            {
+                // Terminan las 6 preguntas. Comprobar si ha ganado.
+                quizPanel.SetActive(true);
+
+                if (numCorrectAnswerFinal >= 4)
+                {
+                    textPregunta.text = $"¡Victoria! Has acertado {numCorrectAnswerFinal} de 6.\n¡{GameManager.GetInstance().getJugTurnoActual().nombre} gana la partida!";
+
+                    yield return new WaitForSeconds(4.0f);
+                    SceneManager.LoadScene("EndScene");
+                    yield break;
+                }
+                else
+                {
+                    textPregunta.text = $"Ronda fallida. Has acertado {numCorrectAnswerFinal} de 6.\nSe necesitan al menos 4. ¡Inténtalo en el próximo turno!";
+                    yield return new WaitForSeconds(3.0f);
+                    isFinalRound = false;
+                }
+            }
+        }
+
+        // Desactivar el panel del quiz y pasar el turno
+        quizPanel.SetActive(false);
         // Resetear el dado y el estado de movimiento antes de cambiar de turno
         DiceTrows dadoUI = FindFirstObjectByType<DiceTrows>();
         if (dadoUI != null)
@@ -303,5 +346,30 @@ public class UIController : MonoBehaviour
 
             yield return new WaitForSeconds(0.4f);
         }
+    }
+
+    public void StartFinalRound()
+    {
+        isFinalRound = true;
+        numCorrectAnswerFinal = 0;
+        currentQuestionFinal = 0;
+
+        // Cargar las 6 categorias
+        topicsFinalRound = new List<string> { "Ciencias", "Geografia", "Historia", "Arte y Literatura", "Deportes y Pasatiempos", "Entretenimiento" };
+
+        NextQuestionFinalRound();
+    }
+
+    private void NextQuestionFinalRound()
+    {
+        string topic = topicsFinalRound[currentQuestionFinal];
+        string[] dificultades = { "Facil", "Media", "Dificil" };
+        string dificultadPregunta = dificultades[Random.Range(0, dificultades.Length)];
+
+        DescriptorJugador jug = GameManager.GetInstance().getJugTurnoActual();
+        Debug.Log($"Ronda Final ({currentQuestionFinal + 1}/6) para {jug.nombre}: Tema {topic}, Dificultad {dificultadPregunta}");
+
+        // Pedir pregunta 
+        ai.PedirPregunta(jug.modeloPreguntas, jug.modelo, topic, dificultadPregunta);
     }
 }

@@ -83,6 +83,14 @@ public class PieceMovement : MonoBehaviour
         }
         // Pruebas con input
 
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            UIController uiController = FindFirstObjectByType<UIController>();
+            if (uiController != null)
+            {
+                uiController.StartFinalRound();
+            }
+        }
         // Comprobar el input y si la casilla actual tiene una conexion en esa direccion
         /*if(Input.GetKeyDown(KeyCode.W) && actualSquare.centre != null)
         {
@@ -165,12 +173,27 @@ public class PieceMovement : MonoBehaviour
             
             string temaPregunta = actualSquare.getTopicString();
 
-            // Si ha caido en el centro y aun no tiene todos los quesitos, elige un tema aleatorio
+            // Si ha caido en el centro
             if (actualSquare.topic == TrivialTopic.FinalCentro)
             {
-                string[] temas = { "Ciencias", "Geografia", "Historia", "Arte y Literatura", "Deportes y Pasatiempos", "Entretenimiento" };
-                temaPregunta = temas[UnityEngine.Random.Range(0, temas.Length)];
-                Debug.Log("Tema aleatorio elegido: " + temaPregunta);
+                // Si tiene todos los quesitos, empieza la ronda final
+                if (ficha != null && ficha.HaveAllWedges())
+                {
+                    UIController uiController = FindFirstObjectByType<UIController>();
+                    if(uiController != null)
+                    {
+                        uiController.StartFinalRound();
+                    }
+                    yield break;
+                }
+                else
+                {
+                    // Si aun no tiene todos, se hace una pregunta aleatoria
+                    string[] temas = { "Ciencias", "Geografia", "Historia", "Arte y Literatura", "Deportes y Pasatiempos", "Entretenimiento" };
+                    temaPregunta = temas[UnityEngine.Random.Range(0, temas.Length)];
+                    Debug.Log("Tema aleatorio elegido: " + temaPregunta);
+                }
+
             }
 
             // Obtener datos del jugador actual
