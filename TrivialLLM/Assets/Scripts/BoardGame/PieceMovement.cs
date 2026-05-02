@@ -3,6 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+
+public class PathInfo
+{
+    public SquareNode destination;
+    public List<SquareNode> path;
+}
 public class PieceMovement : MonoBehaviour
 {
 
@@ -20,8 +26,11 @@ public class PieceMovement : MonoBehaviour
     private bool dstShown = false;
     private bool dstSelected = false;
     List<SquareNode> posibilities = new List<SquareNode>();
+    List<PathInfo> posiblePaths= new List<PathInfo>();
 
     FichaTrivial ficha;
+
+
 
     void Start()
     {
@@ -43,7 +52,8 @@ public class PieceMovement : MonoBehaviour
 
         if(!dstShown&&GameManager.GetInstance().IsDiceThrown()) {
             int movesLeft = GameManager.GetInstance().getRemainingMoves();
-            posibilities = GetPossibleDestinations(actualSquare, movesLeft);
+            GetPossibleDestinations(actualSquare, movesLeft);
+            
             saveDestinations(posibilities);
             GameManager.GetInstance().showPosibleDestinations();
             dstShown = true;
@@ -56,29 +66,33 @@ public class PieceMovement : MonoBehaviour
             
             GameManager.GetInstance().setSelectedStatus(false);
             GameManager.GetInstance().cleanDstBoard(); //borrar las listas y objetos del tablero
-
-            StartCoroutine(MovePiece(target));
+            int i = 0;
+            while (i<posiblePaths.Count && target != posiblePaths[i].destination)
+            {
+                i++;
+            }
+            StartCoroutine(MovePiece(posiblePaths[i].path));
             return;
         }
 
         if(posibilities.Count>=1&& Input.GetKeyDown(KeyCode.Alpha1))
         {
-            StartCoroutine(MovePiece(posibilities[0]));
+            StartCoroutine(MovePiece(posiblePaths[0].path));
             GameManager.GetInstance().cleanDstBoard();
         }
         else if (posibilities.Count >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
         {
-            StartCoroutine(MovePiece(posibilities[1]));
+            StartCoroutine(MovePiece(posiblePaths[1].path));
             GameManager.GetInstance().cleanDstBoard();
         }
         else if (posibilities.Count >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
         {
-            StartCoroutine(MovePiece(posibilities[2]));
+            StartCoroutine(MovePiece(posiblePaths[2].path));
             GameManager.GetInstance().cleanDstBoard();
         }
         else if (posibilities.Count >= 4 && Input.GetKeyDown(KeyCode.Alpha4))
         {
-            StartCoroutine(MovePiece(posibilities[3]));
+            StartCoroutine(MovePiece(posiblePaths[3].path));
             GameManager.GetInstance().cleanDstBoard();
         }
         // Pruebas con input
@@ -111,33 +125,38 @@ public class PieceMovement : MonoBehaviour
 
     }
 
-    IEnumerator MovePiece(SquareNode targetSquare)
+    IEnumerator MovePiece(List<SquareNode> targetPath)
     {
 
-       
+
         //if (movesLeft > 0)
         //{
         //GameManager.GetInstance().wasteMovement();
         //GameManager.GetInstance().showPosibleDestinations();
-        
-        //isMoving = true;
-
-        // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
-        Vector3 targetPos = new Vector3(targetSquare.transform.position.x, transform.position.y, targetSquare.transform.position.z);
-
-        // Mover la ficha poco a poco
-        while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+        foreach (SquareNode actNod in targetPath)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-            yield return null; // Esperar al siguiente frame
-        }
+            //isMoving = true;
 
-        // Ajustar al final 
-        transform.position = targetPos;
-        actualSquare = targetSquare;
+            // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
+            Vector3 targetPos = new Vector3(actNod.transform.position.x, transform.position.y, actNod.transform.position.z);
+
+            // Mover la ficha poco a poco
+            while (Vector3.Distance(transform.position, targetPos) > 0.01f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+                yield return null; // Esperar al siguiente frame
+            }
+
+            // Ajustar al final 
+            transform.position = targetPos;
+            actualSquare = actNod;
+        }
         isMoving = false;
         dstShown = false;
+        clearPaths();
         GameManager.GetInstance().wasteMovement();
+
+        //borrar lista de caminos
 
         // Comprobar si se ha llegado al radio exterior por primera vez desde la casilla de salida central
         // Si la casilla tiene conexiones a los lados
@@ -248,19 +267,25 @@ public class PieceMovement : MonoBehaviour
             }
         }
         SearchDestinations(initialNode, moves, visited, results);
-
-        return results;
+        foreach (PathInfo path in posiblePaths)
+        {
+            posibilities.Add(path.destination);
+        }
+        return posibilities;
     }
 
-    void SearchDestinations(SquareNode current, int movesLeft, HashSet<SquareNode> visited, List<SquareNode> results)
+    void SearchDestinations(SquareNode current, int movesLeft, HashSet<SquareNode> visited, List<SquareNode> actPath)
     {
        // Debug.Log($"Visitando: {current.gameObject.name} | Pasos restantes: {movesLeft}");
         visited.Add(current);
+        List<SquareNode> pathAtm = new List<SquareNode>(actPath);
+        pathAtm.Add(current);
 
         // Caso base
         if (movesLeft == 0)
         {
-            if (!results.Contains(current)) results.Add(current);
+            //if (!results.Contains(current)) results.Add(current);
+            posiblePaths.Add(new PathInfo { destination = current, path = pathAtm });
             visited.Remove(current); // Limpiamos al salir para otras ramas
             return;
         }
@@ -280,10 +305,15 @@ public class PieceMovement : MonoBehaviour
                 {
                     continue;
                 }
-                SearchDestinations(nei, movesLeft - 1, visited, results);
+                SearchDestinations(nei, movesLeft - 1, visited, pathAtm);
             }
         }
 
         visited.Remove(current);
+    }
+
+    void clearPaths()
+    {
+        posiblePaths.Clear();
     }
 }
