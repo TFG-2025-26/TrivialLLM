@@ -242,9 +242,15 @@ public class UIController : MonoBehaviour
 
 
 
-        // Borrar texto de la pregunta y  de respuesta de la IA
+        // Borrar texto de la pregunta, de respuesta y de las opciones
         if (textPregunta != null) textPregunta.text = "";
         if (textRespuesta != null) textRespuesta.text = "";
+
+        foreach (var boton in botonesOpciones)
+        {
+            boton.GetComponentInChildren<TextMeshProUGUI>().text = "";
+            boton.GetComponent<Image>().sprite = spriteBotonNormal;
+        }
 
         if (isFinalRound)
         {

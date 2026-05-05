@@ -63,46 +63,62 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if(instance == null)
+        if (instance != null && instance != this)
         {
+            // Si el gamemanager nuevo tiene asignado el boton de inicio, estamos en el menu de configuracion
+            if (this.buttonStartGame != null)
+            {
+                // Se acaba de terminar una partida
+                // Destruir el gamemanger viejo para limpiar toda la informacion anterior
+                Destroy(instance.gameObject);
+
+                // Asignar el nuevo gamemanager
+                instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                // En otra escena hay un gamemanager duplicado por error, se destruye
+                Destroy(gameObject);
+                return;
+            }
+        }
+        else if (instance == null)
+        {
+            // Es la primera vez que se abre el juego
             instance = this;
             DontDestroyOnLoad(gameObject);
-            numJugHumanos = 0;
-            numLLMS = 0;
-           // numLLMSRegistrados = 0;
-            numTotalJugadores = 0;
-            turno = 1;
-            descriptorJug = new List<DescriptorJugador>();
-            fichaSeleccionadaActual = -1;        
-            fichasOcupadas = new bool[6];
+        }
 
-            if (panelLLM != null )
-            {
-                panelLLM.gameObject.SetActive(false);
-            }
-            if (panelHumano != null)
-            {
-                panelHumano.gameObject.SetActive(false);
-            }
-            if (inputNombre != null)
-            {
-                inputNombre.gameObject.SetActive(false);
-            }
-            if (modelPregunta != null)
-            {
-                modelPregunta.gameObject.SetActive(false);
-            }
-            if (buttonStartGame != null)
-            {
-                buttonStartGame.interactable = false;
-            }
-            // currentMode = GameMode.AIGame;
-        }
-        else
+        // Inicializacion de variables y limpieza de nueva partida
+        numJugHumanos = 0;
+        numLLMS = 0;
+        numTotalJugadores = 0;
+        turno = 1;
+        descriptorJug = new List<DescriptorJugador>();
+        fichaSeleccionadaActual = -1;        
+        fichasOcupadas = new bool[6];
+
+        if (panelLLM != null )
         {
-            Destroy(gameObject);
+            panelLLM.gameObject.SetActive(false);
         }
-        
+        if (panelHumano != null)
+        {
+            panelHumano.gameObject.SetActive(false);
+        }
+        if (inputNombre != null)
+        {
+            inputNombre.gameObject.SetActive(false);
+        }
+        if (modelPregunta != null)
+        {
+            modelPregunta.gameObject.SetActive(false);
+        }
+        if (buttonStartGame != null)
+        {
+            buttonStartGame.interactable = false;
+        }
     }
 
     public static GameManager GetInstance()
