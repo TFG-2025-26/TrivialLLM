@@ -11,7 +11,7 @@ public class TestCristina : MonoBehaviour
 
         DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
 
-        Debug.Log("Simulando llegada a casilla para: " + jugActual.nombre);
+        // Debug.Log("Simulando llegada a casilla para: " + jugActual.nombre);
 
         // Pedimos la pregunta. 
         // Usamos Copilot para generar y el modelo del jugador para responder

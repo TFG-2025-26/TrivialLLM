@@ -67,7 +67,7 @@ public class AITurnManager : MonoBehaviour
 
     IEnumerator StartAITurn(DescriptorJugador jugIA)
     {
-        Debug.Log($"Iniciando turno de IA: {jugIA.nombre}");
+        // Debug.Log($"Iniciando turno de IA: {jugIA.nombre}");
 
         // Bloquear boton del dado
         if (diceController != null && diceController.botonLanzar != null)
@@ -104,7 +104,7 @@ public class AITurnManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("La IA no tiene movimientos posibles");
+                // Debug.LogWarning("La IA no tiene movimientos posibles");
                 gameManager.wasteMovement();
                 gameManager.setSelectedStatus(false);
                 gameManager.cleanDstBoard();
@@ -131,7 +131,7 @@ public class AITurnManager : MonoBehaviour
             // Comprobacion de seguridad
             if(centralNode == null)
             {
-                Debug.LogError("Falta asignar la casilla centran en AITurnManager");
+                // Debug.LogError("Falta asignar la casilla centran en AITurnManager");
                 return options[0];
             }
 
@@ -141,7 +141,7 @@ public class AITurnManager : MonoBehaviour
                 // Si alguna opcion es la casilla final (centro), ir directamente
                 if (node.topic == TrivialTopic.FinalCentro)
                 {
-                    Debug.Log("La IA tiene todos los quesitos y llega EXACTA al centro.");
+                    //  Debug.Log("La IA tiene todos los quesitos y llega EXACTA al centro.");
                     return node; // Se queda con la primera casilla que le falte
                 }
 
@@ -229,6 +229,6 @@ public class AITurnManager : MonoBehaviour
     public void AllowNewMovement()
     {
         isChoosingDestination = false;
-        Debug.Log("La IA ha caido en dados. Desbloqueando nueva eleccion de destino");
+        // Debug.Log("La IA ha caido en dados. Desbloqueando nueva eleccion de destino");
     }
 }

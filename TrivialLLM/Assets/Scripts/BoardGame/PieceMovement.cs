@@ -30,8 +30,6 @@ public class PieceMovement : MonoBehaviour
 
     FichaTrivial ficha;
 
-
-
     void Start()
     {
         // Colocar la ficha exactamente en la casilla inicial al darle a Play
@@ -66,45 +64,74 @@ public class PieceMovement : MonoBehaviour
             
             GameManager.GetInstance().setSelectedStatus(false);
             GameManager.GetInstance().cleanDstBoard(); //borrar las listas y objetos del tablero
-            int i = 0;
-            while (i<posiblePaths.Count && target != posiblePaths[i].destination)
+
+            List<SquareNode> selectedPath = null;
+
+            // Buscar la ruta de forma segura
+            foreach (PathInfo p in posiblePaths)
             {
-                i++;
+                if (p.destination == target)
+                {
+                    selectedPath = p.path;
+                    break;
+                }
             }
-            StartCoroutine(MovePiece(posiblePaths[i].path));
+
+            if (selectedPath == null)
+            {
+                if (posiblePaths.Count > 0)
+                {
+                    // Si no encuentra la exacta por desincronizacion, pilla la primera
+                    selectedPath = posiblePaths[0].path;
+                }
+                else
+                {
+                    // Si la lista esta totalmente vacia por la rapidez de la IA, 
+                    // abortamos el movimiento de este fotograma para que recalcule en el siguiente.
+                    isMoving = false;
+                    return;
+                }
+            }
+
+            //int i = 0;
+            //while (i<posiblePaths.Count && target != posiblePaths[i].destination)
+            //{
+            //    i++;
+            //}
+            StartCoroutine(MovePiece(selectedPath));
             return;
         }
 
-        if(posibilities.Count>=1&& Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            StartCoroutine(MovePiece(posiblePaths[0].path));
-            GameManager.GetInstance().cleanDstBoard();
-        }
-        else if (posibilities.Count >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            StartCoroutine(MovePiece(posiblePaths[1].path));
-            GameManager.GetInstance().cleanDstBoard();
-        }
-        else if (posibilities.Count >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            StartCoroutine(MovePiece(posiblePaths[2].path));
-            GameManager.GetInstance().cleanDstBoard();
-        }
-        else if (posibilities.Count >= 4 && Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            StartCoroutine(MovePiece(posiblePaths[3].path));
-            GameManager.GetInstance().cleanDstBoard();
-        }
+        //if(posibilities.Count>=1&& Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    StartCoroutine(MovePiece(posiblePaths[0].path));
+        //    GameManager.GetInstance().cleanDstBoard();
+        //}
+        //else if (posibilities.Count >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    StartCoroutine(MovePiece(posiblePaths[1].path));
+        //    GameManager.GetInstance().cleanDstBoard();
+        //}
+        //else if (posibilities.Count >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    StartCoroutine(MovePiece(posiblePaths[2].path));
+        //    GameManager.GetInstance().cleanDstBoard();
+        //}
+        //else if (posibilities.Count >= 4 && Input.GetKeyDown(KeyCode.Alpha4))
+        //{
+        //    StartCoroutine(MovePiece(posiblePaths[3].path));
+        //    GameManager.GetInstance().cleanDstBoard();
+        //}
         // Pruebas con input
 
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            UIController uiController = FindFirstObjectByType<UIController>();
-            if (uiController != null)
-            {
-                uiController.StartFinalRound();
-            }
-        }
+        //if(Input.GetKeyDown(KeyCode.F))
+        //{
+        //    UIController uiController = FindFirstObjectByType<UIController>();
+        //    if (uiController != null)
+        //    {
+        //        uiController.StartFinalRound();
+        //    }
+        //}
         // Comprobar el input y si la casilla actual tiene una conexion en esa direccion
         /*if(Input.GetKeyDown(KeyCode.W) && actualSquare.centre != null)
         {
@@ -210,7 +237,7 @@ public class PieceMovement : MonoBehaviour
                     // Si aun no tiene todos, se hace una pregunta aleatoria
                     string[] temas = { "Ciencias", "Geografia", "Historia", "Arte y Literatura", "Deportes y Pasatiempos", "Entretenimiento" };
                     temaPregunta = temas[UnityEngine.Random.Range(0, temas.Length)];
-                    Debug.Log("Tema aleatorio elegido: " + temaPregunta);
+                    // Debug.Log("Tema aleatorio elegido: " + temaPregunta);
                 }
 
             }
@@ -221,10 +248,10 @@ public class PieceMovement : MonoBehaviour
             AIService.Models modeloPregunta = jugActual.modeloPreguntas;
             AIService.Models modeloRespuesta = jugActual.modelo;
 
-            Debug.Log($"La ficha de {jugActual.nombre} ha caido en {actualSquare.topic}. Solicitando pregunta a {modeloPregunta}...");
+            //Debug.Log($"La ficha de {jugActual.nombre} ha caido en {actualSquare.topic}. Solicitando pregunta a {modeloPregunta}...");
             string[] dificultades = { "Facil", "Media", "Dificil"};
             string dificultadPregunta = dificultades[UnityEngine.Random.Range(0, dificultades.Length)];
-            Debug.Log("Dificultad aleatoria elegida: " + dificultadPregunta);
+            // Debug.Log("Dificultad aleatoria elegida: " + dificultadPregunta);
 
             UIController ui = FindFirstObjectByType<UIController>();
             if (ui != null )
@@ -235,7 +262,7 @@ public class PieceMovement : MonoBehaviour
         }
         else
         {
-            Debug.LogError("AIService no esta asignado en el script PieceMovement.");
+            // Debug.LogError("AIService no esta asignado en el script PieceMovement.");
         }
     }
 
@@ -252,6 +279,9 @@ public class PieceMovement : MonoBehaviour
     //BFS para que busque las casillas a x distancia
     public List<SquareNode> GetPossibleDestinations(SquareNode initialNode, int moves)
     {
+        posibilities.Clear();
+        posiblePaths.Clear();
+
         List<SquareNode> results = new List<SquareNode>();
         HashSet<SquareNode> visited = new HashSet<SquareNode>();
 
@@ -315,5 +345,6 @@ public class PieceMovement : MonoBehaviour
     void clearPaths()
     {
         posiblePaths.Clear();
+        posibilities.Clear();
     }
 }

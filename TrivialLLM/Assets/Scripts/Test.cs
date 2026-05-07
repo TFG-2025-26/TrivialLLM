@@ -16,7 +16,7 @@ public class Test : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Test activo");
+       // Debug.Log("Test activo");
     }
 
     public void onClick()
@@ -70,8 +70,8 @@ public class Test : MonoBehaviour
                 return AIService.Models.Copilot;
             case "ChatGPT":
                 return AIService.Models.ChatGPT;
-            case "Azure":
-                return AIService.Models.Azure;
+            //case "Azure":
+            //    return AIService.Models.Azure;
             default:
                 return AIService.Models.Copilot;
         }

@@ -18,7 +18,7 @@ public class AIService : MonoBehaviour
     public UIController uiController;
     public GameManager gameManager;
 
-    public enum Models {Gemini,Copilot,ChatGPT, Azure};
+    public enum Models {Gemini,Copilot,ChatGPT};
 
     public Models modeloPregunta;
     public Models modeloRespuesta;
@@ -132,7 +132,7 @@ Responde SOLO con el índice (0-3).
         string jsonBody = JsonUtility.ToJson(req);
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonBody);
 
-        Debug.Log("ENVIANDO PERFIL: " + jsonBody);
+      //  Debug.Log("ENVIANDO PERFIL: " + jsonBody);
 
         UnityWebRequest www = new UnityWebRequest(urlProfile, "POST");
         www.uploadHandler = new UploadHandlerRaw(bodyRaw);
@@ -141,13 +141,13 @@ Responde SOLO con el índice (0-3).
 
         yield return www.SendWebRequest();
 
-        Debug.Log("RESULTADO: " + www.result);
-        Debug.Log("RESPUESTA: " + www.downloadHandler.text);
+        //Debug.Log("RESULTADO: " + www.result);
+        //Debug.Log("RESPUESTA: " + www.downloadHandler.text);
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("ERROR PERFIL: " + www.error);
-            Debug.LogError("BODY: " + www.downloadHandler.text);
+            // Debug.LogError("ERROR PERFIL: " + www.error);
+            // Debug.LogError("BODY: " + www.downloadHandler.text);
             yield break;
         }
 
@@ -159,13 +159,13 @@ Responde SOLO con el índice (0-3).
         }
         catch
         {
-            Debug.LogError(" JSON inválido en perfil");
+            //Debug.LogError(" JSON inválido en perfil");
             yield break;
         }
 
         if (perfil == null)
         {
-            Debug.LogError(" Perfil NULL");
+            //Debug.LogError(" Perfil NULL");
             yield break;
         }
 
@@ -189,7 +189,15 @@ Responde SOLO con el índice (0-3).
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("Error LLM: " + www.error);
+            //Debug.LogError("Error LLM: " + www.error);
+
+            if (model != Models.Copilot)
+            {
+                //Debug.LogWarning($"Fallo de red con {model}. Reintentando automáticamente con Copilot...");
+                yield return StartCoroutine(EnviarPrompt(Models.Copilot, prompt, esPregunta, callback));
+            }
+
+            yield break;
         }
 
         else
@@ -200,13 +208,20 @@ Responde SOLO con el índice (0-3).
 
             if(responseText.Contains("\"error\""))
             {
-                Debug.LogError("Error devuelto por backend: " + responseText);
+                //Debug.LogError("Error devuelto por backend: " + responseText);
+
+                if (model != Models.Copilot)
+                {
+                    //Debug.LogWarning($"Fallo de API (Ej. Cuota excedida) con {model}. Reintentando automáticamente con Copilot...");
+                    yield return StartCoroutine(EnviarPrompt(Models.Copilot, prompt, esPregunta, callback));
+                }
+
                 yield break;
             }
 
             if (esPregunta)
             {
-                Debug.Log("Pregunta generada por: " + model.ToString());
+                //Debug.Log("Pregunta generada por: " + model.ToString());
                 // Asumir que la respuesta es directamente el JSON de PreguntaOpciones
                 PreguntaOpciones pregunta = JsonUtility.FromJson<PreguntaOpciones>(responseText);
 
@@ -215,7 +230,7 @@ Responde SOLO con el índice (0-3).
             }
             else
             {
-                Debug.Log("Respuesta generada por: "+ model.ToString());
+                //Debug.Log("Respuesta generada por: "+ model.ToString());
                 string cleanAnswer = responseText.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "");
                 if (int.TryParse(cleanAnswer, out int indexRespuesta))
                 {
@@ -225,7 +240,7 @@ Responde SOLO con el índice (0-3).
                 }
                 else
                 {
-                    Debug.LogError("No se pudo parsear incluso despues de limpiar: '" + responseText + "'");
+                  //  Debug.LogError("No se pudo parsear incluso despues de limpiar: '" + responseText + "'");
                 }
             }
         }

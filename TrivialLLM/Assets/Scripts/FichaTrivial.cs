@@ -52,7 +52,7 @@ public class FichaTrivial : MonoBehaviour
                 break;
 
             default:
-                Debug.LogWarning("Categoría no reconocida: " + categoria);
+                // Debug.LogWarning("Categoría no reconocida: " + categoria);
                 break;
         }
     }
@@ -101,7 +101,7 @@ public class FichaTrivial : MonoBehaviour
                 return q_rosa != null && q_rosa.activeSelf;
 
             default:
-                Debug.LogWarning("Categoria no reconocida al comprobar quesito: " + topic);
+                // Debug.LogWarning("Categoria no reconocida al comprobar quesito: " + topic);
                 return false;
         }
     }
@@ -118,5 +118,17 @@ public class FichaTrivial : MonoBehaviour
 
         return winGreen && winBlue && winYellow && winPurple && winOrange && winPink;
 
+    }
+
+    public int GetNumQuesitos()
+    {
+        int count = 0;
+        if (q_verde != null && q_verde.activeSelf) count++;
+        if (q_azul != null && q_azul.activeSelf) count++;
+        if (q_amarillo != null && q_amarillo.activeSelf) count++;
+        if (q_morado != null && q_morado.activeSelf) count++;
+        if (q_naranja != null && q_naranja.activeSelf) count++;
+        if (q_rosa != null && q_rosa.activeSelf) count++;
+        return count;
     }
 }

@@ -59,7 +59,7 @@ public class UIController : MonoBehaviour
     {
         if(p == null || p.opciones == null || p.opciones.Length < botonesOpciones.Length)
         {
-            Debug.LogError("Error: La IA no devolvio las opciones correctamente.");
+           // Debug.LogError("Error: La IA no devolvio las opciones correctamente.");
             textPregunta.text = "Error al generar la pregunta. Vuelve a intentarlo";
             return;
         }
@@ -114,7 +114,7 @@ public class UIController : MonoBehaviour
         // La IA responde automaticamente
         if(!jugActual.esHumano)
         {
-            Debug.Log("Turno de la IA: " + jugActual.nombre + ". Contestando automaticamente...");
+          //  Debug.Log("Turno de la IA: " + jugActual.nombre + ". Contestando automaticamente...");
             StartCoroutine(EsperarYContestarIA());
         }
         respuestaCorrecta = p.respuesta_correcta;
@@ -276,9 +276,11 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    textPregunta.text = $"Ronda fallida. Has acertado {numCorrectAnswerFinal} de 6.\nSe necesitan al menos 4. ¡Inténtalo en el próximo turno!";
-                    yield return new WaitForSeconds(3.0f);
-                    isFinalRound = false;
+                    textPregunta.text = $"Ronda fallida. Has acertado {numCorrectAnswerFinal} de 6.\nSe necesitan al menos 4. ¡Inténtalo la proxima vez!";
+                    yield return new WaitForSeconds(4.0f);
+                    SceneManager.LoadScene("EndScene");
+                    yield break;
+                    //isFinalRound = false;
                 }
             }
         }
@@ -373,7 +375,7 @@ public class UIController : MonoBehaviour
         string dificultadPregunta = dificultades[Random.Range(0, dificultades.Length)];
 
         DescriptorJugador jug = GameManager.GetInstance().getJugTurnoActual();
-        Debug.Log($"Ronda Final ({currentQuestionFinal + 1}/6) para {jug.nombre}: Tema {topic}, Dificultad {dificultadPregunta}");
+       // Debug.Log($"Ronda Final ({currentQuestionFinal + 1}/6) para {jug.nombre}: Tema {topic}, Dificultad {dificultadPregunta}");
 
         // Pedir pregunta 
         ai.PedirPregunta(jug.modeloPreguntas, jug.modelo, topic, dificultadPregunta);

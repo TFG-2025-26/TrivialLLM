@@ -73,7 +73,7 @@ public class BoardGameManager : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"Falta asignar el nodo de salida en el indice {datos.fichaIndex} del BoardGameManager.");
+                //Debug.LogError($"Falta asignar el nodo de salida en el indice {datos.fichaIndex} del BoardGameManager.");
             }
 
             // Marcadores interfaz
