@@ -102,21 +102,20 @@ public class AIService : MonoBehaviour
         string weak = p.weakCategories != null ? string.Join(", ", p.weakCategories) : "none";
 
         return $@"
-Eres una IA que responde preguntas tipo test.
+Actúa exactamente como un jugador humano de Trivial con este perfil:
 
 PERFIL DEL JUGADOR:
-- Precisión base: {p.accuracyBase}
-- Categorías fuertes: {strong}
-- Categorías débiles: {weak}
+- Nivel de inteligencia general: {p.accuracyBase} (0.0 es ignorante, 1.0 es experto)
+- Temas que domina: {strong}
+- Temas débiles y que desconoce por completo: {weak}
 
 REGLA CRÍTICA (OBLIGATORIA):
 Debes responder como si lanzaras un dado.
 
 SIMULACIÓN:
-1. Si la categoría es débil → 70% de fallar
-2. Si es fuerte → 70% de acertar
-3. Si accuracyBase < 0.3 → aumenta probabilidad de error
-
+1. Si la pregunta trata sobre tus temas que desconoces ({weak}), DEBES ELEGIR UNA RESPUESTA INCORRECTA OBLIGATORIAMENTE.
+2. Si tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.3, DEBES ELEGIR UNA RESPUESTA INCORRECTA OBLIGATORIAMENTE.
+3. Si la pregunta trata sobre tus temas dominados ({strong}), elige la opcion correcta.
 IMPORTANTE:
 NO intentes ser correcto siempre.
 Tu objetivo es simular comportamiento humano imperfecto.
