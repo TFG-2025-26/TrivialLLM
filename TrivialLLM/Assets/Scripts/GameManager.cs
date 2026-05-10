@@ -129,6 +129,17 @@ public class GameManager : MonoBehaviour
         return instance;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #else
+                Application.Quit();
+            #endif
+        }
+    }
     // Establece el modo de juego desde los botones del menu principal
     //public void SetGameMode(GameMode mode)
     //{
