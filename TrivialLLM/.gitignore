@@ -100,3 +100,8 @@ InitTestScene*.unity*
 
 Assets/KeySecrets/
 
+# Backend Python del juego
+TrivialBackend/__pycache__/
+TrivialBackend/venv/
+TrivialBackend/*.pyc
+TrivialBackend/config.txt
