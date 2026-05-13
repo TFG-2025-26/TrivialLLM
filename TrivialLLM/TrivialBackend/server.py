@@ -24,7 +24,7 @@ config = load_config("config.txt")
 
 print("✅ CONFIG CARGADO CORRECTAMENTE")
 
-required_keys = ["AZURE_ENDPOINT","AZURE_API_KEY", "GEMINI_API_KEY","GEMINI_URL", "CHATGPT_API_KEY","CHATGPT_URL"]
+required_keys = ["AZURE_ENDPOINT","AZURE_API_KEY","AZURE_GPT_ENDPOINT" "GEMINI_API_KEY","GEMINI_URL", "CHATGPT_API_KEY","CHATGPT_URL"]
 
 for key in required_keys:
     if key in config and config[key]:
@@ -39,7 +39,7 @@ AZURE_ENDPOINT = config["AZURE_ENDPOINT"]
 
 AZURE_API_KEY = config["AZURE_API_KEY"]
 
-AZURE_GPT_ENDPOINT = "https://tfg-trivial-openai.openai.azure.com/openai/deployments/gpt-5.2-chat/chat/completions?api-version=2025-01-01-preview"
+AZURE_GPT_ENDPOINT = config["AZURE_GPT_ENDPOINT"]
 
 #Configuracion de Gemini Cristina
 GEMINI_API_KEY = config["GEMINI_API_KEY"]
