@@ -22,15 +22,15 @@ def load_config(path="config.txt"):
 
 config = load_config("config.txt")
 
-print("✅ CONFIG CARGADO CORRECTAMENTE")
+print("CONFIG CARGADO CORRECTAMENTE")
 
-required_keys = ["AZURE_ENDPOINT","AZURE_API_KEY","AZURE_GPT_ENDPOINT" "GEMINI_API_KEY","GEMINI_URL", "CHATGPT_API_KEY","CHATGPT_URL"]
+required_keys = ["AZURE_ENDPOINT","AZURE_API_KEY","AZURE_GPT_ENDPOINT", "GEMINI_API_KEY","GEMINI_URL", "CHATGPT_API_KEY","CHATGPT_URL"]
 
 for key in required_keys:
     if key in config and config[key]:
-        print(f"✔ {key} leída correctamente")
+        print(f"{key} leída correctamente")
     else:
-        print(f"❌ {key} FALTA en config.txt")
+        print(f"{key} FALTA en config.txt")
 
 
 
@@ -50,7 +50,6 @@ GEMINI_URL = gemini_url_template.replace("{GEMINI_API_KEY}",config["GEMINI_API_K
 
 #Configiracion de Chatgpt Cristina
 CHATGPT_API_KEY = config["CHATGPT_API_KEY"]
-#CHATGPT_URL= "https://api.openai.com/v1/chat/completions" #"https://api.openai.com/v1/responses"
 CHATGPT_URL = config["CHATGPT_URL"]
 
 app = FastAPI()
