@@ -18,6 +18,7 @@ public class UIController : MonoBehaviour
 
     public TextMeshProUGUI textTema;
     public TextMeshProUGUI textModeloPregunta;
+    public TextMeshProUGUI textTurno;
 
     [Header("Fichas de los jugadores")]
     public FichaTrivial[] fichasTablero; // Fichas que se mueven por el tablero
@@ -89,6 +90,10 @@ public class UIController : MonoBehaviour
         {
             textModeloPregunta.text = "Pregunta: " + jugActual.modeloPreguntas.ToString();
         }
+        if (textTurno != null && jugActual != null)
+        {
+            textTurno.text = "Turno: " + jugActual.nombre;
+        }
 
         //if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
         //{
@@ -122,7 +127,7 @@ public class UIController : MonoBehaviour
 
     private IEnumerator EsperarYContestarIA()
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(10.0f);
         MandarPregunta();
     }
 
@@ -286,7 +291,7 @@ public class UIController : MonoBehaviour
         // Desactivar el panel del quiz y pasar el turno
         quizPanel.SetActive(false);
         // Resetear el dado y el estado de movimiento antes de cambiar de turno
-        DiceTrows dadoUI = FindFirstObjectByType<DiceTrows>();
+        DiceThrow dadoUI = FindFirstObjectByType<DiceThrow>();
         if (dadoUI != null)
         {
             dadoUI.ActivarBotonLanzar();

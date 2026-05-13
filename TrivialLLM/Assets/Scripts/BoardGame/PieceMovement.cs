@@ -30,8 +30,6 @@ public class PieceMovement : MonoBehaviour
 
     FichaTrivial ficha;
 
-
-
     void Start()
     {
         // Colocar la ficha exactamente en la casilla inicial al darle a Play
@@ -66,12 +64,40 @@ public class PieceMovement : MonoBehaviour
             
             GameManager.GetInstance().setSelectedStatus(false);
             GameManager.GetInstance().cleanDstBoard(); //borrar las listas y objetos del tablero
-            int i = 0;
-            while (i<posiblePaths.Count && target != posiblePaths[i].destination)
+
+            List<SquareNode> selectedPath = null;
+
+            // Buscar la ruta de forma segura
+            foreach (PathInfo p in posiblePaths)
             {
-                i++;
+                if (p.destination == target)
+                {
+                    selectedPath = p.path;
+                    break;
+                }
             }
-            StartCoroutine(MovePiece(posiblePaths[i].path));
+
+            if (selectedPath == null)
+            {
+                if (posiblePaths.Count > 0)
+                {
+                    // Si no encuentra la exacta por desincronizacion, pilla la primera
+                    selectedPath = posiblePaths[0].path;
+                }
+                else
+                {
+                    // Si la lista esta totalmente vacia por la rapidez de la IA, 
+                    // abortamos el movimiento de este fotograma para que recalcule en el siguiente.
+                    isMoving = false;
+                    return;
+                }
+            }
+            //int i = 0;
+            //while (i<posiblePaths.Count && target != posiblePaths[i].destination)
+            //{
+            //    i++;
+            //}
+            StartCoroutine(MovePiece(selectedPath));
             return;
         }
 
@@ -168,7 +194,7 @@ public class PieceMovement : MonoBehaviour
         // Si ha caido en la casilla de los dados
         if (actualSquare.topic == TrivialTopic.Dados)
         {
-            DiceTrows dadoUI = FindFirstObjectByType<DiceTrows>();
+            DiceThrow dadoUI = FindFirstObjectByType<DiceThrow>();
             if (dadoUI != null)
             {
                 dadoUI.squareThrowAgain();
@@ -252,6 +278,9 @@ public class PieceMovement : MonoBehaviour
     //BFS para que busque las casillas a x distancia
     public List<SquareNode> GetPossibleDestinations(SquareNode initialNode, int moves)
     {
+        posibilities.Clear();
+        posiblePaths.Clear();
+
         List<SquareNode> results = new List<SquareNode>();
         HashSet<SquareNode> visited = new HashSet<SquareNode>();
 
@@ -315,5 +344,6 @@ public class PieceMovement : MonoBehaviour
     void clearPaths()
     {
         posiblePaths.Clear();
+        posibilities.Clear();
     }
 }

@@ -2524,7 +2524,7 @@ MonoBehaviour:
   m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
-  m_CharacterLimit: 16
+  m_CharacterLimit: 15
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -8279,6 +8279,7 @@ MonoBehaviour:
   promptText: {fileID: 42866845}
   inputNombre: {fileID: 612372490}
   buttonStartGame: {fileID: 339074469}
+  rondaActual: 1
   descriptorJug: []
   botonesFichas:
   - {fileID: 18687595}

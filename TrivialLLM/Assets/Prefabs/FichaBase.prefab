@@ -284,7 +284,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actualSquare: {fileID: 0}
   aiService: {fileID: 0}
-  speed: 30
+  speed: 40
+  turnoIndex: 0
 --- !u!114 &2397344247026894794
 MonoBehaviour:
   m_ObjectHideFlags: 0

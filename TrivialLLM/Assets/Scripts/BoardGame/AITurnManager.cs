@@ -11,7 +11,7 @@ public class AITurnManager : MonoBehaviour
 {
     private GameManager gameManager;
     private PieceMovement currentAIPiece;
-    private DiceTrows diceController;
+    private DiceThrow diceController;
 
     // private bool isAITurnActive = false;
     private bool diceThrown = false;
@@ -23,7 +23,7 @@ public class AITurnManager : MonoBehaviour
     void Start()
     {
         gameManager = GameManager.GetInstance();
-        diceController = FindFirstObjectByType<DiceTrows>();
+        diceController = FindFirstObjectByType<DiceThrow>();
     }
 
     void Update()

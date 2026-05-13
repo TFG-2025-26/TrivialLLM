@@ -2,7 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DiceTrows : MonoBehaviour
+public class DiceThrow : MonoBehaviour
 {
     [SerializeField]
     Text resultado;
@@ -13,6 +13,8 @@ public class DiceTrows : MonoBehaviour
 
     public Button botonLanzar;
 
+    public GameObject textThrow;
+
     bool throwed=false;
     int startFace;
     float countToChange = 0.0f;
@@ -21,6 +23,16 @@ public class DiceTrows : MonoBehaviour
     void Start()
     {
         startFace = 0;
+
+        if(GameManager.GetInstance() != null)
+        {
+            DescriptorJugador firstPlayer = GameManager.GetInstance().getJugTurnoActual();
+
+            if(firstPlayer != null && firstPlayer.esHumano)
+            {
+                textThrow.SetActive(true);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -57,6 +69,8 @@ public class DiceTrows : MonoBehaviour
             // Desactivar boton en cuanto se hace clic
             if (botonLanzar != null) botonLanzar.interactable = false;
 
+            if(textThrow != null) textThrow.SetActive(false);
+
             int diceNum = Random.Range(1, 7);
             GameManager.GetInstance().setTurnMoves(diceNum);
             //resultado.text = "Puedes avanzar " + GameManager.GetInstance().getRemainingMoves() + " casilla/s";
@@ -79,6 +93,8 @@ public class DiceTrows : MonoBehaviour
     public void ActivarBotonLanzar()
     {
         if (botonLanzar != null) botonLanzar.interactable = true;
+
+        if(textThrow != null) textThrow.SetActive(true);
         throwed = false;
     }
 

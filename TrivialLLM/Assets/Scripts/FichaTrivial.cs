@@ -119,4 +119,16 @@ public class FichaTrivial : MonoBehaviour
         return winGreen && winBlue && winYellow && winPurple && winOrange && winPink;
 
     }
+
+    public int GetNumQuesitos()
+    {
+        int count = 0;
+        if (q_verde != null && q_verde.activeSelf) count++;
+        if (q_azul != null && q_azul.activeSelf) count++;
+        if (q_amarillo != null && q_amarillo.activeSelf) count++;
+        if (q_morado != null && q_morado.activeSelf) count++;
+        if (q_naranja != null && q_naranja.activeSelf) count++;
+        if (q_rosa != null && q_rosa.activeSelf) count++;
+        return count;
+    }
 }

@@ -32,7 +32,8 @@ public class GameManager : MonoBehaviour
     private int numTotalJugadores;
     private int numJugHumanos;
     private int numLLMS;
-   // private int numLLMSRegistrados;
+
+    public int rondaActual = 1;
 
     public List<DescriptorJugador> descriptorJug;
 
@@ -42,11 +43,6 @@ public class GameManager : MonoBehaviour
     private int fichaSeleccionadaActual;       // boton seleccionado sin haberlo confirmado
     private bool[] fichasOcupadas;  // true si ya se ha seleccionado
 
-    // Modos de juego posible
-   // public enum GameMode { HumanGame, AIGame }
-
-    // Modo de juego actual
-   // public GameMode currentMode;
 
     //Manejo de movimientos
     int actMoves=0;
@@ -94,7 +90,8 @@ public class GameManager : MonoBehaviour
         numJugHumanos = 0;
         numLLMS = 0;
         numTotalJugadores = 0;
-        turno = 1;
+        turno = 0;
+        rondaActual = 1;
         descriptorJug = new List<DescriptorJugador>();
         fichaSeleccionadaActual = -1;        
         fichasOcupadas = new bool[6];
@@ -126,35 +123,24 @@ public class GameManager : MonoBehaviour
         return instance;
     }
 
-    // Establece el modo de juego desde los botones del menu principal
-    //public void SetGameMode(GameMode mode)
-    //{
-    //    currentMode = mode;
-    //    Debug.Log("Modo de juego actual: " + currentMode);
-    //}
-
-    // Metodos para los botones de StartScene
-    //public void PlayHumanMode()
-    //{
-    //    SetGameMode(GameMode.HumanGame);
-    //    SceneManager.LoadScene("HumanGameScene");
-    //}
-
-    //public void PlayAIMode()
-    //{
-    //    SetGameMode(GameMode.AIGame);
-    //    SceneManager.LoadScene("IAGameScene");
-    //}
-
-    // Metodo que se asigna a los botones de las fichas en la UI
-    // 0 al 5 (6 botones(
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+            #else
+                Application.Quit();
+            #endif
+        }
+    }
 
     private void CheckStartButton()
     {
         if (buttonStartGame != null)
         {
-            // El boton solo es interactuable cuando el num de jugadores total es mayor que 0
-            buttonStartGame.interactable = (numTotalJugadores > 0);
+            // El boton solo es interactuable cuando el num de jugadores total es mayor o igual que 2
+            buttonStartGame.interactable = (numTotalJugadores >= 2);
         }
     }
     public void ClickEnFicha(int index)
@@ -230,13 +216,6 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
-        //// Maximo 27
-        //if (resultadoNombre.Length > 27)
-        //{
-        //    resultadoNombre = resultadoNombre.Substring(0,27);  
-        //    inputNombre.text = resultadoNombre; 
-        //}
-
         return true;
     }
     public void addHuman()
@@ -257,7 +236,8 @@ public class GameManager : MonoBehaviour
 
         if (!panelHumano.activeSelf)
         {
-            panelHumano.SetActive(true);
+            AbrirPanelHumano();
+            // panelHumano.SetActive(true);
         }
         if (!inputNombre.gameObject.activeSelf)
         {
@@ -338,9 +318,10 @@ public class GameManager : MonoBehaviour
         
         if (!panelLLM.activeSelf)
         {
-            panelLLM.SetActive(true);
+            AbrirPanelLLM();
+            //panelLLM.SetActive(true);
         }
-        if(!inputNombre.gameObject.activeSelf)
+        if (!inputNombre.gameObject.activeSelf)
         {
             inputNombre.gameObject.SetActive(true);
         }
@@ -429,6 +410,36 @@ public class GameManager : MonoBehaviour
             
             })
         );
+    }
+
+    public void AbrirPanelHumano()
+    {
+        // Ocultar el panel contrario
+        if (panelLLM != null) panelLLM.SetActive(false);
+
+        // Limpiar los campos
+        if (inputNombre != null) inputNombre.text = "";
+        if (promptText != null) promptText.text = "";
+        if (modelPregunta != null) modelPregunta.value = 0;
+        if (modelRespuesta != null) modelRespuesta.value = 0;
+
+        // Mostrar el panel seleccionado
+        if (panelHumano != null) panelHumano.SetActive(true);
+    }
+
+    public void AbrirPanelLLM()
+    {
+        // Ocultar el panel contrario
+        if (panelHumano != null) panelHumano.SetActive(false);
+
+        // Limpiar los campos
+        if (inputNombre != null) inputNombre.text = "";
+        if (promptText != null) promptText.text = "";
+        if (modelPregunta != null) modelPregunta.value = 0;
+        if (modelRespuesta != null) modelRespuesta.value = 0;
+
+        // Mostrar el panel seleccionado
+        if (panelLLM != null) panelLLM.SetActive(true);
     }
 
     private void MostrarMensaje (string mensaje)
@@ -534,7 +545,9 @@ public class GameManager : MonoBehaviour
 
     public DescriptorJugador getJugTurnoActual()
     {
-        return descriptorJug[(turno - 1) % numTotalJugadores];
+        if (numTotalJugadores == 0 || descriptorJug.Count == 0) return null;
+        return descriptorJug[turno];
+        //return descriptorJug[(turno - 1) % numTotalJugadores];
 
         //// Por seguridad, si la lista esta vacia devuelve un humano generico
         //if (descriptorJug.Count == 0)
@@ -546,8 +559,40 @@ public class GameManager : MonoBehaviour
 
     public void sigTurno()
     {
+        // Avanza turno
         turno++;
+
+        if (turno >= numTotalJugadores)
+        {
+            turno = 0;
+            rondaActual++;
+        }
+
         Debug.Log("Siguiente turno: " + getJugTurnoActual().nombre);
+
+        // Resetear estados del tablero y movimiento para el nuevo turno
+        diceThrew = false;
+        cleanDstBoard();
+        selectedMove = false;
+
+        DiceThrow dice = FindFirstObjectByType<DiceThrow>();
+        // Flujo normal
+        if(dice != null)
+        {
+            if (descriptorJug[turno].esHumano)
+            {
+                // Si es humano, activar boton de dados
+                dice.ActivarBotonLanzar();
+            }
+            else
+            {
+                if (dice.textThrow != null)
+                {
+                    dice.textThrow.SetActive(false);
+                }
+            }
+        }
+        
         //FichaTrivial nextPiece = piecesList[(turno - 1) % numTotalJugadores];
         //uiController.setCurrentPiece(nextPiece);
     }
@@ -555,7 +600,7 @@ public class GameManager : MonoBehaviour
     public int GetTurnoIndex()
     {
         if(numTotalJugadores == 0) return 0;
-        return (turno - 1) % numTotalJugadores;
+        return turno;
     }
 
     public int GetTurnoAbsoluto()
