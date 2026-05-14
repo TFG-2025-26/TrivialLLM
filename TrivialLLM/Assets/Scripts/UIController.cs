@@ -40,6 +40,9 @@ public class UIController : MonoBehaviour
     public TextMeshProUGUI textWaiting;
     private Coroutine animationLoading;
 
+    public TextMeshProUGUI textThinking;
+    private Coroutine animationThinking;
+
     private bool isFinalRound = false;
     private int numCorrectAnswerFinal = 0;
     private int currentQuestionFinal = 0;
@@ -52,6 +55,8 @@ public class UIController : MonoBehaviour
         if(quizPanel != null) quizPanel.SetActive(false);
         // Texto de esperar aparece apagado
         if (textWaiting != null) textWaiting.gameObject.SetActive(false);
+        // Texto de pensar aparece apagado
+        if (textThinking != null) textThinking.gameObject.SetActive(false);
 
         ai =GameObject.Find("AIService").GetComponent<AIService>();
         ai.uiController = this; 
@@ -77,6 +82,8 @@ public class UIController : MonoBehaviour
         // Mostrar panel del quiz
         quizPanel.SetActive(true);
         textPregunta.text = p.pregunta;
+
+        ShowTextThinking();
 
         DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
         //Debug.Log($"Turno de: {jugActual.nombre} | ¿Es humano?: {jugActual.esHumano}");
@@ -119,7 +126,7 @@ public class UIController : MonoBehaviour
         // La IA responde automaticamente
         if(!jugActual.esHumano)
         {
-            Debug.Log("Turno de la IA: " + jugActual.nombre + ". Contestando automaticamente...");
+            //Debug.Log("Turno de la IA: " + jugActual.nombre + ". Contestando automaticamente...");
             StartCoroutine(EsperarYContestarIA());
         }
         respuestaCorrecta = p.respuesta_correcta;
@@ -147,6 +154,7 @@ public class UIController : MonoBehaviour
             jug.modelo,        // modelo del jugador
             jug.perfil,        // perfil del jugador
             prompt,
+            ai.dificultadActual,
             (int indexRespuesta) =>
             {
                 if (indexRespuesta >= 0)
@@ -159,6 +167,13 @@ public class UIController : MonoBehaviour
 
     public void SeleccionarRespuesta(int index)
     {
+        if(animationThinking != null)
+        {
+            StopCoroutine(animationThinking );
+            animationThinking = null;
+        }
+        if(textThinking != null) textThinking.gameObject.SetActive(false);
+
         if(textRespuesta != null)
         {
             textRespuesta.text = /*index + ") " + */botonesOpciones[index].GetComponentInChildren<TextMeshProUGUI>().text;
@@ -332,25 +347,31 @@ public class UIController : MonoBehaviour
         }
     }
 
+    private Coroutine ShowText(TextMeshProUGUI text, Coroutine animation, string baseText)
+    {
+        if (text != null)
+        {
+            text.gameObject.SetActive(true);
+            if (animation != null) StopCoroutine(animation);
+            return StartCoroutine(StartAnimation(baseText, text));
+        }
+        return null;
+    }
     public void ShowTextLoading()
     {
-        if (textWaiting != null)
-        {
-            textWaiting.gameObject.SetActive(true);
-            if(animationLoading != null) StopCoroutine(animationLoading);
-            animationLoading = StartCoroutine(StartAnimationLoading());
-        }
+        animationLoading = ShowText(textWaiting, animationLoading, "Esperando pregunta");
     }
-
-    private IEnumerator StartAnimationLoading()
+    public void ShowTextThinking()
     {
-        string baseText = "Esperando pregunta";
+        animationThinking = ShowText(textThinking, animationThinking, "Pensando");
+    }
+    private IEnumerator StartAnimation(string baseText, TextMeshProUGUI text)
+    {
         int dots = 0;
-
         while (true)
         {
             string textDots = new string('.', dots);
-            textWaiting.text = baseText + textDots;
+            text.text = baseText + textDots;
 
             dots++;
             if (dots > 3) dots = 0;

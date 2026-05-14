@@ -36,19 +36,15 @@ for key in required_keys:
 
 # Configuracion de azure OpenAI
 AZURE_ENDPOINT = config["AZURE_ENDPOINT"]
-
 AZURE_API_KEY = config["AZURE_API_KEY"]
-
 AZURE_GPT_ENDPOINT = config["AZURE_GPT_ENDPOINT"]
 
-#Configuracion de Gemini Cristina
+#Configuracion de Gemini
 GEMINI_API_KEY = config["GEMINI_API_KEY"]
 gemini_url_template = config["GEMINI_URL"]
 GEMINI_URL = gemini_url_template.replace("{GEMINI_API_KEY}",config["GEMINI_API_KEY"])
 
-#Configuracion de chatGPT
-
-#Configiracion de Chatgpt Cristina
+#Configiracion de Chatgpt
 CHATGPT_API_KEY = config["CHATGPT_API_KEY"]
 CHATGPT_URL = config["CHATGPT_URL"]
 

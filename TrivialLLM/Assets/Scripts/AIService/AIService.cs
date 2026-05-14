@@ -7,10 +7,10 @@ using UnityEngine.Networking;
 public class AIService : MonoBehaviour
 {
     // LOCAL
-    private const string BASE_URL = "http://127.0.0.1:8000";
+    //private const string BASE_URL = "http://127.0.0.1:8000";
 
     // SERVIDOR AZURE
-    //private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";
+    private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";
 
     private string urlTrivial => BASE_URL + "/trivial";
     private string urlProfile => BASE_URL + "/profile";
@@ -77,28 +77,31 @@ public class AIService : MonoBehaviour
     {
         int seed = Random.Range(0, 100000);
         return
-            $@"Actúa como un generador de peguntas de trivial.
+            $@"Actúa como un experto creador de peguntas  para el clásico juego de mesa Trivial Pursuit.
 
             Tema: {tema}
             Dificultad: {dificultad}
 
-            Instrucciones:
-                - Genera UNA pregunta original y única, no repitas preguntas comunes
-                - La pregunta debe ser relevante para la categoría y la dificultad
+            Instrucciones OBLIGATORIAS:
+                - Estilo Trivial: La pregunta debe seguir el estilo clásico de un juego de mesa. Sé conciso y no te vayas por las ramas con introducciones largas.
+                - Contexto claro: Especifica el sujeto exacto, si nombras personajes o eventos, nombra la obra claramente para evitar ambigüedades.
+                - Cero pistas: No incluyas la respuesta correcta ni pistas evidentes dentro de la pregunta.
+                - Originalidad: Genera UNA pregunta original y única, no repitas preguntas comunes.
+                - La pregunta debe ser relevante para la categoría y la dificultad.
                 - Varía el estilo: puede ser de opción múltiple directa, de deducción, de comparación, curiosidades...
-                - Añade un toque creativo o curioso para que no se repita
+                - Añade un toque creativo o curioso para que no se repita.
                 - Usa la semilla de variación: {seed}
                 
 
-            Devu�lveme SOLO un JSON valido con este formato exacto:
+            Devuélveme SOLO un JSON valido con este formato exacto:
 
             {{
                 ""pregunta"": ""texto de la pregunta"",
                 ""opciones"": [
-                    ""opci�n 0"",
-                    ""opci�n 1"",
-                    ""opci�n 2"",
-                    ""opci�n 3""
+                    ""opción 0"",
+                    ""opción 1"",
+                    ""opción 2"",
+                    ""opción 3""
                  ],
                  ""respuesta_correcta"": INDICE_CORRECTO
             }}
