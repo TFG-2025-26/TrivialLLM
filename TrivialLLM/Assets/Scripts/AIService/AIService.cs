@@ -7,10 +7,10 @@ using UnityEngine.Networking;
 public class AIService : MonoBehaviour
 {
     // LOCAL
-    //private const string BASE_URL = "http://127.0.0.1:8000";
+    private const string BASE_URL = "http://127.0.0.1:8000";
 
     // SERVIDOR AZURE
-    private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";
+    //private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";
 
     private string urlTrivial => BASE_URL + "/trivial";
     private string urlProfile => BASE_URL + "/profile";
@@ -24,6 +24,7 @@ public class AIService : MonoBehaviour
     public Models modeloRespuesta;
 
     public string categoriaActual;
+    public string dificultadActual;
     public static AIService Instance;
 
     private void Awake()
@@ -49,13 +50,24 @@ public class AIService : MonoBehaviour
         this.modeloPregunta = modeloPregunta;
         this.modeloRespuesta = modeloRespuesta;
         this.categoriaActual = tema;
+        this.dificultadActual = dificultad;
         string prompt = CrearPromptPregunta(tema, dificultad);
         StartCoroutine(EnviarPrompt(this.modeloPregunta,prompt, true));
     }
 
-    public void ContestarPregunta(Models model, PlayerProfile perfil, string pregunta, System.Action<int> callback)
+    public void ContestarPregunta(Models model, PlayerProfile perfil, string pregunta, string dificultad, System.Action<int> callback)
     {
-        string context = BuildRoleContext(perfil);
+        if (perfil != null)
+        {
+            string strong = perfil.strongCategories != null ? string.Join(", ", perfil.strongCategories) : "Ninguno";
+            string weak = perfil.weakCategories != null ? string.Join(", ", perfil.weakCategories) : "Ninguno";
+
+            Debug.Log($"<color=cyan>[COMPROBACIÓN DE ROL IA]</color> Tema de la pregunta: <b>{categoriaActual}</b>");
+            Debug.Log($"<color=green>Temas Fuertes:</color> {strong}");
+            Debug.Log($"<color=red>Temas Débiles:</color> {weak}");
+            Debug.Log($"Nivel de Inteligencia (Accuracy): {perfil.accuracyBase}");
+        }
+        string context = BuildRoleContext(perfil, dificultad);
         string prompt = context + "\nPregunta:\n" + pregunta;
 
         StartCoroutine(EnviarPrompt(model, prompt, false, callback));
@@ -65,7 +77,7 @@ public class AIService : MonoBehaviour
     {
         int seed = Random.Range(0, 100000);
         return
-            $@"Act�a como un generador de peguntas de trivial.
+            $@"Actúa como un generador de peguntas de trivial.
 
             Tema: {tema}
             Dificultad: {dificultad}
@@ -78,7 +90,7 @@ public class AIService : MonoBehaviour
                 - Usa la semilla de variación: {seed}
                 
 
-            Devu�lveme SOLO un JSON v�lido con este formato exacto:
+            Devu�lveme SOLO un JSON valido con este formato exacto:
 
             {{
                 ""pregunta"": ""texto de la pregunta"",
@@ -91,10 +103,10 @@ public class AIService : MonoBehaviour
                  ""respuesta_correcta"": INDICE_CORRECTO
             }}
 
-        No a�adas comentarios, explicaciones ni texto fuera del JSON.";
+            No añadas comentarios, explicaciones ni texto fuera del JSON.";
     }
 
-    private string BuildRoleContext(PlayerProfile p)
+    private string BuildRoleContext(PlayerProfile p, string dificultad)
     {
         if (p == null) return "";
 
@@ -102,27 +114,35 @@ public class AIService : MonoBehaviour
         string weak = p.weakCategories != null ? string.Join(", ", p.weakCategories) : "none";
 
         return $@"
-Actúa exactamente como un jugador humano de Trivial con este perfil:
+            Actúa exactamente como un jugador humano de Trivial respondiendo a una pregunta con este perfil:
 
-PERFIL DEL JUGADOR:
-- Nivel de inteligencia general: {p.accuracyBase} (0.0 es ignorante, 1.0 es experto)
-- Temas que domina: {strong}
-- Temas débiles y que desconoce por completo: {weak}
+            PERFIL DEL JUGADOR:
+            - Nivel de inteligencia general: {p.accuracyBase} (0.0 es ignorante, 1.0 es experto)
+            - Temas que domina: {strong}
+            - Temas débiles y que desconoce por completo: {weak}
+            - Años de conocimiento: Desde {p.knowledgeStart} hasta {p.knowledgeCutoff}
+            - Nivel de caos: {p.randomness}
 
-REGLA CRÍTICA (OBLIGATORIA):
-Debes responder como si lanzaras un dado.
+            DATOS DE LA PREGUNTA ACTUAL:
+            - Tema: {categoriaActual}
+            - Dificultad de la pregunta actual: {dificultad}
 
-SIMULACIÓN:
-1. Si la pregunta trata sobre tus temas que desconoces ({weak}), DEBES ELEGIR UNA RESPUESTA INCORRECTA OBLIGATORIAMENTE.
-2. Si tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.3, DEBES ELEGIR UNA RESPUESTA INCORRECTA OBLIGATORIAMENTE.
-3. Si la pregunta trata sobre tus temas dominados ({strong}), elige la opcion correcta.
 
-IMPORTANTE:
-NO intentes ser correcto siempre.
-Tu objetivo es simular comportamiento humano imperfecto.
+            INSTRUCCIONES DE RAZONAMIENTO (OBLIGATORIAS):
+            Tu objetivo principal es simular un comportamiento humano realista basándote en tu perfil.
+            Debes decidir qué responder aplicando estas reglas paso a paso:
 
-Responde SOLO con el índice (0-3).
-";
+            1. Si el tema actual ({categoriaActual}) coincide o está relacionado con tus temas dominados ({strong}), DEBES ELEGIR LA RESPUESTA CORRECTA OBLIGATORIAMENTE, sin importar tu nivel de inteligencia ni la dificultad.
+            2. Si el tema actual ({categoriaActual}) coincide o está relacionado con tus temas desconocidos ({weak}), DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE, sin importar tu nivel de inteligencia ni la dificultad.
+            3. Si la pregunta menciona eventos, hechos, obras (películas, libros o series) o personas anteriores al año  {p.knowledgeStart} o posteriores al año  {p.knowledgeCutoff}, DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE.
+            4. Evaluación de dificultad e inteligencia (Si no cumple lo anterior):
+            - Si la dificultad es 'Fácil', intenta acertar.
+            - Si la dificultad es 'Díficil', y tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.7, DEBES ELEGIR UNA RESPUESTA INCORRECTA.
+            - Si tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.3, DEBES ELEGIR UNA RESPUESTA INCORRECTA casi siempre.
+            5. Si tu nivel de caos ({p.randomness}) es mayor a 0.7, elige una respuesta totalmente AL AZAR ignorando todo lo demás.
+
+            Responde SOLO con el índice (0-3).
+            ";
     }
 
     public IEnumerator PedirPerfil(string role, System.Action<PlayerProfile> callback)
@@ -132,7 +152,7 @@ Responde SOLO con el índice (0-3).
         string jsonBody = JsonUtility.ToJson(req);
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonBody);
 
-        Debug.Log("ENVIANDO PERFIL: " + jsonBody);
+        //Debug.Log("ENVIANDO PERFIL: " + jsonBody);
 
         UnityWebRequest www = new UnityWebRequest(urlProfile, "POST");
         www.uploadHandler = new UploadHandlerRaw(bodyRaw);
@@ -219,7 +239,7 @@ Responde SOLO con el índice (0-3).
 
             if (esPregunta)
             {
-                Debug.Log("Pregunta generada por: " + model.ToString());
+                //Debug.Log("Pregunta generada por: " + model.ToString());
                 // Asumir que la respuesta es directamente el JSON de PreguntaOpciones
                 PreguntaOpciones pregunta = JsonUtility.FromJson<PreguntaOpciones>(responseText);
 
@@ -228,7 +248,7 @@ Responde SOLO con el índice (0-3).
             }
             else
             {
-                Debug.Log("Respuesta generada por: "+ model.ToString());
+                //Debug.Log("Respuesta generada por: "+ model.ToString());
                 string cleanAnswer = responseText.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "");
                 if (int.TryParse(cleanAnswer, out int indexRespuesta))
                 {

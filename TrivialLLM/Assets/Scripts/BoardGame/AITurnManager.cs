@@ -67,7 +67,7 @@ public class AITurnManager : MonoBehaviour
 
     IEnumerator StartAITurn(DescriptorJugador jugIA)
     {
-        Debug.Log($"Iniciando turno de IA: {jugIA.nombre}");
+        //Debug.Log($"Iniciando turno de IA: {jugIA.nombre}");
 
         // Bloquear boton del dado
         if (diceController != null && diceController.botonLanzar != null)

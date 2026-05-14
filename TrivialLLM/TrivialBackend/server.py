@@ -72,13 +72,22 @@ Convierte este rol en JSON válido para un jugador de trivial.
 ROL:
 {data.role}
 
+INSTRUCCIONES IMPORTANTES:
+-Analiza el texto del rol para deducir el 'accuracyBase' (0.0 a 1.0). Si el rol parece torpe o no muy listo, pon un valor bajo. Si parece experto, pon un un valor alto.
+-Deduce el 'knowledgeStart' (1940-2025). Año en el que el personaje empezó a aprender conocimientos y hechos del mundo. Si el rol describe a una persona mayor, un anciano o alguien del pasado, asígnale un año de corte antiguo acorde a su época(1940-1960). Si es un adulto, (1960-1980).  Si es un joven o un perfil contemporáneo (1980-2010). Si es un niño pequeño 2020.
+-Deduce el 'knowledgeCutoff' (2000-2025). Si el rol describe a una persona mayor, un anciano o alguien del pasado, asígnale un año de corte entre 2000-2020. Si es un adulto o un perfil contemporáneo, asígnale un año cercano a 2025.
+-Identifica y genera las listas de temas 'strongCategories' y 'weakCategories'.
+-Deduce el 'randomness' (0.0 a 1.0). Si el rol es caótico o loco, pon un valor alto.
+-No uses siempre los mismo valores, adáptalos a la descripción.
+
 Devuelve SOLO JSON válido:
 {{
-  "accuracyBase": 0.0-1.0,
-  "knowledgeCutoff": 2000-2025,
+  "accuracyBase": 0.0,
+  "knowledgeStart": 2000,
+  "knowledgeCutoff": 2025,
   "strongCategories": ["..."],
   "weakCategories": ["..."],
-  "randomness": 0.0-1.0
+  "randomness": 0.0
 }}
 """
 

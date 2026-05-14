@@ -202,7 +202,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Todas las fichas asignadas correctamente.");
+       // Debug.Log("Todas las fichas asignadas correctamente.");
     }
 
     // metodo para validar el nombre
@@ -222,7 +222,7 @@ public class GameManager : MonoBehaviour
     {
         if (numTotalJugadores >= 6)
         {
-            Debug.Log("No se pueden añadir más de 6 jugadores");
+           // Debug.Log("No se pueden añadir más de 6 jugadores");
             if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
@@ -255,7 +255,7 @@ public class GameManager : MonoBehaviour
     {
         if (numTotalJugadores >= 6)
         {
-            Debug.Log("No se pueden añadir más de 6 jugadores");
+           // Debug.Log("No se pueden añadir más de 6 jugadores");
             if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
@@ -306,7 +306,7 @@ public class GameManager : MonoBehaviour
     {
         if (numTotalJugadores >= 6)
         {
-            Debug.Log("No se pueden añadir más de 6 jugadores");
+            //Debug.Log("No se pueden añadir más de 6 jugadores");
             if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
@@ -343,7 +343,7 @@ public class GameManager : MonoBehaviour
     {
         if (numTotalJugadores >= 6)
         {
-            Debug.Log("No se pueden añadir más de 6 jugadores");
+           // Debug.Log("No se pueden añadir más de 6 jugadores");
             if (textLimite != null && !textLimite.gameObject.activeSelf)
             {
                 textLimite.gameObject.SetActive(true);
@@ -379,7 +379,7 @@ public class GameManager : MonoBehaviour
                     return;
                 }
 
-                Debug.Log("Llega");
+                //Debug.Log("Llega");
                 descriptorJug.Add(new DescriptorJugador
                 {
                     nombre = nombreValido,
@@ -568,7 +568,7 @@ public class GameManager : MonoBehaviour
             rondaActual++;
         }
 
-        Debug.Log("Siguiente turno: " + getJugTurnoActual().nombre);
+        //Debug.Log("Siguiente turno: " + getJugTurnoActual().nombre);
 
         // Resetear estados del tablero y movimiento para el nuevo turno
         diceThrew = false;
@@ -652,7 +652,6 @@ public class GameManager : MonoBehaviour
     public void recieveSelectedTransform(Transform trf)
     {
         selectedMove = true;
-        Debug.Log("HOLAAAAA");
         foreach (SquareNode nod in posdst)
         {
             if(nod.transform == trf)

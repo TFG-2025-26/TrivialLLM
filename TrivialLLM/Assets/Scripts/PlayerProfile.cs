@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class PlayerProfile
 {
     public float accuracyBase;
+    public int knowledgeStart;
     public int knowledgeCutoff;
     public List<string> strongCategories;
     public List<string> weakCategories;
