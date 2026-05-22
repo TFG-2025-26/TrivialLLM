@@ -77,7 +77,7 @@ public class AIService : MonoBehaviour
     {
         int seed = Random.Range(0, 100000);
         return
-            $@"Actúa como un experto creador de peguntas  para el clásico juego de mesa Trivial Pursuit.
+            $@"Actúa como un experto creador de peguntas para el clásico juego de mesa Trivial Pursuit.
 
             Tema: {tema}
             Dificultad: {dificultad}
@@ -140,7 +140,7 @@ public class AIService : MonoBehaviour
             3. Si la pregunta menciona eventos, hechos, obras (películas, libros o series) o personas anteriores al año  {p.knowledgeStart} o posteriores al año  {p.knowledgeCutoff}, DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE.
             4. Evaluación de dificultad e inteligencia (Si no cumple lo anterior):
             - Si la dificultad es 'Fácil', intenta acertar.
-            - Si la dificultad es 'Díficil', y tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.7, DEBES ELEGIR UNA RESPUESTA INCORRECTA.
+            - Si la dificultad es 'Difícil', y tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.7, DEBES ELEGIR UNA RESPUESTA INCORRECTA.
             - Si tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.3, DEBES ELEGIR UNA RESPUESTA INCORRECTA casi siempre.
             5. Si tu nivel de caos ({p.randomness}) es mayor a 0.7, elige una respuesta totalmente AL AZAR ignorando todo lo demás.
 
