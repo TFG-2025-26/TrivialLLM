@@ -5,15 +5,15 @@ using UnityEngine.UI;
 public class DiceThrow : MonoBehaviour
 {
     [SerializeField]
-    Text resultado;
+    Text result;
     [SerializeField]
     Image diceImage;
     [SerializeField]
-    Sprite[] dicefaces;
+    Sprite[] diceFaces;
 
-    public Button botonLanzar;
+    public Button throwButton;
 
-    public GameObject textThrow;
+    public GameObject throwText;
 
     bool throwed=false;
     int startFace;
@@ -26,11 +26,11 @@ public class DiceThrow : MonoBehaviour
 
         if(GameManager.GetInstance() != null)
         {
-            DescriptorJugador firstPlayer = GameManager.GetInstance().getJugTurnoActual();
+            PlayerDescriptor firstPlayer = GameManager.GetInstance().GetPlayerCurrentTurn();
 
-            if(firstPlayer != null && firstPlayer.esHumano)
+            if(firstPlayer != null && firstPlayer.isHuman)
             {
-                textThrow.SetActive(true);
+                throwText.SetActive(true);
             }
         }
     }
@@ -40,7 +40,7 @@ public class DiceThrow : MonoBehaviour
     {
         if (!throwed)
         {
-            if (startFace >= dicefaces.Length-1)
+            if (startFace >= diceFaces.Length-1)
             {
                 startFace = 0;
             }
@@ -50,7 +50,7 @@ public class DiceThrow : MonoBehaviour
             }
             if (countToChange > 0.4f)
             {
-                diceImage.sprite = dicefaces[startFace];
+                diceImage.sprite = diceFaces[startFace];
                 countToChange = 0.0f;
             }
             else
@@ -58,24 +58,24 @@ public class DiceThrow : MonoBehaviour
                 countToChange += Time.deltaTime;
             }
         }
-        showMovementsText();
+        ShowMovementsText();
     }
-    public void releaseNumber()
+    public void ReleaseNumber()
     {
         if (!throwed)
         {
             throwed = true;
 
             // Desactivar boton en cuanto se hace clic
-            if (botonLanzar != null) botonLanzar.interactable = false;
+            if (throwButton != null) throwButton.interactable = false;
 
-            if(textThrow != null) textThrow.SetActive(false);
+            if(throwText != null) throwText.SetActive(false);
 
             int diceNum = Random.Range(1, 7);
-            GameManager.GetInstance().setTurnMoves(diceNum);
+            GameManager.GetInstance().SetTurnMoves(diceNum);
             //resultado.text = "Puedes avanzar " + GameManager.GetInstance().getRemainingMoves() + " casilla/s";
 
-            diceImage.sprite= dicefaces[diceNum-1];
+            diceImage.sprite= diceFaces[diceNum-1];
         }
         else
         {
@@ -83,31 +83,31 @@ public class DiceThrow : MonoBehaviour
         }
     }
     // Funcion que fuerza la tirada automatica cuando se cae en la casilla de los dados para tirar otra vez
-    public void squareThrowAgain()
+    public void SquareThrowAgain()
     {
         throwed = false;
-        releaseNumber();
+        ReleaseNumber();
     }
 
     // Activar el boton de lanzar una vez se haya respondido a la pregunta y pase al siguiente turno
-    public void ActivarBotonLanzar()
+    public void ActiveThrowButton()
     {
-        if (botonLanzar != null) botonLanzar.interactable = true;
+        if (throwButton != null) throwButton.interactable = true;
 
-        if(textThrow != null) textThrow.SetActive(true);
+        if(throwText != null) throwText.SetActive(true);
         throwed = false;
     }
 
-    void showMovementsText()
+    void ShowMovementsText()
     {
-        resultado.text = "Puedes avanzar " + GameManager.GetInstance().getRemainingMoves() + " casilla/s";
+        result.text = "Puedes avanzar " + GameManager.GetInstance().GetRemainingMoves() + " casilla/s";
     }
 
     public void ReleaseNumberAutomatic()
     {
-        if (botonLanzar != null)
+        if (throwButton != null)
         {
-            releaseNumber();
+            ReleaseNumber();
         }
     }
 }

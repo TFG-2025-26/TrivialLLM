@@ -20,11 +20,11 @@ public class AIService : MonoBehaviour
 
     public enum Models {Gemini,Copilot,ChatGPT, Azure};
 
-    public Models modeloPregunta;
-    public Models modeloRespuesta;
+    public Models questionModel;
+    public Models answerModel;
 
-    public string categoriaActual;
-    public string dificultadActual;
+    public string currentCategory;
+    public string currentDifficulty;
     public static AIService Instance;
 
     private void Awake()
@@ -45,42 +45,42 @@ public class AIService : MonoBehaviour
     }
 
     
-    public void PedirPregunta(Models modeloPregunta, Models modeloRespuesta, string tema, string dificultad)
+    public void RequestQuestion(Models questionModel, Models answerModel, string category, string difficulty)
     {
-        this.modeloPregunta = modeloPregunta;
-        this.modeloRespuesta = modeloRespuesta;
-        this.categoriaActual = tema;
-        this.dificultadActual = dificultad;
-        string prompt = CrearPromptPregunta(tema, dificultad);
-        StartCoroutine(EnviarPrompt(this.modeloPregunta,prompt, true));
+        this.questionModel = questionModel;
+        this.answerModel = answerModel;
+        this.currentCategory = category;
+        this.currentDifficulty = difficulty;
+        string prompt = BuildQuestionPrompt(category, difficulty);
+        StartCoroutine(SendPrompt(this.questionModel,prompt, true));
     }
 
-    public void ContestarPregunta(Models model, PlayerProfile perfil, string pregunta, string dificultad, System.Action<int> callback)
+    public void ReplyQuestion(Models model, PlayerProfile profile, string question, string difficulty, System.Action<int> callback)
     {
-        if (perfil != null)
+        if (profile != null)
         {
-            string strong = perfil.strongCategories != null ? string.Join(", ", perfil.strongCategories) : "Ninguno";
-            string weak = perfil.weakCategories != null ? string.Join(", ", perfil.weakCategories) : "Ninguno";
+            string strong = profile.strongCategories != null ? string.Join(", ", profile.strongCategories) : "Ninguno";
+            string weak = profile.weakCategories != null ? string.Join(", ", profile.weakCategories) : "Ninguno";
 
-            Debug.Log($"<color=cyan>[COMPROBACIÓN DE ROL IA]</color> Tema de la pregunta: <b>{categoriaActual}</b>");
+            Debug.Log($"<color=cyan>[COMPROBACIÓN DE ROL IA]</color> Tema de la pregunta: <b>{currentCategory}</b>");
             Debug.Log($"<color=green>Temas Fuertes:</color> {strong}");
             Debug.Log($"<color=red>Temas Débiles:</color> {weak}");
-            Debug.Log($"Nivel de Inteligencia (Accuracy): {perfil.accuracyBase}");
+            Debug.Log($"Nivel de Inteligencia (Accuracy): {profile.accuracyBase}");
         }
-        string context = BuildRoleContext(perfil, dificultad);
-        string prompt = context + "\nPregunta:\n" + pregunta;
+        string context = BuildRoleContext(profile, difficulty);
+        string prompt = context + "\nPregunta:\n" + question;
 
-        StartCoroutine(EnviarPrompt(model, prompt, false, callback));
+        StartCoroutine(SendPrompt(model, prompt, false, callback));
     }
 
-    private string CrearPromptPregunta(string tema, string dificultad)
+    private string BuildQuestionPrompt(string category, string difficulty)
     {
         int seed = Random.Range(0, 100000);
         return
             $@"Actúa como un experto creador de peguntas para el clásico juego de mesa Trivial Pursuit.
 
-            Tema: {tema}
-            Dificultad: {dificultad}
+            Tema: {category}
+            Dificultad: {difficulty}
 
             Instrucciones OBLIGATORIAS:
                 - Estilo Trivial: La pregunta debe seguir el estilo clásico de un juego de mesa. Sé conciso y no te vayas por las ramas con introducciones largas.
@@ -109,46 +109,46 @@ public class AIService : MonoBehaviour
             No añadas comentarios, explicaciones ni texto fuera del JSON.";
     }
 
-    private string BuildRoleContext(PlayerProfile p, string dificultad)
+    private string BuildRoleContext(PlayerProfile profile, string difficulty)
     {
-        if (p == null) return "";
+        if (profile == null) return "";
 
-        string strong = p.strongCategories != null ? string.Join(", ", p.strongCategories) : "none";
-        string weak = p.weakCategories != null ? string.Join(", ", p.weakCategories) : "none";
+        string strong = profile.strongCategories != null ? string.Join(", ", profile.strongCategories) : "none";
+        string weak = profile.weakCategories != null ? string.Join(", ", profile.weakCategories) : "none";
 
         return $@"
             Actúa exactamente como un jugador humano de Trivial respondiendo a una pregunta con este perfil:
 
             PERFIL DEL JUGADOR:
-            - Nivel de inteligencia general: {p.accuracyBase} (0.0 es ignorante, 1.0 es experto)
+            - Nivel de inteligencia general: {profile.accuracyBase} (0.0 es ignorante, 1.0 es experto)
             - Temas que domina: {strong}
             - Temas débiles y que desconoce por completo: {weak}
-            - Años de conocimiento: Desde {p.knowledgeStart} hasta {p.knowledgeCutoff}
-            - Nivel de caos: {p.randomness}
+            - Años de conocimiento: Desde {profile.knowledgeStart} hasta {profile.knowledgeCutoff}
+            - Nivel de caos: {profile.randomness}
 
             DATOS DE LA PREGUNTA ACTUAL:
-            - Tema: {categoriaActual}
-            - Dificultad de la pregunta actual: {dificultad}
+            - Tema: {currentCategory}
+            - Dificultad de la pregunta actual: {difficulty}
 
 
             INSTRUCCIONES DE RAZONAMIENTO (OBLIGATORIAS):
             Tu objetivo principal es simular un comportamiento humano realista basándote en tu perfil.
             Debes decidir qué responder aplicando estas reglas paso a paso:
 
-            1. Si el tema actual ({categoriaActual}) coincide o está relacionado con tus temas dominados ({strong}), DEBES ELEGIR LA RESPUESTA CORRECTA OBLIGATORIAMENTE, sin importar tu nivel de inteligencia ni la dificultad.
-            2. Si el tema actual ({categoriaActual}) coincide o está relacionado con tus temas desconocidos ({weak}), DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE, sin importar tu nivel de inteligencia ni la dificultad.
-            3. Si la pregunta menciona eventos, hechos, obras (películas, libros o series) o personas anteriores al año  {p.knowledgeStart} o posteriores al año  {p.knowledgeCutoff}, DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE.
+            1. Si el tema actual ({currentCategory}) coincide o está relacionado con tus temas dominados ({strong}), DEBES ELEGIR LA RESPUESTA CORRECTA OBLIGATORIAMENTE, sin importar tu nivel de inteligencia ni la dificultad.
+            2. Si el tema actual ({currentCategory}) coincide o está relacionado con tus temas desconocidos ({weak}), DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE, sin importar tu nivel de inteligencia ni la dificultad.
+            3. Si la pregunta menciona eventos, hechos, obras (películas, libros o series) o personas anteriores al año  {profile.knowledgeStart} o posteriores al año  {profile.knowledgeCutoff}, DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE.
             4. Evaluación de dificultad e inteligencia (Si no cumple lo anterior):
             - Si la dificultad es 'Fácil', intenta acertar.
-            - Si la dificultad es 'Difícil', y tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.7, DEBES ELEGIR UNA RESPUESTA INCORRECTA.
-            - Si tu nivel de inteligencia ({p.accuracyBase}) es menor a 0.3, DEBES ELEGIR UNA RESPUESTA INCORRECTA casi siempre.
-            5. Si tu nivel de caos ({p.randomness}) es mayor a 0.7, elige una respuesta totalmente AL AZAR ignorando todo lo demás.
+            - Si la dificultad es 'Difícil', y tu nivel de inteligencia ({profile.accuracyBase}) es menor a 0.7, DEBES ELEGIR UNA RESPUESTA INCORRECTA.
+            - Si tu nivel de inteligencia ({profile.accuracyBase}) es menor a 0.3, DEBES ELEGIR UNA RESPUESTA INCORRECTA casi siempre.
+            5. Si tu nivel de caos ({profile.randomness}) es mayor a 0.7, elige una respuesta totalmente AL AZAR ignorando todo lo demás.
 
             Responde SOLO con el índice (0-3).
             ";
     }
 
-    public IEnumerator PedirPerfil(string role, System.Action<PlayerProfile> callback)
+    public IEnumerator RequestProfile(string role, System.Action<PlayerProfile> callback)
     {
         RoleRequest req = new RoleRequest { role = role };
 
@@ -174,11 +174,11 @@ public class AIService : MonoBehaviour
             yield break;
         }
 
-        PlayerProfile perfil;
+        PlayerProfile profile;
 
         try
         {
-            perfil = JsonUtility.FromJson<PlayerProfile>(www.downloadHandler.text);
+            profile = JsonUtility.FromJson<PlayerProfile>(www.downloadHandler.text);
         }
         catch
         {
@@ -186,18 +186,18 @@ public class AIService : MonoBehaviour
             yield break;
         }
 
-        if (perfil == null)
+        if (profile == null)
         {
             Debug.LogError(" Perfil NULL");
             yield break;
         }
 
-        callback?.Invoke(perfil);
+        callback?.Invoke(profile);
     }
 
-    private System.Collections.IEnumerator EnviarPrompt(Models model,string prompt, bool esPregunta, System.Action<int> callback = null)
+    private System.Collections.IEnumerator SendPrompt(Models model,string prompt, bool isQuestion, System.Action<int> callback = null)
     {
-        PromptRequest req = CreateRequest(model, prompt, esPregunta);
+        PromptRequest req = CreateRequest(model, prompt, isQuestion);
         string jsonBody = JsonUtility.ToJson(req);
 
         byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonBody);
@@ -217,7 +217,7 @@ public class AIService : MonoBehaviour
             if (model != Models.Copilot)
             {
                 Debug.LogWarning($"Fallo de red con {model}. Reintentando automáticamente con Copilot...");
-                yield return StartCoroutine(EnviarPrompt(Models.Copilot, prompt, esPregunta, callback));
+                yield return StartCoroutine(SendPrompt(Models.Copilot, prompt, isQuestion, callback));
             }
 
             yield break;
@@ -235,19 +235,19 @@ public class AIService : MonoBehaviour
                 if (model != Models.Copilot)
                 {
                     //Debug.LogWarning($"Fallo de API (Ej. Cuota excedida) con {model}. Reintentando automáticamente con Copilot...");
-                    yield return StartCoroutine(EnviarPrompt(Models.Copilot, prompt, esPregunta, callback));
+                    yield return StartCoroutine(SendPrompt(Models.Copilot, prompt, isQuestion, callback));
                 }
                 yield break;
             }
 
-            if (esPregunta)
+            if (isQuestion)
             {
                 //Debug.Log("Pregunta generada por: " + model.ToString());
                 // Asumir que la respuesta es directamente el JSON de PreguntaOpciones
-                PreguntaOpciones pregunta = JsonUtility.FromJson<PreguntaOpciones>(responseText);
+                OptionsQuestion pregunta = JsonUtility.FromJson<OptionsQuestion>(responseText);
 
                 // Mostrar la pregunta en pantalla
-                MostrarPregunta(pregunta);
+                ShowQuestion(pregunta);
             }
             else
             {
@@ -277,8 +277,8 @@ public class AIService : MonoBehaviour
         };
     }
 
-    private void MostrarPregunta(PreguntaOpciones pregunta)
+    private void ShowQuestion(OptionsQuestion pregunta)
     {
-        uiController.MostrarPregunta(pregunta);
+        uiController.ShowQuestion(pregunta);
     }
 }

@@ -7,94 +7,94 @@ public class BoardGameManager : MonoBehaviour
     public UIController uiController;
 
     [Header("Marcadores UI")]
-    public FichaTrivial[] marcadores;
+    public TrivialPiece[] scoreboards;
 
     [Header("Nodos de inicio (en la escena)")]
     [Tooltip("Arrastra los 6 nodos centrales de la escena en el mismo orden que los prefabs de las fichas")]
-    public SquareNode[] nodesSalida;
+    public SquareNode[] outgoingNodes;
 
     void Start()
     {
         if (GameManager.GetInstance() != null)
         {
-            InicializarPartida();
+            StartGame();
         }
     }
 
-    void InicializarPartida()
+    void StartGame()
     {
         GameManager gm = GameManager.GetInstance();
-        int totalJugadores = gm.descriptorJug.Count;
+        int totalPlayers = gm.playerDescriptor.Count;
 
-        List<FichaTrivial> fichasInstanciadas = new List<FichaTrivial>();
-        List<FichaTrivial> marcadoresActivos = new List<FichaTrivial>();
+        List<TrivialPiece> instantiatedPieces = new List<TrivialPiece>();
+        List<TrivialPiece> activeScoreboards = new List<TrivialPiece>();
 
         // Desactivar todos los marcadores por seguridad
-        foreach (var marcador in marcadores)
+        foreach (var scoreboard in scoreboards)
         {
-            if (marcador != null) marcador.gameObject.SetActive(false);
+            if (scoreboard != null) scoreboard.gameObject.SetActive(false);
         }
 
-        for (int i = 0; i < totalJugadores; i++)
+        for (int i = 0; i < totalPlayers; i++)
         {
-            DescriptorJugador datos = gm.descriptorJug[i];
+            PlayerDescriptor data = gm.playerDescriptor[i];
 
             // Prefab
-            GameObject prefabFicha = gm.prefabsFichas[datos.fichaIndex];
+            GameObject piecePrefab = gm.piecesPrefabs[data.indexPiece];
 
             // Obtener nodo real de la escena basandose en el indice de la ficha
-            SquareNode nodeInicio = nodesSalida[datos.fichaIndex];
+            SquareNode startNode = outgoingNodes[data.indexPiece];
 
-            if (nodeInicio != null)
+            if (startNode != null)
             {
                 // Posicion de salida
-                Vector3 posSalida = nodeInicio.transform.position;
-                posSalida.y = prefabFicha.transform.position.y;
+                Vector3 iniPos = startNode.transform.position;
+                iniPos.y = piecePrefab.transform.position.y;
 
                 // Instanciar la ficha en la casilla de salida
                 Quaternion iniRot = Quaternion.Euler(90f, 0f, 0f);
-                GameObject nuevaFicha = Instantiate(prefabFicha, posSalida, iniRot);
-                nuevaFicha.name = "Ficha_" + datos.nombre;
+                GameObject newPiece = Instantiate(piecePrefab, iniPos, iniRot);
+                newPiece.name = "Ficha_" + data.name;
 
                 // Inyectar a la ficha instanciada el nodo real
-                PieceMovement pmInstacia = nuevaFicha.GetComponent<PieceMovement>();
-                if(pmInstacia != null)
+                PieceMovement pmInstance = newPiece.GetComponent<PieceMovement>();
+                if(pmInstance != null)
                 {
-                    pmInstacia.actualSquare = nodeInicio;
-                    pmInstacia.turnoIndex = i;
+                    pmInstance.actualSquare = startNode;
+                    pmInstance.indexTurn = i;
                 }
 
                 // Guardar la referencia para el UIController
-                FichaTrivial fichaT = nuevaFicha.GetComponent<FichaTrivial>();
-                if (fichaT != null)
+                TrivialPiece trivialPiece = newPiece.GetComponent<TrivialPiece>();
+                if (trivialPiece != null)
                 {
-                    fichasInstanciadas.Add(fichaT);
+                    instantiatedPieces.Add(trivialPiece);
                 }
             }
             else
             {
-                Debug.LogError($"Falta asignar el nodo de salida en el indice {datos.fichaIndex} del BoardGameManager.");
+                Debug.LogError($"Falta asignar el nodo de salida en el indice {data.indexPiece} del BoardGameManager.");
             }
 
             // Marcadores interfaz
-            if (datos.fichaIndex >= 0 && datos.fichaIndex < marcadores.Length)
+            if (data.indexPiece >= 0 && data.indexPiece < scoreboards.Length)
             {
                 // Buscar marcador que corresponde a esta ficha
-                FichaTrivial marcadorUI = marcadores[datos.fichaIndex];
+                TrivialPiece scoreboardUI = scoreboards[data.indexPiece];
 
-                if (marcadorUI != null)
+                if (scoreboardUI != null)
                 {
                     // Activar en la jerarquia
-                    marcadorUI.gameObject.SetActive(true);
+                    scoreboardUI.gameObject.SetActive(true);
 
                     // Añadir a la lista ordanada para el UIController
-                    marcadoresActivos.Add(marcadorUI);
+                    activeScoreboards.Add(scoreboardUI);
 
                     // Añadir nombre del jugador
-                    TextMeshProUGUI textoNombre = marcadorUI.GetComponentInChildren<TextMeshProUGUI>();
-                    if ( textoNombre != null )
+                    TextMeshProUGUI textName = scoreboardUI.GetComponentInChildren<TextMeshProUGUI>();
+                    if ( textName != null )
                     {
-                        textoNombre.text = datos.nombre;
+                        textName.text = data.name;
                     }
                 }
             }
@@ -103,11 +103,11 @@ public class BoardGameManager : MonoBehaviour
         // Pasar las fichas instanciadas y los marcadores activos ordenados al UIController
         if (uiController != null)
         {
-            uiController.fichasTablero = fichasInstanciadas.ToArray();
-            uiController.fichasMarcadores = marcadoresActivos.ToArray();
+            uiController.boardgamePieces = instantiatedPieces.ToArray();
+            uiController.scoreboardPieces = activeScoreboards.ToArray();
 
             // Resaltar primer turno al empezar
-            uiController.ActualizarIndicadoresTurno();
+            uiController.UpdateTurnSigns();
         }
     }
 }

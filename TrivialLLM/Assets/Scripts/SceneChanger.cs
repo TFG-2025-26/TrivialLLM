@@ -1,17 +1,17 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CambiaEscena : MonoBehaviour
+public class SceneChanger : MonoBehaviour
 {
     public string sceneName; 
 
     public void onClick()
     {
         gameObject.GetComponent<AudioSource>().Play();
-        Invoke("cambiaEscena", 0.2f);
+        Invoke("ChangeScene", 0.2f);
     }
 
-    private void cambiaEscena()
+    private void ChangeScene()
     {
         SceneManager.LoadScene(sceneName);
     }

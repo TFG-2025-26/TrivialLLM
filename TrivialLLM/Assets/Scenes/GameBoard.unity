@@ -148,12 +148,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 2003410588}
   outwards: {fileID: 1341140891}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &34287598
 Transform:
   m_ObjectHideFlags: 0
@@ -213,12 +213,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 300007167}
   outwards: {fileID: 567485037}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &50904834
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,12 +355,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 1094318531}
   outwards: {fileID: 857653005}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &127528971
 Transform:
   m_ObjectHideFlags: 0
@@ -405,12 +405,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 541864814}
   right: {fileID: 2108132124}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &138246685
 Transform:
   m_ObjectHideFlags: 0
@@ -873,12 +873,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 2096037544}
   outwards: {fileID: 47052283}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &300007168
 Transform:
   m_ObjectHideFlags: 0
@@ -923,12 +923,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 1307885326}
   outwards: {fileID: 1522242426}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &357334625
 Transform:
   m_ObjectHideFlags: 0
@@ -1217,12 +1217,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 1207721210}
   outwards: {fileID: 0}
   left: {fileID: 1549122396}
   right: {fileID: 1285654618}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &406835435
 Transform:
   m_ObjectHideFlags: 0
@@ -1403,12 +1403,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 737270392}
   right: {fileID: 1830290257}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &476510916
 Transform:
   m_ObjectHideFlags: 0
@@ -1626,12 +1626,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1230021078}
   right: {fileID: 992401309}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &494131875
 Transform:
   m_ObjectHideFlags: 0
@@ -1805,12 +1805,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 1271269795}
   outwards: {fileID: 592683999}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &514556909
 Transform:
   m_ObjectHideFlags: 0
@@ -1855,12 +1855,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 567485037}
   right: {fileID: 138246684}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &541864815
 Transform:
   m_ObjectHideFlags: 0
@@ -2032,12 +2032,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 47052283}
   outwards: {fileID: 0}
   left: {fileID: 1267779462}
   right: {fileID: 541864814}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &567485038
 Transform:
   m_ObjectHideFlags: 0
@@ -2082,12 +2082,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1139079461}
   right: {fileID: 722599062}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &581423423
 Transform:
   m_ObjectHideFlags: 0
@@ -2174,12 +2174,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 514556908}
   outwards: {fileID: 1382087452}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &592684000
 Transform:
   m_ObjectHideFlags: 0
@@ -2241,25 +2241,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quizPanel: {fileID: 215467715}
-  textPregunta: {fileID: 707250537}
-  botonesOpciones:
+  questionText: {fileID: 707250537}
+  optionsButtons:
   - {fileID: 1696900859}
   - {fileID: 243791406}
   - {fileID: 1691245265}
   - {fileID: 276059980}
-  textRespuesta: {fileID: 895240936}
-  textTema: {fileID: 461735896}
-  textModeloPregunta: {fileID: 1225751339}
-  textTurno: {fileID: 1838267608}
-  fichasTablero:
-  - {fileID: 0}
-  fichasMarcadores:
-  - {fileID: 0}
-  spriteBotonNormal: {fileID: 21300000, guid: 43724888fcc4fd141b1d1255ede52f48, type: 3}
-  spriteBotonCorrecto: {fileID: 21300000, guid: a128cc23a8e632742a06c5c4cb19ab26, type: 3}
-  spriteBotonIncorrecto: {fileID: 21300000, guid: 247099efad9f6984f96ba3af120e659e, type: 3}
-  sonidoCorrecto: {fileID: 8300000, guid: 1b696b75033fbc84887cd8855005db86, type: 3}
-  sonidoIncorrecto: {fileID: 8300000, guid: 5cb53e94132431642b68a4729c30348f, type: 3}
+  answerText: {fileID: 895240936}
+  categoryText: {fileID: 461735896}
+  modelAskingText: {fileID: 1225751339}
+  currentTurnNameText: {fileID: 1838267608}
+  boardgamePieces: []
+  scoreboardPieces: []
+  normalButtonSprite: {fileID: 21300000, guid: 43724888fcc4fd141b1d1255ede52f48, type: 3}
+  correctButtonSprite: {fileID: 21300000, guid: a128cc23a8e632742a06c5c4cb19ab26, type: 3}
+  incorrectButtonSprite: {fileID: 21300000, guid: 247099efad9f6984f96ba3af120e659e, type: 3}
+  correctSound: {fileID: 8300000, guid: 1b696b75033fbc84887cd8855005db86, type: 3}
+  incorrectSound: {fileID: 8300000, guid: 5cb53e94132431642b68a4729c30348f, type: 3}
   ai: {fileID: 0}
   textWaiting: {fileID: 1925443857}
   textThinking: {fileID: 2128744732}
@@ -2513,12 +2511,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1984030176}
   right: {fileID: 1792950422}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &658444051
 Transform:
   m_ObjectHideFlags: 0
@@ -2699,12 +2697,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1792950422}
   right: {fileID: 1267779462}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &712896217
 Transform:
   m_ObjectHideFlags: 0
@@ -2749,12 +2747,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 2122588994}
   right: {fileID: 1704259927}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &716579742
 Transform:
   m_ObjectHideFlags: 0
@@ -2814,12 +2812,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 581423422}
   right: {fileID: 829788996}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &737270391
 GameObject:
   m_ObjectHideFlags: 0
@@ -2849,12 +2847,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 1602361178}
   outwards: {fileID: 0}
   left: {fileID: 2109625011}
   right: {fileID: 476510915}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &737270393
 Transform:
   m_ObjectHideFlags: 0
@@ -3291,12 +3289,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 1126884786}
   outwards: {fileID: 1898011998}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &806270570
 Transform:
   m_ObjectHideFlags: 0
@@ -3356,12 +3354,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 857653005}
   outwards: {fileID: 0}
   left: {fileID: 722599062}
   right: {fileID: 2116388814}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &830144314
 GameObject:
   m_ObjectHideFlags: 0
@@ -3542,12 +3540,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 127528970}
   outwards: {fileID: 829788996}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &877328805
 GameObject:
   m_ObjectHideFlags: 0
@@ -3577,12 +3575,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 2108132124}
   right: {fileID: 2137213638}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &877328807
 Transform:
   m_ObjectHideFlags: 0
@@ -4031,17 +4029,6 @@ Transform:
   - {fileID: 1549122395}
   m_Father: {fileID: 798633111}
   m_LocalEulerAnglesHint: {x: 0, y: -300, z: 0}
---- !u!114 &924163614 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6934608560300494364, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
-  m_PrefabInstance: {fileID: 1774963159}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &934936278
 GameObject:
   m_ObjectHideFlags: 0
@@ -4071,12 +4058,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 2087079527}
   outwards: {fileID: 1094318531}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &934936280
 Transform:
   m_ObjectHideFlags: 0
@@ -4196,12 +4183,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 1382087452}
   outwards: {fileID: 0}
   left: {fileID: 983424349}
   right: {fileID: 1181625614}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &938563208
 Transform:
   m_ObjectHideFlags: 0
@@ -4246,12 +4233,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 1699224300}
   outwards: {fileID: 1126884786}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &941266005
 Transform:
   m_ObjectHideFlags: 0
@@ -4296,12 +4283,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 2003410588}
   outwards: {fileID: 975672538}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &964437518
 Transform:
   m_ObjectHideFlags: 0
@@ -4346,12 +4333,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 964437517}
   outwards: {fileID: 1559864301}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &975672539
 Transform:
   m_ObjectHideFlags: 0
@@ -4448,12 +4435,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 992401309}
   right: {fileID: 938563207}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &992401308
 GameObject:
   m_ObjectHideFlags: 0
@@ -4483,12 +4470,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 494131874}
   right: {fileID: 983424349}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &992401310
 Transform:
   m_ObjectHideFlags: 0
@@ -4711,12 +4698,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 934936279}
   outwards: {fileID: 127528970}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1094318532
 Transform:
   m_ObjectHideFlags: 0
@@ -4836,12 +4823,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 941266004}
   outwards: {fileID: 806270569}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1126884787
 Transform:
   m_ObjectHideFlags: 0
@@ -4886,12 +4873,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1403441334}
   right: {fileID: 1380860800}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1136768239
 Transform:
   m_ObjectHideFlags: 0
@@ -4936,12 +4923,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1587037666}
   right: {fileID: 581423422}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1139079462
 Transform:
   m_ObjectHideFlags: 0
@@ -4986,12 +4973,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 938563207}
   right: {fileID: 1656719507}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1181625615
 Transform:
   m_ObjectHideFlags: 0
@@ -5036,12 +5023,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 1898011998}
   outwards: {fileID: 0}
   left: {fileID: 1555293256}
   right: {fileID: 1654164847}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1194761250
 Transform:
   m_ObjectHideFlags: 0
@@ -5091,12 +5078,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 2043098911}
   outwards: {fileID: 406835434}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1207721211
 Transform:
   m_ObjectHideFlags: 0
@@ -5277,12 +5264,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 2061259866}
   right: {fileID: 494131874}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1230021079
 Transform:
   m_ObjectHideFlags: 0
@@ -5547,12 +5534,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 712896216}
   right: {fileID: 567485037}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &1271269794
 GameObject:
   m_ObjectHideFlags: 0
@@ -5582,12 +5569,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 1646970850}
   outwards: {fileID: 514556908}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1271269796
 Transform:
   m_ObjectHideFlags: 0
@@ -5756,12 +5743,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 406835434}
   right: {fileID: 1984030176}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1285654619
 Transform:
   m_ObjectHideFlags: 0
@@ -5806,12 +5793,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 2003410588}
   outwards: {fileID: 357334624}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1307885327
 Transform:
   m_ObjectHideFlags: 0
@@ -5992,12 +5979,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 34287597}
   outwards: {fileID: 2096037544}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1341140892
 Transform:
   m_ObjectHideFlags: 0
@@ -6042,12 +6029,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1136768238}
   right: {fileID: 1549122396}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1380860801
 Transform:
   m_ObjectHideFlags: 0
@@ -6107,12 +6094,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 592683999}
   outwards: {fileID: 938563207}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &1403441333
 GameObject:
   m_ObjectHideFlags: 0
@@ -6142,12 +6129,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1830290257}
   right: {fileID: 1136768238}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1403441335
 Transform:
   m_ObjectHideFlags: 0
@@ -6370,12 +6357,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 357334624}
   outwards: {fileID: 2134689852}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1522242427
 Transform:
   m_ObjectHideFlags: 0
@@ -6474,12 +6461,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1380860800}
   right: {fileID: 406835434}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &1555293254
 GameObject:
   m_ObjectHideFlags: 0
@@ -6524,12 +6511,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 2137213638}
   right: {fileID: 1194761249}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &1559864300
 GameObject:
   m_ObjectHideFlags: 0
@@ -6559,12 +6546,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 975672538}
   outwards: {fileID: 2043098911}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1559864302
 Transform:
   m_ObjectHideFlags: 0
@@ -6609,12 +6596,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1656719507}
   right: {fileID: 1139079461}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1587037667
 Transform:
   m_ObjectHideFlags: 0
@@ -6674,12 +6661,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 2134689852}
   outwards: {fileID: 737270392}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &1646970849
 GameObject:
   m_ObjectHideFlags: 0
@@ -6709,12 +6696,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 0
+  category: 0
   centre: {fileID: 2003410588}
   outwards: {fileID: 1271269795}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1646970851
 Transform:
   m_ObjectHideFlags: 0
@@ -6759,12 +6746,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1194761249}
   right: {fileID: 2061259866}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1654164848
 Transform:
   m_ObjectHideFlags: 0
@@ -6809,12 +6796,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1181625614}
   right: {fileID: 1587037666}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1656719508
 Transform:
   m_ObjectHideFlags: 0
@@ -7379,12 +7366,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 2003410588}
   outwards: {fileID: 941266004}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1699224301
 Transform:
   m_ObjectHideFlags: 0
@@ -7505,12 +7492,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 716579741}
   right: {fileID: 2109625011}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1704259928
 Transform:
   m_ObjectHideFlags: 0
@@ -7692,14 +7679,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiController: {fileID: 597026420}
-  marcadores:
+  scoreboards:
   - {fileID: 1283440597}
   - {fileID: 1668057713}
   - {fileID: 633876247}
   - {fileID: 1967336847}
   - {fileID: 513156438}
   - {fileID: 889078658}
-  nodesSalida:
+  outgoingNodes:
   - {fileID: 4968520155610298055}
   - {fileID: 1148351972645801532}
   - {fileID: 5437697856414568989}
@@ -7799,7 +7786,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1062132242970480560, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: releaseNumber
+      value: ReleaseNumber
+      objectReference: {fileID: 0}
+    - target: {fileID: 1062132242970480560, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: DiceThrow, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 1062132242970480560, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
@@ -7999,6 +7990,17 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
 --- !u!114 &1774963160 stripped
 MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6934608560300494364, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
+  m_PrefabInstance: {fileID: 1774963159}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1774963161 stripped
+MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1062132242970480560, guid: 045a77ba121da694e8f001e8b1b6ff22, type: 3}
   m_PrefabInstance: {fileID: 1774963159}
   m_PrefabAsset: {fileID: 0}
@@ -8037,12 +8039,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 658444050}
   right: {fileID: 712896216}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1792950423
 Transform:
   m_ObjectHideFlags: 0
@@ -8098,12 +8100,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 476510915}
   right: {fileID: 1403441334}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1830290258
 Transform:
   m_ObjectHideFlags: 0
@@ -8284,12 +8286,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 2116388814}
   right: {fileID: 2122588994}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1895917704
 Transform:
   m_ObjectHideFlags: 0
@@ -8349,12 +8351,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 806270569}
   outwards: {fileID: 1194761249}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &1925443855
 GameObject:
   m_ObjectHideFlags: 0
@@ -8916,12 +8918,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1285654618}
   right: {fileID: 658444050}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &1984030177
 Transform:
   m_ObjectHideFlags: 0
@@ -8966,18 +8968,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 7
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra:
-  - {fileID: 964437517}
-  - {fileID: 34287597}
-  - {fileID: 1699224300}
-  - {fileID: 1646970850}
-  - {fileID: 2087079527}
-  - {fileID: 1307885326}
+  extraNodes: []
 --- !u!4 &2003410589
 Transform:
   m_ObjectHideFlags: 0
@@ -9015,17 +9011,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04bbf1d9ca0b20745be5fcd3972b1fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resultado: {fileID: 924163614}
+  result: {fileID: 1774963160}
   diceImage: {fileID: 1826406172}
-  dicefaces:
+  diceFaces:
   - {fileID: 1393086386, guid: 3e091841c99f3c840b24c6d3e6b9f6bd, type: 3}
   - {fileID: 1465872550, guid: 3e091841c99f3c840b24c6d3e6b9f6bd, type: 3}
   - {fileID: -806096723, guid: 3e091841c99f3c840b24c6d3e6b9f6bd, type: 3}
   - {fileID: 946544650, guid: 3e091841c99f3c840b24c6d3e6b9f6bd, type: 3}
   - {fileID: 1899937226, guid: 3e091841c99f3c840b24c6d3e6b9f6bd, type: 3}
   - {fileID: -315872156, guid: 3e091841c99f3c840b24c6d3e6b9f6bd, type: 3}
-  botonLanzar: {fileID: 1774963160}
-  textThrow: {fileID: 381974362}
+  throwButton: {fileID: 1774963161}
+  throwText: {fileID: 381974362}
 --- !u!1 &2043098910
 GameObject:
   m_ObjectHideFlags: 0
@@ -9055,12 +9051,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 1559864301}
   outwards: {fileID: 1207721210}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2043098912
 Transform:
   m_ObjectHideFlags: 0
@@ -9105,12 +9101,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1654164847}
   right: {fileID: 1230021078}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2061259867
 Transform:
   m_ObjectHideFlags: 0
@@ -9155,12 +9151,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 2003410588}
   outwards: {fileID: 934936279}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2087079528
 Transform:
   m_ObjectHideFlags: 0
@@ -9205,12 +9201,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 3
+  category: 0
   centre: {fileID: 1341140891}
   outwards: {fileID: 300007167}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2096037545
 Transform:
   m_ObjectHideFlags: 0
@@ -9391,12 +9387,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 2
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 138246684}
   right: {fileID: 877328806}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2108132125
 Transform:
   m_ObjectHideFlags: 0
@@ -9456,12 +9452,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 4
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1704259927}
   right: {fileID: 737270392}
-  nodesExtra: []
+  extraNodes: []
 --- !u!1 &2116388813
 GameObject:
   m_ObjectHideFlags: 0
@@ -9491,12 +9487,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 829788996}
   right: {fileID: 1895917703}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2116388815
 Transform:
   m_ObjectHideFlags: 0
@@ -9541,12 +9537,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 1
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 1895917703}
   right: {fileID: 716579741}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2122588995
 Transform:
   m_ObjectHideFlags: 0
@@ -9727,12 +9723,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 5
+  category: 0
   centre: {fileID: 1522242426}
   outwards: {fileID: 1602361178}
   left: {fileID: 0}
   right: {fileID: 0}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2134689853
 Transform:
   m_ObjectHideFlags: 0
@@ -9777,12 +9773,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c63726ad9bc014b8b376314fc20849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topic: 6
+  category: 0
   centre: {fileID: 0}
   outwards: {fileID: 0}
   left: {fileID: 877328806}
   right: {fileID: 1555293256}
-  nodesExtra: []
+  extraNodes: []
 --- !u!4 &2137213639
 Transform:
   m_ObjectHideFlags: 0

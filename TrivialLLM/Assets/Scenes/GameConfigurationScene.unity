@@ -241,7 +241,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ClickEnFicha
+        m_MethodName: ClickOnPiece
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -725,7 +725,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: registrarHumano
+        m_MethodName: RegisterHuman
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1258,7 +1258,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: quitarLLM
+        m_MethodName: RemoveLLM
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1677,7 +1677,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: AsignarFichasLLM
+        m_MethodName: AsignLLMPieces
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2726,7 +2726,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: registrarLLM
+        m_MethodName: RegisterLLM
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3388,7 +3388,7 @@ RectTransform:
   m_Father: {fileID: 50567003}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.88712555}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3763,7 +3763,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ClickEnFicha
+        m_MethodName: ClickOnPiece
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4470,7 +4470,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ClickEnFicha
+        m_MethodName: ClickOnPiece
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4888,7 +4888,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ClickEnFicha
+        m_MethodName: ClickOnPiece
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5093,7 +5093,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: quitarHum
+        m_MethodName: RemoveHuman
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5307,6 +5307,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AIService
       objectReference: {fileID: 0}
+    - target: {fileID: 3875627413760238745, guid: 5f90f961c158fb14891d1065d50b0d62, type: 3}
+      propertyPath: questionModel
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8677557425058586731, guid: 5f90f961c158fb14891d1065d50b0d62, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5417,7 +5421,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ClickEnFicha
+        m_MethodName: ClickOnPiece
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6994,7 +6998,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1017023863}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.88712555
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7882,7 +7886,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: addLLM
+        m_MethodName: AddLLM
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8268,33 +8272,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55e70792c6f42554c8ac5a26fabae7d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textoNumHumanos: {fileID: 216466569}
-  textoNumLLMS: {fileID: 1988220297}
-  textConfirmacion: {fileID: 2042755808}
-  textLimite: {fileID: 1819469032}
+  numHumansText: {fileID: 216466569}
+  numLLMsText: {fileID: 1988220297}
+  confirmText: {fileID: 2042755808}
+  limitText: {fileID: 1819469032}
   panelLLM: {fileID: 607531856}
-  panelHumano: {fileID: 2069605285}
-  modelRespuesta: {fileID: 870522944}
-  modelPregunta: {fileID: 1624890995}
+  panelHuman: {fileID: 2069605285}
+  answerModel: {fileID: 870522944}
+  questionModel: {fileID: 1624890995}
   promptText: {fileID: 42866845}
-  inputNombre: {fileID: 612372490}
-  buttonStartGame: {fileID: 339074469}
-  rondaActual: 1
-  descriptorJug: []
-  botonesFichas:
+  nameInput: {fileID: 612372490}
+  startGameButton: {fileID: 339074469}
+  playerDescriptor: []
+  piecesButtons:
   - {fileID: 18687595}
   - {fileID: 1349882982}
   - {fileID: 1120347028}
   - {fileID: 1524774632}
   - {fileID: 2142622094}
   - {fileID: 1595516710}
-  prefabsFichas:
+  piecesPrefabs:
   - {fileID: 2877249046730997229, guid: 50c948e61e5f629409c6de2afe4e442a, type: 3}
   - {fileID: 6716511610996161843, guid: 9e2f10dc4ee2f304d9ff88b51256f330, type: 3}
   - {fileID: 1555261918065675957, guid: bd5436631b6cd1847ad2e1b333e78aa5, type: 3}
   - {fileID: 7160728176745585415, guid: cf86f03b142a8ec468507a3607537362, type: 3}
   - {fileID: 1555261918065675957, guid: 1e12e68ae6a62fb4faf9d2dafd4df79b, type: 3}
   - {fileID: 6824248592557979521, guid: e05d725bfc032354681941a1dc78bebf, type: 3}
+  currentRound: 1
   placeToMove: {fileID: 4091621245666146647, guid: 1c73d7fae328bd1488694d9a84a1abfc, type: 3}
 --- !u!4 &2047806507
 Transform:
@@ -8692,7 +8696,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: addHuman
+        m_MethodName: AddHuman
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8862,7 +8866,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2047806506}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: ClickEnFicha
+        m_MethodName: ClickOnPiece
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

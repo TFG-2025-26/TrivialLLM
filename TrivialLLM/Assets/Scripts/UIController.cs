@@ -12,29 +12,29 @@ public class UIController : MonoBehaviour
     public GameObject quizPanel;
 
     [Header("Textos y botones")]
-    public TextMeshProUGUI textPregunta;
-    public Button[] botonesOpciones;
-    public TextMeshProUGUI textRespuesta;
+    public TextMeshProUGUI questionText;
+    public Button[] optionsButtons;
+    public TextMeshProUGUI answerText;
 
-    public TextMeshProUGUI textTema;
-    public TextMeshProUGUI textModeloPregunta;
-    public TextMeshProUGUI textTurno;
+    public TextMeshProUGUI categoryText;
+    public TextMeshProUGUI modelAskingText;
+    public TextMeshProUGUI currentTurnNameText;
 
     [Header("Fichas de los jugadores")]
-    public FichaTrivial[] fichasTablero; // Fichas que se mueven por el tablero
-    public FichaTrivial[] fichasMarcadores; // Las de la interfaz
+    public TrivialPiece[] boardgamePieces; // Fichas que se mueven por el tablero
+    public TrivialPiece[] scoreboardPieces; // Las de la interfaz
 
     [Header("Sprites feedback botones")]
-    public Sprite spriteBotonNormal;
-    public Sprite spriteBotonCorrecto;
-    public Sprite spriteBotonIncorrecto;
+    public Sprite normalButtonSprite;
+    public Sprite correctButtonSprite;
+    public Sprite incorrectButtonSprite;
     [Header("Sonidos respuesta")]
-    public AudioClip sonidoCorrecto;
-    public AudioClip sonidoIncorrecto;
+    public AudioClip correctSound;
+    public AudioClip incorrectSound;
 
 
     public AIService ai;
-    private int respuestaCorrecta;
+    private int correctAnswerIndex;
 
     [Header("UI del tablero")]
     public TextMeshProUGUI textWaiting;
@@ -44,7 +44,7 @@ public class UIController : MonoBehaviour
     private Coroutine animationThinking;
 
     private bool isFinalRound = false;
-    private int numCorrectAnswerFinal = 0;
+    private int correctAnswerFinalCount = 0;
     private int currentQuestionFinal = 0;
     private List<string> topicsFinalRound = new List<string>();
     //private bool esTurnoHumano;
@@ -61,12 +61,12 @@ public class UIController : MonoBehaviour
         ai =GameObject.Find("AIService").GetComponent<AIService>();
         ai.uiController = this; 
     }
-    public void MostrarPregunta(PreguntaOpciones p)
+    public void ShowQuestion(OptionsQuestion question)
     {
-        if(p == null || p.opciones == null || p.opciones.Length < botonesOpciones.Length)
+        if(question == null || question.opciones == null || question.opciones.Length < optionsButtons.Length)
         {
             Debug.LogError("Error: La IA no devolvio las opciones correctamente.");
-            textPregunta.text = "Error al generar la pregunta. Vuelve a intentarlo";
+            questionText.text = "Error al generar la pregunta. Vuelve a intentarlo";
             return;
         }
 
@@ -81,25 +81,25 @@ public class UIController : MonoBehaviour
 
         // Mostrar panel del quiz
         quizPanel.SetActive(true);
-        textPregunta.text = p.pregunta;
+        questionText.text = question.pregunta;
 
         ShowTextThinking();
 
-        DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
+        PlayerDescriptor currentPlayer = GameManager.GetInstance().GetPlayerCurrentTurn();
         //Debug.Log($"Turno de: {jugActual.nombre} | ¿Es humano?: {jugActual.esHumano}");
 
         // Mostrar tema y modelo que pregunta
-        if (textTema != null && ai != null)
+        if (categoryText != null && ai != null)
         {
-            textTema.text = "Tema: " + ai.categoriaActual;
+            categoryText.text = "Tema: " + ai.currentCategory;
         }
-        if (textModeloPregunta != null && jugActual != null)
+        if (modelAskingText != null && currentPlayer != null)
         {
-            textModeloPregunta.text = "Pregunta: " + jugActual.modeloPreguntas.ToString();
+            modelAskingText.text = "Pregunta: " + currentPlayer.questionModel.ToString();
         }
-        if (textTurno != null && jugActual != null)
+        if (currentTurnNameText != null && currentPlayer != null)
         {
-            textTurno.text = "Turno: " + jugActual.nombre;
+            currentTurnNameText.text = "Turno: " + currentPlayer.name;
         }
 
         //if (GameManager.GetInstance() != null && GameManager.GetInstance().descriptorJug.Count > 0)
@@ -107,65 +107,65 @@ public class UIController : MonoBehaviour
         //    esTurnoHumano = (GameManager.GetInstance().getJugTurnoActual().esHumano);
         //}
 
-        for (int i = 0; i < botonesOpciones.Length; i++)
+        for (int i = 0; i < optionsButtons.Length; i++)
         {
-            botonesOpciones[i].GetComponentInChildren<TextMeshProUGUI>().text = p.opciones[i];
+            optionsButtons[i].GetComponentInChildren<TextMeshProUGUI>().text = question.opciones[i];
 
             // Resetear sprite normal al cargar nueva pregunta
-            botonesOpciones[i].GetComponent<Image>().sprite = spriteBotonNormal;
+            optionsButtons[i].GetComponent<Image>().sprite = normalButtonSprite;
 
             // Los botones son interactuables solo para jugadores humanos
-            botonesOpciones[i].interactable = jugActual.esHumano;
+            optionsButtons[i].interactable = currentPlayer.isHuman;
 
             int index = i;
-            botonesOpciones[i].onClick.RemoveAllListeners();
-            botonesOpciones[i].onClick.AddListener(() => SeleccionarRespuesta(index));
+            optionsButtons[i].onClick.RemoveAllListeners();
+            optionsButtons[i].onClick.AddListener(() => SelectAnswer(index));
 
         }
 
         // La IA responde automaticamente
-        if(!jugActual.esHumano)
+        if(!currentPlayer.isHuman)
         {
             //Debug.Log("Turno de la IA: " + jugActual.nombre + ". Contestando automaticamente...");
-            StartCoroutine(EsperarYContestarIA());
+            StartCoroutine(WaitAndReplyAI());
         }
-        respuestaCorrecta = p.respuesta_correcta;
+        correctAnswerIndex = question.respuesta_correcta;
     }
 
-    private IEnumerator EsperarYContestarIA()
+    private IEnumerator WaitAndReplyAI()
     {
-        yield return new WaitForSeconds(10.0f);
-        MandarPregunta();
+        yield return new WaitForSeconds(1.0f);
+        SendQuestion();
     }
 
-    public void MandarPregunta()
+    public void SendQuestion()
     {
-        string prompt = textPregunta.text + "\nOpciones:\n";
+        string prompt = questionText.text + "\nOpciones:\n";
 
-        for (int i = 0; i < botonesOpciones.Length; i++)
+        for (int i = 0; i < optionsButtons.Length; i++)
         {
-            string opcion = botonesOpciones[i].GetComponentInChildren<TextMeshProUGUI>().text;
-            prompt += $"{i}) {opcion}\n";
+            string option = optionsButtons[i].GetComponentInChildren<TextMeshProUGUI>().text;
+            prompt += $"{i}) {option}\n";
         }
 
-        DescriptorJugador jug = GameManager.GetInstance().getJugTurnoActual();
+        PlayerDescriptor player = GameManager.GetInstance().GetPlayerCurrentTurn();
 
-        ai.ContestarPregunta(
-            jug.modelo,        // modelo del jugador
-            jug.perfil,        // perfil del jugador
+        ai.ReplyQuestion(
+            player.answerModel,        // modelo del jugador
+            player.profile,        // perfil del jugador
             prompt,
-            ai.dificultadActual,
+            ai.currentDifficulty,
             (int indexRespuesta) =>
             {
                 if (indexRespuesta >= 0)
                 {
-                    SeleccionarRespuesta(indexRespuesta);
+                    SelectAnswer(indexRespuesta);
                 }
             }
         );
     }
 
-    public void SeleccionarRespuesta(int index)
+    public void SelectAnswer(int index)
     {
         if(animationThinking != null)
         {
@@ -174,12 +174,12 @@ public class UIController : MonoBehaviour
         }
         if(textThinking != null) textThinking.gameObject.SetActive(false);
 
-        if(textRespuesta != null)
+        if(answerText != null)
         {
-            textRespuesta.text = /*index + ") " + */botonesOpciones[index].GetComponentInChildren<TextMeshProUGUI>().text;
+            answerText.text = /*index + ") " + */optionsButtons[index].GetComponentInChildren<TextMeshProUGUI>().text;
         }
 
-        StartCoroutine(MostrarResultadoVisual(index));
+        StartCoroutine(ShowVisualResult(index));
         
         //if (index == respuestaCorrecta)
         //{
@@ -212,48 +212,48 @@ public class UIController : MonoBehaviour
         //// Aqui se puede cargar otra pregunta, sumar puntos...
     }
 
-    private IEnumerator MostrarResultadoVisual(int index)
+    private IEnumerator ShowVisualResult(int index)
     {
         // Bloquear botones
-        foreach (var boton in botonesOpciones) boton.interactable = false;
+        foreach (var button in optionsButtons) button.interactable = false;
 
-        Image imgBotonElegido = botonesOpciones[index].GetComponent<Image>();
+        Image imgChosenButton = optionsButtons[index].GetComponent<Image>();
 
         // Comprobar acierto
-        if (index == respuestaCorrecta)
+        if (index == correctAnswerIndex)
         {
             // Cambiar a sprite correcto
-            imgBotonElegido.sprite = spriteBotonCorrecto;
-            gameObject.GetComponent<AudioSource>().PlayOneShot(sonidoCorrecto);
+            imgChosenButton.sprite = correctButtonSprite;
+            gameObject.GetComponent<AudioSource>().PlayOneShot(correctSound);
 
             // Si es ronda final, se suma acierto
-            if (isFinalRound) numCorrectAnswerFinal++;
+            if (isFinalRound) correctAnswerFinalCount++;
 
             // Siguiente turno
-            int turnoIndex = 0;
-            if (GameManager.GetInstance() != null) turnoIndex = GameManager.GetInstance().GetTurnoIndex();
+            int indexTurn = 0;
+            if (GameManager.GetInstance() != null) indexTurn = GameManager.GetInstance().GetIndexTurn();
 
             // Dar los quesitos a las fichas
-            if (ai != null && !string.IsNullOrEmpty(ai.categoriaActual))
+            if (ai != null && !string.IsNullOrEmpty(ai.currentCategory))
             {
-                if (fichasTablero.Length > turnoIndex && fichasTablero[turnoIndex] != null)
+                if (boardgamePieces.Length > indexTurn && boardgamePieces[indexTurn] != null)
                 {
-                    fichasTablero[turnoIndex].GanarQuesito(ai.categoriaActual);
+                    boardgamePieces[indexTurn].WinWedge(ai.currentCategory);
                 }
-                if (fichasMarcadores.Length > turnoIndex && fichasMarcadores[turnoIndex] != null)
+                if (scoreboardPieces.Length > indexTurn && scoreboardPieces[indexTurn] != null)
                 {
-                    fichasMarcadores[turnoIndex].GanarQuesito(ai.categoriaActual);
+                    scoreboardPieces[indexTurn].WinWedge(ai.currentCategory);
                 }
             }
         }
         else
         {
             // Cambiar a sprite incorrecto
-            imgBotonElegido.sprite = spriteBotonIncorrecto;
-            gameObject.GetComponent<AudioSource>().PlayOneShot(sonidoIncorrecto);
+            imgChosenButton.sprite = incorrectButtonSprite;
+            gameObject.GetComponent<AudioSource>().PlayOneShot(incorrectSound);
 
             // Mostrar cual era la correcta
-            botonesOpciones[respuestaCorrecta].GetComponent<Image>().sprite = spriteBotonCorrecto;
+            optionsButtons[correctAnswerIndex].GetComponent<Image>().sprite = correctButtonSprite;
 
         }
 
@@ -263,13 +263,13 @@ public class UIController : MonoBehaviour
 
 
         // Borrar texto de la pregunta, de respuesta y de las opciones
-        if (textPregunta != null) textPregunta.text = "";
-        if (textRespuesta != null) textRespuesta.text = "";
+        if (questionText != null) questionText.text = "";
+        if (answerText != null) answerText.text = "";
 
-        foreach (var boton in botonesOpciones)
+        foreach (var button in optionsButtons)
         {
-            boton.GetComponentInChildren<TextMeshProUGUI>().text = "";
-            boton.GetComponent<Image>().sprite = spriteBotonNormal;
+            button.GetComponentInChildren<TextMeshProUGUI>().text = "";
+            button.GetComponent<Image>().sprite = normalButtonSprite;
         }
 
         if (isFinalRound)
@@ -286,9 +286,9 @@ public class UIController : MonoBehaviour
                 // Terminan las 6 preguntas. Comprobar si ha ganado.
                 quizPanel.SetActive(true);
 
-                if (numCorrectAnswerFinal >= 4)
+                if (correctAnswerFinalCount >= 4)
                 {
-                    textPregunta.text = $"¡Victoria! Has acertado {numCorrectAnswerFinal} de 6.\n¡{GameManager.GetInstance().getJugTurnoActual().nombre} gana la partida!";
+                    questionText.text = $"¡Victoria! Has acertado {correctAnswerFinalCount} de 6.\n¡{GameManager.GetInstance().GetPlayerCurrentTurn().name} gana la partida!";
 
                     yield return new WaitForSeconds(4.0f);
                     SceneManager.LoadScene("EndScene");
@@ -296,7 +296,7 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    textPregunta.text = $"Ronda fallida. Has acertado {numCorrectAnswerFinal} de 6.\nSe necesitan al menos 4. ¡Inténtalo en el próximo turno!";
+                    questionText.text = $"Ronda fallida. Has acertado {correctAnswerFinalCount} de 6.\nSe necesitan al menos 4. ¡Inténtalo en el próximo turno!";
                     yield return new WaitForSeconds(3.0f);
                     isFinalRound = false;
                 }
@@ -306,42 +306,42 @@ public class UIController : MonoBehaviour
         // Desactivar el panel del quiz y pasar el turno
         quizPanel.SetActive(false);
         // Resetear el dado y el estado de movimiento antes de cambiar de turno
-        DiceThrow dadoUI = FindFirstObjectByType<DiceThrow>();
-        if (dadoUI != null)
+        DiceThrow diceUI = FindFirstObjectByType<DiceThrow>();
+        if (diceUI != null)
         {
-            dadoUI.ActivarBotonLanzar();
+            diceUI.ActiveThrowButton();
         }
 
         if (GameManager.GetInstance() != null)
         {
-            GameManager.GetInstance().wasteMovement();
-            GameManager.GetInstance().setSelectedStatus(false);
-            GameManager.GetInstance().cleanDstBoard();
+            GameManager.GetInstance().WasteMovement();
+            GameManager.GetInstance().SetSelectedStatus(false);
+            GameManager.GetInstance().CleanDstBoard();
         }
 
         if (GameManager.GetInstance() != null)
         {
-            GameManager.GetInstance().sigTurno();
+            GameManager.GetInstance().NextTurn();
         }
-        ActualizarIndicadoresTurno();
+        UpdateTurnSigns();
     }
 
-    public void ActualizarIndicadoresTurno()
+    public void UpdateTurnSigns()
     {
-        int turnoIndex = GameManager.GetInstance().GetTurnoIndex();
+        int turnoIndex = GameManager.GetInstance().GetIndexTurn();
 
-        for (int i = 0; i < fichasTablero.Length; i++)
+        for (int i = 0; i < boardgamePieces.Length; i++)
         {
             bool esTurno = (i == turnoIndex);
 
-            if (fichasTablero[i] != null)
+            if (boardgamePieces[i] != null)
             {
-                fichasTablero[i].SetTurnoActivo(esTurno);
+                boardgamePieces[i].SetActiveTurn(esTurno);
             }
 
-            if (fichasMarcadores[i] != null && fichasMarcadores.Length > i && fichasMarcadores[i] != null)
+            if (scoreboardPieces[i] != null && scoreboardPieces.Length > i && scoreboardPieces[i] != null)
             {
-                fichasMarcadores[i].SetTurnoActivo(esTurno);
+                scoreboardPieces[i].SetActiveTurn(esTurno);
             }
 
         }
@@ -383,7 +383,7 @@ public class UIController : MonoBehaviour
     public void StartFinalRound()
     {
         isFinalRound = true;
-        numCorrectAnswerFinal = 0;
+        correctAnswerFinalCount = 0;
         currentQuestionFinal = 0;
 
         // Cargar las 6 categorias
@@ -398,10 +398,10 @@ public class UIController : MonoBehaviour
         string[] dificultades = { "Facil", "Media", "Dificil" };
         string dificultadPregunta = dificultades[Random.Range(0, dificultades.Length)];
 
-        DescriptorJugador jug = GameManager.GetInstance().getJugTurnoActual();
-        Debug.Log($"Ronda Final ({currentQuestionFinal + 1}/6) para {jug.nombre}: Tema {topic}, Dificultad {dificultadPregunta}");
+        PlayerDescriptor jug = GameManager.GetInstance().GetPlayerCurrentTurn();
+        Debug.Log($"Ronda Final ({currentQuestionFinal + 1}/6) para {jug.name}: Tema {topic}, Dificultad {dificultadPregunta}");
 
         // Pedir pregunta 
-        ai.PedirPregunta(jug.modeloPreguntas, jug.modelo, topic, dificultadPregunta);
+        ai.RequestQuestion(jug.questionModel, jug.answerModel, topic, dificultadPregunta);
     }
 }

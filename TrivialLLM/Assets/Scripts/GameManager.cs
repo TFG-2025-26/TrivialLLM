@@ -11,43 +11,37 @@ public class GameManager : MonoBehaviour
     private static GameManager instance;
 
     [Header ("UI del Menu")]
-    public TextMeshProUGUI textoNumHumanos;
-    public TextMeshProUGUI textoNumLLMS;
-    public TextMeshProUGUI textConfirmacion;
-    public TextMeshProUGUI textLimite;
+    public TextMeshProUGUI numHumansText;
+    public TextMeshProUGUI numLLMsText;
+    public TextMeshProUGUI confirmText;
+    public TextMeshProUGUI limitText;
     public GameObject panelLLM;
-    public GameObject panelHumano;
-    public TMP_Dropdown modelRespuesta;
-    public TMP_Dropdown modelPregunta;
+    public GameObject panelHuman;
+    public TMP_Dropdown answerModel;
+    public TMP_Dropdown questionModel;
     public TMP_InputField promptText;
-    public TMP_InputField inputNombre;
-    public Button buttonStartGame;
-
-    //public UIController uiController;
+    public TMP_InputField nameInput;
+    public Button startGameButton;
 
     [Header ("Variables de jugadores")]
-    //public int numMaxJugadores=1;
-    //public int numMaxLLMS = 3;
-    private int turno;
-    private int numTotalJugadores;
-    private int numJugHumanos;
-    private int numLLMS;
+    private int turn;
+    private int playersCount;
+    private int humansCount;
+    private int LLMsCount;
 
-    public int rondaActual = 1;
-
-    public List<DescriptorJugador> descriptorJug;
+    public List<PlayerDescriptor> playerDescriptor;
 
     [Header("Fichas")]
-    public Button[] botonesFichas;
-    public GameObject[] prefabsFichas;
-    private int fichaSeleccionadaActual;       // boton seleccionado sin haberlo confirmado
-    private bool[] fichasOcupadas;  // true si ya se ha seleccionado
-
+    public Button[] piecesButtons;
+    public GameObject[] piecesPrefabs;
+    private int currentSelectedPiece;       // boton seleccionado sin haberlo confirmado
+    private bool[] takenPieces;          // true si ya se ha seleccionado
 
     //Manejo de movimientos
     int actMoves=0;
     int turnMoves = 0;
     bool diceThrew = false;
+    public int currentRound = 1;
 
     List<SquareNode> posdst =new List<SquareNode>();
     [SerializeField]
@@ -62,7 +56,7 @@ public class GameManager : MonoBehaviour
         if (instance != null && instance != this)
         {
             // Si el gamemanager nuevo tiene asignado el boton de inicio, estamos en el menu de configuracion
-            if (this.buttonStartGame != null)
+            if (this.startGameButton != null)
             {
                 // Se acaba de terminar una partida
                 // Destruir el gamemanger viejo para limpiar toda la informacion anterior
@@ -87,34 +81,34 @@ public class GameManager : MonoBehaviour
         }
 
         // Inicializacion de variables y limpieza de nueva partida
-        numJugHumanos = 0;
-        numLLMS = 0;
-        numTotalJugadores = 0;
-        turno = 0;
-        rondaActual = 1;
-        descriptorJug = new List<DescriptorJugador>();
-        fichaSeleccionadaActual = -1;        
-        fichasOcupadas = new bool[6];
+        humansCount = 0;
+        LLMsCount = 0;
+        playersCount = 0;
+        turn = 0;
+        currentRound = 1;
+        playerDescriptor = new List<PlayerDescriptor>();
+        currentSelectedPiece = -1;        
+        takenPieces = new bool[6];
 
         if (panelLLM != null )
         {
             panelLLM.gameObject.SetActive(false);
         }
-        if (panelHumano != null)
+        if (panelHuman != null)
         {
-            panelHumano.gameObject.SetActive(false);
+            panelHuman.gameObject.SetActive(false);
         }
-        if (inputNombre != null)
+        if (nameInput != null)
         {
-            inputNombre.gameObject.SetActive(false);
+            nameInput.gameObject.SetActive(false);
         }
-        if (modelPregunta != null)
+        if (questionModel != null)
         {
-            modelPregunta.gameObject.SetActive(false);
+            questionModel.gameObject.SetActive(false);
         }
-        if (buttonStartGame != null)
+        if (startGameButton != null)
         {
-            buttonStartGame.interactable = false;
+            startGameButton.interactable = false;
         }
     }
 
@@ -137,66 +131,66 @@ public class GameManager : MonoBehaviour
 
     private void CheckStartButton()
     {
-        if (buttonStartGame != null)
+        if (startGameButton != null)
         {
             // El boton solo es interactuable cuando el num de jugadores total es mayor o igual que 2
-            buttonStartGame.interactable = (numTotalJugadores >= 2);
+            startGameButton.interactable = (playersCount >= 2);
         }
     }
-    public void ClickEnFicha(int index)
+    public void ClickOnPiece(int index)
     {
-        if (fichasOcupadas[index]) return; // si la ha seleccionado otro jugador
+        if (takenPieces[index]) return; // si la ha seleccionado otro jugador
 
-        fichaSeleccionadaActual = index;
-        ActualizarVisualBotonesFichas();
+        currentSelectedPiece = index;
+        UpdateVisualPiecesButtons();
     }
 
-    private void ActualizarVisualBotonesFichas()
+    private void UpdateVisualPiecesButtons()
     {
-        for (int i = 0; i < botonesFichas.Length; i++)
+        for (int i = 0; i < piecesButtons.Length; i++)
         {
-            if (botonesFichas[i] == null) continue;
+            if (piecesButtons[i] == null) continue;
 
-            Image img = botonesFichas[i].GetComponent<Image>();
+            Image img = piecesButtons[i].GetComponent<Image>();
 
-            if (fichasOcupadas[i])
+            if (takenPieces[i])
             {
                 // Escogida por alguien, oscura y no pulsable
-                botonesFichas[i].interactable = false;
+                piecesButtons[i].interactable = false;
                 img.color = new Color(0.4f, 0.4f, 0.4f, 1f); // Gris oscuro
-                botonesFichas[i].transform.localScale = Vector3.one;
+                piecesButtons[i].transform.localScale = Vector3.one;
             }
-            else if (i == fichaSeleccionadaActual)
+            else if (i == currentSelectedPiece)
             {
-                botonesFichas[i].interactable = true;
+                piecesButtons[i].interactable = true;
                 img.color = Color.white;
-                botonesFichas[i].transform.localScale = new Vector3(1.15f, 1.15f, 1.15f);
+                piecesButtons[i].transform.localScale = new Vector3(1.15f, 1.15f, 1.15f);
             }
             else
             {
                 // Libre pero no seleccionada
-                botonesFichas[i].interactable = true;
+                piecesButtons[i].interactable = true;
                 img.color = Color.white;
-                botonesFichas[i].transform.localScale = Vector3.one;
+                piecesButtons[i].transform.localScale = Vector3.one;
             }
         }
     }
 
     // Asignar fichas sobrantes a los jugadores de las IA
-    public void AsignarFichasLLM()
+    public void AsignLLMPieces()
     {
-        foreach (var jug in descriptorJug)
+        foreach (var jug in playerDescriptor)
         {
             // Si es IA y no tiene ficha
-            if (!jug.esHumano && jug.fichaIndex == -1)
+            if (!jug.isHuman && jug.indexPiece == -1)
             {
                 // Dar la primera ficha libre
-                for (int i = 0; i < fichasOcupadas.Length; i++)
+                for (int i = 0; i < takenPieces.Length; i++)
                 {
-                    if (!fichasOcupadas[i])
+                    if (!takenPieces[i])
                     {
-                        jug.fichaIndex = i;
-                        fichasOcupadas[i] = true;
+                        jug.indexPiece = i;
+                        takenPieces[i] = true;
                         break;
                     }
                 }
@@ -206,110 +200,110 @@ public class GameManager : MonoBehaviour
     }
 
     // metodo para validar el nombre
-    private bool ValidarNombre(out string resultadoNombre)
+    private bool CheckName(out string nameResult)
     {
-        resultadoNombre = inputNombre.text;
+        nameResult = nameInput.text;
 
-        if(string.IsNullOrEmpty(resultadoNombre))
+        if(string.IsNullOrEmpty(nameResult))
         {
-            MostrarMensaje("Introduce un nombre primero");
+            ShowMessage("Introduce un nombre primero");
             return false;
         }
 
         return true;
     }
-    public void addHuman()
+    public void AddHuman()
     {
-        if (numTotalJugadores >= 6)
+        if (playersCount >= 6)
         {
            // Debug.Log("No se pueden añadir más de 6 jugadores");
-            if (textLimite != null && !textLimite.gameObject.activeSelf)
+            if (limitText != null && !limitText.gameObject.activeSelf)
             {
-                textLimite.gameObject.SetActive(true);
+                limitText.gameObject.SetActive(true);
             }
             return;
         }
 
-        fichaSeleccionadaActual = -1;
-        ActualizarVisualBotonesFichas();
+        currentSelectedPiece = -1;
+        UpdateVisualPiecesButtons();
         gameObject.GetComponent<AudioSource>().Play();
 
-        if (!panelHumano.activeSelf)
+        if (!panelHuman.activeSelf)
         {
-            AbrirPanelHumano();
+            OpenPanelHuman();
             // panelHumano.SetActive(true);
         }
-        if (!inputNombre.gameObject.activeSelf)
+        if (!nameInput.gameObject.activeSelf)
         {
-            inputNombre.gameObject.SetActive(true);
+            nameInput.gameObject.SetActive(true);
         }
-        if (modelPregunta != null)
+        if (questionModel != null)
         {
-            modelPregunta.value = 0;
-            modelPregunta.RefreshShownValue();
-            modelPregunta.gameObject.SetActive(true);
+            questionModel.value = 0;
+            questionModel.RefreshShownValue();
+            questionModel.gameObject.SetActive(true);
         }
     }
 
-    public void registrarHumano()
+    public void RegisterHuman()
     {
-        if (numTotalJugadores >= 6)
+        if (playersCount >= 6)
         {
            // Debug.Log("No se pueden añadir más de 6 jugadores");
-            if (textLimite != null && !textLimite.gameObject.activeSelf)
+            if (limitText != null && !limitText.gameObject.activeSelf)
             {
-                textLimite.gameObject.SetActive(true);
+                limitText.gameObject.SetActive(true);
             }
-            if (panelHumano != null)
+            if (panelHuman != null)
             {
-                panelHumano.SetActive(false);
+                panelHuman.SetActive(false);
             }
             return;
         }
 
         //  Comprobar que ha elegido una ficha
-        if (fichaSeleccionadaActual == -1)
+        if (currentSelectedPiece == -1)
         {
-            MostrarMensaje("Selecciona una ficha");
+            ShowMessage("Selecciona una ficha");
             return;
         }
 
         // Guardar que IA le preguntara
-        AIService.Models quienPregunta = AIService.Models.Gemini; // Por defecto
-        if (modelPregunta != null)
+        AIService.Models whoAsk = AIService.Models.Gemini; // Por defecto
+        if (questionModel != null)
         {
-            quienPregunta = (AIService.Models)modelPregunta.value;
+            whoAsk = (AIService.Models)questionModel.value;
         }
-        if (ValidarNombre(out string nombreValido))
+        if (CheckName(out string nombreValido))
         {
-            descriptorJug.Add(new DescriptorJugador { nombre = nombreValido, esHumano = true, fichaIndex = fichaSeleccionadaActual, modeloPreguntas = quienPregunta});
-            numJugHumanos++;
-            numTotalJugadores++;
-            textoNumHumanos.text = numJugHumanos.ToString();
+            playerDescriptor.Add(new PlayerDescriptor { name = nombreValido, isHuman = true, indexPiece = currentSelectedPiece, questionModel = whoAsk});
+            humansCount++;
+            playersCount++;
+            numHumansText.text = humansCount.ToString();
 
             CheckStartButton();
 
-            fichasOcupadas[fichaSeleccionadaActual] = true;
-            fichaSeleccionadaActual = -1;
-            ActualizarVisualBotonesFichas();
+            takenPieces[currentSelectedPiece] = true;
+            currentSelectedPiece = -1;
+            UpdateVisualPiecesButtons();
 
             gameObject.GetComponent<AudioSource>().Play();
-            MostrarMensaje(nombreValido + " registrado correctamente");
-            inputNombre.text = "";
-            if (panelHumano != null) panelHumano.SetActive(false);
-            if (inputNombre != null) inputNombre.gameObject.SetActive(false);
-            if (modelPregunta != null) modelPregunta.gameObject.SetActive(false);
+            ShowMessage(nombreValido + " registrado correctamente");
+            nameInput.text = "";
+            if (panelHuman != null) panelHuman.SetActive(false);
+            if (nameInput != null) nameInput.gameObject.SetActive(false);
+            if (questionModel != null) questionModel.gameObject.SetActive(false);
 
         }
     }
-    public void addLLM()
+    public void AddLLM()
     {
-        if (numTotalJugadores >= 6)
+        if (playersCount >= 6)
         {
             //Debug.Log("No se pueden añadir más de 6 jugadores");
-            if (textLimite != null && !textLimite.gameObject.activeSelf)
+            if (limitText != null && !limitText.gameObject.activeSelf)
             {
-                textLimite.gameObject.SetActive(true);
+                limitText.gameObject.SetActive(true);
             }
             return;
         }
@@ -318,174 +312,172 @@ public class GameManager : MonoBehaviour
         
         if (!panelLLM.activeSelf)
         {
-            AbrirPanelLLM();
+            OpenPanelLLM();
             //panelLLM.SetActive(true);
         }
-        if (!inputNombre.gameObject.activeSelf)
+        if (!nameInput.gameObject.activeSelf)
         {
-            inputNombre.gameObject.SetActive(true);
+            nameInput.gameObject.SetActive(true);
         }
-        if (modelPregunta != null)
+        if (questionModel != null)
         {
-            modelPregunta.value = 0;
-            modelPregunta.RefreshShownValue();
-            modelPregunta.gameObject.SetActive(true);
+            questionModel.value = 0;
+            questionModel.RefreshShownValue();
+            questionModel.gameObject.SetActive(true);
         }
-        if(modelRespuesta != null)
+        if(answerModel != null)
         {
-            modelRespuesta.value = 0;
-            modelRespuesta.RefreshShownValue();
+            answerModel.value = 0;
+            answerModel.RefreshShownValue();
         }
 
     }
 
-    public void registrarLLM()
+    public void RegisterLLM()
     {
-        if (numTotalJugadores >= 6)
+        if (playersCount >= 6)
         {
            // Debug.Log("No se pueden añadir más de 6 jugadores");
-            if (textLimite != null && !textLimite.gameObject.activeSelf)
+            if (limitText != null && !limitText.gameObject.activeSelf)
             {
-                textLimite.gameObject.SetActive(true);
+                limitText.gameObject.SetActive(true);
             }
             if (panelLLM != null) panelLLM.SetActive(false);
             return;
         }
 
-        AIService.Models quienPregunta = AIService.Models.Gemini; // Por defecto
-        if (modelPregunta != null)
-            quienPregunta = (AIService.Models)modelPregunta.value;
+        AIService.Models whoAsk = AIService.Models.Gemini; // Por defecto
+        if (questionModel != null)
+            whoAsk = (AIService.Models)questionModel.value;
 
-        if (!ValidarNombre(out string nombreValido))
+        if (!CheckName(out string validName))
             return;
 
-        AIService.Models quienResponde = AIService.Models.Gemini; // Por defecto
-        if (modelRespuesta != null)
-            quienResponde = (AIService.Models)modelRespuesta.value;
+        AIService.Models whoReply = AIService.Models.Gemini; // Por defecto
+        if (answerModel != null)
+            whoReply = (AIService.Models)answerModel.value;
 
-        string rol = promptText.text;
+        string role = promptText.text;
 
         ShowLoadingMessage("Registrando jugador. Puede tardar unos segundos.");
 
         StartCoroutine(
             GameObject.Find("AIService")
             .GetComponent<AIService>()
-            .PedirPerfil(rol, (perfil) =>
+            .RequestProfile(role, (profile) =>
             {
-                if(perfil == null)
+                if(profile == null)
                 {
                     Debug.LogError("Perfil nulo, LLM no registrado");
-                    MostrarMensaje("Error al registrar LLM");
+                    ShowMessage("Error al registrar LLM");
                     return;
                 }
 
                 //Debug.Log("Llega");
-                descriptorJug.Add(new DescriptorJugador
+                playerDescriptor.Add(new PlayerDescriptor
                 {
-                    nombre = nombreValido,
-                    esHumano = false,
-                    modelo = quienResponde,
-                    modeloPreguntas = quienPregunta,
-                    perfil = perfil,
-                    fichaIndex = -1
+                    name = validName,
+                    isHuman = false,
+                    answerModel = whoReply,
+                    questionModel = whoAsk,
+                    profile = profile,
+                    indexPiece = -1
                 });
 
-                numLLMS++;
-                numTotalJugadores++;
-                if (textoNumLLMS != null) textoNumLLMS.text = numLLMS.ToString();
+                LLMsCount++;
+                playersCount++;
+                if (numLLMsText != null) numLLMsText.text = LLMsCount.ToString();
 
                 CheckStartButton();
 
                 gameObject.GetComponent<AudioSource>().Play();
-                MostrarMensaje(nombreValido + " registrado correctamente");
+                ShowMessage(validName + " registrado correctamente");
                 //Debug.Log("LLM registrado correctamente: " + nombreValido);
 
-                if (inputNombre != null) inputNombre.text = "";
+                if (nameInput != null) nameInput.text = "";
                 if (promptText != null) promptText.text = "";
 
                 if(panelLLM != null) panelLLM.SetActive(false);
-                if(inputNombre != null) inputNombre.gameObject.SetActive(false);
-                if (modelPregunta != null) modelPregunta.gameObject.SetActive(false);
-
-            
+                if(nameInput != null) nameInput.gameObject.SetActive(false);
+                if (questionModel != null) questionModel.gameObject.SetActive(false);
             })
         );
     }
 
-    public void AbrirPanelHumano()
+    public void OpenPanelHuman()
     {
         // Ocultar el panel contrario
         if (panelLLM != null) panelLLM.SetActive(false);
 
         // Limpiar los campos
-        if (inputNombre != null) inputNombre.text = "";
+        if (nameInput != null) nameInput.text = "";
         if (promptText != null) promptText.text = "";
-        if (modelPregunta != null) modelPregunta.value = 0;
-        if (modelRespuesta != null) modelRespuesta.value = 0;
+        if (questionModel != null) questionModel.value = 0;
+        if (answerModel != null) answerModel.value = 0;
 
         // Mostrar el panel seleccionado
-        if (panelHumano != null) panelHumano.SetActive(true);
+        if (panelHuman != null) panelHuman.SetActive(true);
     }
 
-    public void AbrirPanelLLM()
+    public void OpenPanelLLM()
     {
         // Ocultar el panel contrario
-        if (panelHumano != null) panelHumano.SetActive(false);
+        if (panelHuman != null) panelHuman.SetActive(false);
 
         // Limpiar los campos
-        if (inputNombre != null) inputNombre.text = "";
+        if (nameInput != null) nameInput.text = "";
         if (promptText != null) promptText.text = "";
-        if (modelPregunta != null) modelPregunta.value = 0;
-        if (modelRespuesta != null) modelRespuesta.value = 0;
+        if (questionModel != null) questionModel.value = 0;
+        if (answerModel != null) answerModel.value = 0;
 
         // Mostrar el panel seleccionado
         if (panelLLM != null) panelLLM.SetActive(true);
     }
 
-    private void MostrarMensaje (string mensaje)
+    private void ShowMessage (string message)
     {
-        if (textConfirmacion != null)
+        if (confirmText != null)
         {
             StopAllCoroutines();
-            textConfirmacion.text = mensaje;
-            textConfirmacion.gameObject.SetActive(true);
-            StartCoroutine(OcultarTexto(1.5f));
+            confirmText.text = message;
+            confirmText.gameObject.SetActive(true);
+            StartCoroutine(HideText(1.5f));
         }
     }
 
-    private void ShowLoadingMessage(string mensaje)
+    private void ShowLoadingMessage(string message)
     {
-        if (textConfirmacion != null)
+        if (confirmText != null)
         {
             StopAllCoroutines();
-            textConfirmacion.text = mensaje;
-            textConfirmacion.gameObject.SetActive(true);
+            confirmText.text = message;
+            confirmText.gameObject.SetActive(true);
         }
     }
     // Corrutina para desactivar el texto despues de X segundos
-    private IEnumerator OcultarTexto(float tiempo)
+    private IEnumerator HideText(float time)
     {
-        yield return new WaitForSeconds(tiempo);
-        if (textConfirmacion != null)
+        yield return new WaitForSeconds(time);
+        if (confirmText != null)
         {
-            textConfirmacion.gameObject.SetActive(false);
+            confirmText.gameObject.SetActive(false);
         }
     }
-    public void quitarHum()
+    public void RemoveHuman()
     {
-        if (numJugHumanos > 0)
+        if (humansCount > 0)
         {
-            int i = descriptorJug.Count - 1;
+            int i = playerDescriptor.Count - 1;
             bool enc = false;
             while(!enc && i >= 0) {
-                if (descriptorJug[i].esHumano)
+                if (playerDescriptor[i].isHuman)
                 {
                     enc = true;
-                    descriptorJug.RemoveAt(i);
+                    playerDescriptor.RemoveAt(i);
                     gameObject.GetComponent<AudioSource>().Play();
-                    numJugHumanos--;
-                    numTotalJugadores--;
-                    textoNumHumanos.text= numJugHumanos.ToString();
+                    humansCount--;
+                    playersCount--;
+                    numHumansText.text= humansCount.ToString();
 
                     CheckStartButton();
                 }
@@ -496,23 +488,23 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    public void quitarLLM()
+    public void RemoveLLM()
     {
-        if (numLLMS > 0)
+        if (LLMsCount > 0)
         {
-            int i = descriptorJug.Count - 1;
+            int i = playerDescriptor.Count - 1;
             bool enc = false;
             while (!enc && i >= 0)
             {
-                if (!descriptorJug[i].esHumano)
+                if (!playerDescriptor[i].isHuman)
                 {
                     enc = true;
-                    descriptorJug.RemoveAt(i);
+                    playerDescriptor.RemoveAt(i);
                     gameObject.GetComponent<AudioSource>().Play();
-                    numLLMS--;
-                    numTotalJugadores--;
-                    textoNumLLMS.text= numLLMS.ToString();
-                    if (numLLMS <= 0)
+                    LLMsCount--;
+                    playersCount--;
+                    numLLMsText.text= LLMsCount.ToString();
+                    if (LLMsCount <= 0)
                     {
                         panelLLM.SetActive(false);
                     }
@@ -524,29 +516,29 @@ public class GameManager : MonoBehaviour
                     i--;
                 }
             }
-            if(!enc &&  numLLMS > 0)
+            if(!enc &&  LLMsCount > 0)
             {
-                numLLMS = 0;
-                textoNumLLMS.text = numLLMS.ToString();
+                LLMsCount = 0;
+                numLLMsText.text = LLMsCount.ToString();
                 panelLLM.SetActive(false);
             }
         }
     }
 
-    public int getNumHuman()
+    public int GetHumansCount()
     {
-        return numJugHumanos;
+        return humansCount;
     }
 
-    public int getNumLLMS()
+    public int GetLLMsCount()
     {
-        return numLLMS;
+        return LLMsCount;
     }
 
-    public DescriptorJugador getJugTurnoActual()
+    public PlayerDescriptor GetPlayerCurrentTurn()
     {
-        if (numTotalJugadores == 0 || descriptorJug.Count == 0) return null;
-        return descriptorJug[turno];
+        if (playersCount == 0 || playerDescriptor.Count == 0) return null;
+        return playerDescriptor[turn];
         //return descriptorJug[(turno - 1) % numTotalJugadores];
 
         //// Por seguridad, si la lista esta vacia devuelve un humano generico
@@ -557,38 +549,38 @@ public class GameManager : MonoBehaviour
         //return descriptorJug[GetTurnoIndex()];
     }
 
-    public void sigTurno()
+    public void NextTurn()
     {
         // Avanza turno
-        turno++;
+        turn++;
 
-        if (turno >= numTotalJugadores)
+        if (turn >= playersCount)
         {
-            turno = 0;
-            rondaActual++;
+            turn = 0;
+            currentRound++;
         }
 
         //Debug.Log("Siguiente turno: " + getJugTurnoActual().nombre);
 
         // Resetear estados del tablero y movimiento para el nuevo turno
         diceThrew = false;
-        cleanDstBoard();
+        CleanDstBoard();
         selectedMove = false;
 
         DiceThrow dice = FindFirstObjectByType<DiceThrow>();
         // Flujo normal
         if(dice != null)
         {
-            if (descriptorJug[turno].esHumano)
+            if (playerDescriptor[turn].isHuman)
             {
                 // Si es humano, activar boton de dados
-                dice.ActivarBotonLanzar();
+                dice.ActiveThrowButton();
             }
             else
             {
-                if (dice.textThrow != null)
+                if (dice.throwText != null)
                 {
-                    dice.textThrow.SetActive(false);
+                    dice.throwText.SetActive(false);
                 }
             }
         }
@@ -597,36 +589,36 @@ public class GameManager : MonoBehaviour
         //uiController.setCurrentPiece(nextPiece);
     }
 
-    public int GetTurnoIndex()
+    public int GetIndexTurn()
     {
-        if(numTotalJugadores == 0) return 0;
-        return turno;
+        if(playersCount == 0) return 0;
+        return turn;
     }
 
-    public int GetTurnoAbsoluto()
+    public int GetAbsTurn()
     {
-        return turno;
+        return turn;
     }
 
-    public void setTurnMoves(int moves)
+    public void SetTurnMoves(int moves)
     {
         turnMoves= moves;
         actMoves = moves;
         diceThrew = true;
 
     }
-    public void wasteMovement()
+    public void WasteMovement()
     {
         //actMoves--;
         diceThrew = false;
     }
 
-    public int getRemainingMoves()
+    public int GetRemainingMoves()
     {
         return actMoves;
     }
 
-    public void showPosibleDestinations()
+    public void ShowPosibleDestinations()
     {
         //Debug.Log(posdst.Count);
         foreach(SquareNode nod in posdst)
@@ -644,19 +636,19 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void receiveSelectedNode(SquareNode nod)
+    public void ReceiveSelectedNode(SquareNode node)
     {
         selectedMove = true;
-        selectedNode = nod;
+        selectedNode = node;
     }
-    public void recieveSelectedTransform(Transform trf)
+    public void RecieveSelectedTransform(Transform trf)
     {
         selectedMove = true;
-        foreach (SquareNode nod in posdst)
+        foreach (SquareNode node in posdst)
         {
-            if(nod.transform == trf)
+            if(node.transform == trf)
             {
-                selectedNode = nod;
+                selectedNode = node;
                 break; 
             }
         }
@@ -671,13 +663,13 @@ public class GameManager : MonoBehaviour
         return diceThrew;
     }
 
-    public void addToPosibleDestination(SquareNode nod)
+    public void AddToPosibleDestination(SquareNode node)
     {
-        posdst.Add(nod);
+        posdst.Add(node);
     }
     
 
-    public void cleanDstBoard()
+    public void CleanDstBoard()
     {
         foreach(GameObject gobj in physPlaceToMove)
         {
@@ -688,12 +680,12 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public bool getSelectedStatus()
+    public bool GetSelectedStatus()
     {
         return selectedMove;
     }
 
-    public void setSelectedStatus(bool status)
+    public void SetSelectedStatus(bool status)
     {
         selectedMove = status;
     }

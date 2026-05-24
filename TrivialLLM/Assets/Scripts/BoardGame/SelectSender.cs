@@ -16,12 +16,12 @@ public class SelectSender : MonoBehaviour
     public void sendSigToMove()
     {
         //Debug.Log("WHY??????");
-        GameManager.GetInstance().recieveSelectedTransform(this.gameObject.transform);
+        GameManager.GetInstance().RecieveSelectedTransform(this.gameObject.transform);
     }
 
     private void OnMouseDown()
     {
         //Debug.Log("Destino cliclado");
-        GameManager.GetInstance().receiveSelectedNode(nodoDestino);
+        GameManager.GetInstance().ReceiveSelectedNode(nodoDestino);
     }
 }

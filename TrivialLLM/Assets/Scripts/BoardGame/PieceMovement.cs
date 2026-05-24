@@ -19,8 +19,8 @@ public class PieceMovement : MonoBehaviour
     [SerializeField]
     private float speed = 30f;
 
-    public int turnoIndex;
-    private bool bordeAlcanzado = false;
+    public int indexTurn;
+    private bool edgeReached = false;
     private bool isMoving = false;
 
     private bool dstShown = false;
@@ -28,7 +28,7 @@ public class PieceMovement : MonoBehaviour
     List<SquareNode> posibilities = new List<SquareNode>();
     List<PathInfo> posiblePaths= new List<PathInfo>();
 
-    FichaTrivial ficha;
+    TrivialPiece trivialPiece;
 
     void Start()
     {
@@ -39,31 +39,31 @@ public class PieceMovement : MonoBehaviour
             transform.position = iniPos;
         }
 
-        ficha = GetComponent<FichaTrivial>();
+        trivialPiece = GetComponent<TrivialPiece>();
         aiService = FindFirstObjectByType<AIService>();
     }
     void Update()
     {
         // Si no es el turno de esta ficha, se ignora todo lo demas
-        if (GameManager.GetInstance().GetTurnoIndex() != turnoIndex) return;
+        if (GameManager.GetInstance().GetIndexTurn() != indexTurn) return;
         if(isMoving) {return; }
 
         if(!dstShown&&GameManager.GetInstance().IsDiceThrown()) {
-            int movesLeft = GameManager.GetInstance().getRemainingMoves();
+            int movesLeft = GameManager.GetInstance().GetRemainingMoves();
             GetPossibleDestinations(actualSquare, movesLeft);
             
-            saveDestinations(posibilities);
-            GameManager.GetInstance().showPosibleDestinations();
+            SaveDestinations(posibilities);
+            GameManager.GetInstance().ShowPosibleDestinations();
             dstShown = true;
         }
 
-        if (GameManager.GetInstance().getSelectedStatus() && !isMoving)
+        if (GameManager.GetInstance().GetSelectedStatus() && !isMoving)
         {
             isMoving = true;
             SquareNode target = GameManager.GetInstance().GetSelectedDst();
             
-            GameManager.GetInstance().setSelectedStatus(false);
-            GameManager.GetInstance().cleanDstBoard(); //borrar las listas y objetos del tablero
+            GameManager.GetInstance().SetSelectedStatus(false);
+            GameManager.GetInstance().CleanDstBoard(); //borrar las listas y objetos del tablero
 
             List<SquareNode> selectedPath = null;
 
@@ -101,36 +101,36 @@ public class PieceMovement : MonoBehaviour
             return;
         }
 
-        if(posibilities.Count>=1&& Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            StartCoroutine(MovePiece(posiblePaths[0].path));
-            GameManager.GetInstance().cleanDstBoard();
-        }
-        else if (posibilities.Count >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            StartCoroutine(MovePiece(posiblePaths[1].path));
-            GameManager.GetInstance().cleanDstBoard();
-        }
-        else if (posibilities.Count >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            StartCoroutine(MovePiece(posiblePaths[2].path));
-            GameManager.GetInstance().cleanDstBoard();
-        }
-        else if (posibilities.Count >= 4 && Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            StartCoroutine(MovePiece(posiblePaths[3].path));
-            GameManager.GetInstance().cleanDstBoard();
-        }
+        //if(posibilities.Count>=1&& Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    StartCoroutine(MovePiece(posiblePaths[0].path));
+        //    GameManager.GetInstance().cleanDstBoard();
+        //}
+        //else if (posibilities.Count >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    StartCoroutine(MovePiece(posiblePaths[1].path));
+        //    GameManager.GetInstance().cleanDstBoard();
+        //}
+        //else if (posibilities.Count >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    StartCoroutine(MovePiece(posiblePaths[2].path));
+        //    GameManager.GetInstance().cleanDstBoard();
+        //}
+        //else if (posibilities.Count >= 4 && Input.GetKeyDown(KeyCode.Alpha4))
+        //{
+        //    StartCoroutine(MovePiece(posiblePaths[3].path));
+        //    GameManager.GetInstance().cleanDstBoard();
+        //}
         // Pruebas con input
 
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            UIController uiController = FindFirstObjectByType<UIController>();
-            if (uiController != null)
-            {
-                uiController.StartFinalRound();
-            }
-        }
+        //if(Input.GetKeyDown(KeyCode.F))
+        //{
+        //    UIController uiController = FindFirstObjectByType<UIController>();
+        //    if (uiController != null)
+        //    {
+        //        uiController.StartFinalRound();
+        //    }
+        //}
         // Comprobar el input y si la casilla actual tiene una conexion en esa direccion
         /*if(Input.GetKeyDown(KeyCode.W) && actualSquare.centre != null)
         {
@@ -180,7 +180,7 @@ public class PieceMovement : MonoBehaviour
         isMoving = false;
         dstShown = false;
         clearPaths();
-        GameManager.GetInstance().wasteMovement();
+        GameManager.GetInstance().WasteMovement();
 
         //borrar lista de caminos
 
@@ -188,20 +188,20 @@ public class PieceMovement : MonoBehaviour
         // Si la casilla tiene conexiones a los lados
         if (actualSquare.left != null || actualSquare.right != null)
         {
-            bordeAlcanzado = true;
+            edgeReached = true;
         }
 
         // Si ha caido en la casilla de los dados
-        if (actualSquare.topic == TrivialTopic.Dados)
+        if (actualSquare.category == TrivialCategories.Dados)
         {
-            DiceThrow dadoUI = FindFirstObjectByType<DiceThrow>();
-            if (dadoUI != null)
+            DiceThrow diceUI = FindFirstObjectByType<DiceThrow>();
+            if (diceUI != null)
             {
-                dadoUI.squareThrowAgain();
+                diceUI.SquareThrowAgain();
             }
 
             // Avisar AITurnManager de que puede volver a elegir destino
-            if (!GameManager.GetInstance().getJugTurnoActual().esHumano)
+            if (!GameManager.GetInstance().GetPlayerCurrentTurn().isHuman)
             {
                 AITurnManager aiManager = FindFirstObjectByType<AITurnManager>();
                 if(aiManager != null)
@@ -216,13 +216,13 @@ public class PieceMovement : MonoBehaviour
         if (aiService != null)
         {
             
-            string temaPregunta = actualSquare.getTopicString();
+            string questionCategory = actualSquare.getTopicString();
 
             // Si ha caido en el centro
-            if (actualSquare.topic == TrivialTopic.FinalCentro)
+            if (actualSquare.category == TrivialCategories.Final)
             {
                 // Si tiene todos los quesitos, empieza la ronda final
-                if (ficha != null && ficha.HaveAllWedges())
+                if (trivialPiece != null && trivialPiece.HaveAllWedges())
                 {
                     UIController uiController = FindFirstObjectByType<UIController>();
                     if(uiController != null)
@@ -234,30 +234,30 @@ public class PieceMovement : MonoBehaviour
                 else
                 {
                     // Si aun no tiene todos, se hace una pregunta aleatoria
-                    string[] temas = { "Ciencias", "Geografia", "Historia", "Arte y Literatura", "Deportes y Pasatiempos", "Entretenimiento" };
-                    temaPregunta = temas[UnityEngine.Random.Range(0, temas.Length)];
-                    Debug.Log("Tema aleatorio elegido: " + temaPregunta);
+                    string[] categories = { "Ciencias", "Geografia", "Historia", "Arte y Literatura", "Deportes y Pasatiempos", "Entretenimiento" };
+                    questionCategory = categories[UnityEngine.Random.Range(0, categories.Length)];
+                    Debug.Log("Tema aleatorio elegido: " + questionCategory);
                 }
 
             }
 
             // Obtener datos del jugador actual
-            DescriptorJugador jugActual = GameManager.GetInstance().getJugTurnoActual();
+            PlayerDescriptor currentPlayer = GameManager.GetInstance().GetPlayerCurrentTurn();
 
-            AIService.Models modeloPregunta = jugActual.modeloPreguntas;
-            AIService.Models modeloRespuesta = jugActual.modelo;
+            AIService.Models questionModel = currentPlayer.questionModel;
+            AIService.Models answerModel = currentPlayer.answerModel;
 
-            Debug.Log($"La ficha de {jugActual.nombre} ha caido en {actualSquare.topic}. Solicitando pregunta a {modeloPregunta}...");
-            string[] dificultades = { "Facil", "Media", "Dificil"};
-            string dificultadPregunta = dificultades[UnityEngine.Random.Range(0, dificultades.Length)];
-            Debug.Log("Dificultad aleatoria elegida: " + dificultadPregunta);
+            Debug.Log($"La ficha de {currentPlayer.name} ha caido en {actualSquare.category}. Solicitando pregunta a {questionModel}...");
+            string[] difficulties = { "Facil", "Media", "Dificil"};
+            string questionDifficulty = difficulties[UnityEngine.Random.Range(0, difficulties.Length)];
+            Debug.Log("Dificultad aleatoria elegida: " + questionDifficulty);
 
             UIController ui = FindFirstObjectByType<UIController>();
             if (ui != null )
             {
                 ui.ShowTextLoading();
             }
-            aiService.PedirPregunta(modeloPregunta, modeloRespuesta, temaPregunta, dificultadPregunta);
+            aiService.RequestQuestion(questionModel, answerModel, questionCategory, questionDifficulty);
         }
         else
         {
@@ -265,10 +265,10 @@ public class PieceMovement : MonoBehaviour
         }
     }
 
-    void saveDestinations(List<SquareNode> posdst)
+    void SaveDestinations(List<SquareNode> posdst)
     {
        foreach (SquareNode dst in posdst) {
-            GameManager.GetInstance().addToPosibleDestination(dst);
+            GameManager.GetInstance().AddToPosibleDestination(dst);
        }
     }
 
@@ -286,7 +286,7 @@ public class PieceMovement : MonoBehaviour
 
         // El primer movimiento solo te deja salir hacia el radio desde la casilla central
         // Comprobar que se esta en un nodo de inicio (no tiene centro asignado y no es el final)
-        if (initialNode.centre == null && initialNode.topic != TrivialTopic.FinalCentro)
+        if (initialNode.centre == null && initialNode.category != TrivialCategories.Final)
         {
             // Comprobar centro verdadero a traves de la primera casilla del radio
             if (initialNode.outwards != null && initialNode.outwards.centre != null)
@@ -330,7 +330,7 @@ public class PieceMovement : MonoBehaviour
             {
                 // Bloquear ir hacia atras en la primera salida desde el centro hasta el radio exterior
                 // Si aun no se ha llegado al exterior y el vecino es una casilla que va hacia el centro se ignora
-                if (!bordeAlcanzado && nei == current.centre)
+                if (!edgeReached && nei == current.centre)
                 {
                     continue;
                 }

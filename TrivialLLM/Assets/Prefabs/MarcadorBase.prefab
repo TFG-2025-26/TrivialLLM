@@ -169,14 +169,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc9a512c58dda4c48890102fb12de29c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  q_verde: {fileID: 1064205411105465701}
-  q_azul: {fileID: 3153549381854995840}
-  q_amarillo: {fileID: 8025245071752201362}
-  q_morado: {fileID: 3518146366722403218}
-  q_naranja: {fileID: 6822670346072522750}
-  q_rosa: {fileID: 8939275369128774288}
-  esMarcadorUI: 1
-  luzTurno: {fileID: 0}
+  green_wedge: {fileID: 1064205411105465701}
+  blue_wedge: {fileID: 3153549381854995840}
+  yellow_wedge: {fileID: 8025245071752201362}
+  purple_wedge: {fileID: 3518146366722403218}
+  orange_wedge: {fileID: 6822670346072522750}
+  pink_wedge: {fileID: 8939275369128774288}
+  isUIscoreboard: 1
+  turnLight: {fileID: 0}
 --- !u!1 &3153549381854995840
 GameObject:
   m_ObjectHideFlags: 0

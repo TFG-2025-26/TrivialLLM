@@ -33,8 +33,8 @@ public class AITurnManager : MonoBehaviour
             return;
         }
 
-        int currentTurnIndex = gameManager.GetTurnoAbsoluto();
-        DescriptorJugador currentPlayer = gameManager.getJugTurnoActual();
+        int currentTurnIndex = gameManager.GetAbsTurn();
+        PlayerDescriptor currentPlayer = gameManager.GetPlayerCurrentTurn();
 
         // Si el turno cambia en el GameManager, resetear todos los bloqueos de la IA
         if (currentTurnTicket != currentTurnIndex)
@@ -45,7 +45,7 @@ public class AITurnManager : MonoBehaviour
         }
 
         // Si es el turno de la IA
-        if (!currentPlayer.esHumano)
+        if (!currentPlayer.isHuman)
         {
             // Lanzar dado al principio del turno
             // Solo entra si no ha empezado el turno y el dado no se ha lanzado
@@ -57,7 +57,7 @@ public class AITurnManager : MonoBehaviour
 
             // Elegir el destino
             // Entra cuando ya se ha tirado el dado pero no ha seleccionado una casilla a la que moverse
-            if (diceThrown && gameManager.IsDiceThrown() && !gameManager.getSelectedStatus() && !isChoosingDestination)
+            if (diceThrown && gameManager.IsDiceThrown() && !gameManager.GetSelectedStatus() && !isChoosingDestination)
             {
                 isChoosingDestination = true;
                 StartCoroutine(ChooseDestination(currentPlayer));
@@ -65,14 +65,14 @@ public class AITurnManager : MonoBehaviour
         }
     }
 
-    IEnumerator StartAITurn(DescriptorJugador jugIA)
+    IEnumerator StartAITurn(PlayerDescriptor jugIA)
     {
         //Debug.Log($"Iniciando turno de IA: {jugIA.nombre}");
 
         // Bloquear boton del dado
-        if (diceController != null && diceController.botonLanzar != null)
+        if (diceController != null && diceController.throwButton != null)
         {
-            diceController.botonLanzar.interactable = false;
+            diceController.throwButton.interactable = false;
         }
         // Esperar unos segundos para dar fluidez visual al cambio de turno
         yield return new WaitForSeconds(1.5f);
@@ -84,40 +84,40 @@ public class AITurnManager : MonoBehaviour
         }
     }
 
-    IEnumerator ChooseDestination(DescriptorJugador jugIA)
+    IEnumerator ChooseDestination(PlayerDescriptor jugIA)
     {
         // Esperar a que PieceMovement calcule las casillas posibles
         yield return new WaitForSeconds(1.5f);
 
         // Pieza de la IA actual en la escena
-        currentAIPiece = FindAIPiece(gameManager.GetTurnoIndex());
+        currentAIPiece = FindAIPiece(gameManager.GetIndexTurn());
 
         if (currentAIPiece != null)
         {
-            List<SquareNode> possibleDestinations = currentAIPiece.GetPossibleDestinations(currentAIPiece.actualSquare, gameManager.getRemainingMoves());
+            List<SquareNode> possibleDestinations = currentAIPiece.GetPossibleDestinations(currentAIPiece.actualSquare, gameManager.GetRemainingMoves());
 
             if (possibleDestinations.Count > 0)
             {
                 // Logica inteligente para elegir destino
-                SquareNode bestDestination = ChooseSmartDestination(currentAIPiece.actualSquare, possibleDestinations, currentAIPiece.GetComponent<FichaTrivial>());
-                gameManager.receiveSelectedNode(bestDestination);
+                SquareNode bestDestination = ChooseSmartDestination(currentAIPiece.actualSquare, possibleDestinations, currentAIPiece.GetComponent<TrivialPiece>());
+                gameManager.ReceiveSelectedNode(bestDestination);
             }
             else
             {
                 Debug.LogWarning("La IA no tiene movimientos posibles");
-                gameManager.wasteMovement();
-                gameManager.setSelectedStatus(false);
-                gameManager.cleanDstBoard();
-                gameManager.sigTurno();
+                gameManager.WasteMovement();
+                gameManager.SetSelectedStatus(false);
+                gameManager.CleanDstBoard();
+                gameManager.NextTurn();
             }
         }
 
        // isChoosingDestination = false;
     }
-    private SquareNode ChooseSmartDestination(SquareNode currentSquare, List<SquareNode> options, FichaTrivial fichaStatus)
+    private SquareNode ChooseSmartDestination(SquareNode currentSquare, List<SquareNode> options, TrivialPiece fichaStatus)
     {
         // Al principio salir del centro al radio exterior
-        if (currentSquare.topic == TrivialTopic.FinalCentro && currentSquare.centre == null)
+        if (currentSquare.category == TrivialCategories.Final && currentSquare.centre == null)
         {
             return options[0];
         }
@@ -139,7 +139,7 @@ public class AITurnManager : MonoBehaviour
             foreach (var node in options)
             {
                 // Si alguna opcion es la casilla final (centro), ir directamente
-                if (node.topic == TrivialTopic.FinalCentro)
+                if (node.category == TrivialCategories.Final)
                 {
                     Debug.Log("La IA tiene todos los quesitos y llega EXACTA al centro.");
                     return node; // Se queda con la primera casilla que le falte
@@ -176,14 +176,14 @@ public class AITurnManager : MonoBehaviour
             // Buscar quesitos que falten o casilla de dados
             foreach (var node in options)
             {
-                if (node.topic == TrivialTopic.Dados)
+                if (node.category == TrivialCategories.Dados)
                 {
                     squareDice = node;
                     continue;
                 }
 
                 // Si no es centro ni dados, comprobar si le falta el quesito
-                if (node.topic != TrivialTopic.FinalCentro && node.topic != TrivialTopic.Dados)
+                if (node.category != TrivialCategories.Final && node.category != TrivialCategories.Dados)
                 {
                     validDestinations.Add(node);
 
@@ -220,7 +220,7 @@ public class AITurnManager : MonoBehaviour
         PieceMovement[] allPieces = FindObjectsByType<PieceMovement>(FindObjectsSortMode.None);
         foreach (var piece in allPieces)
         {
-            if (piece.turnoIndex == index) return piece;
+            if (piece.indexTurn == index) return piece;
         }
         return null;
     }

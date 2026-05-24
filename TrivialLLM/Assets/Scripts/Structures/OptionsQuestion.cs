@@ -1,5 +1,5 @@
 [System.Serializable]
-public class PreguntaOpciones
+public class OptionsQuestion
 {
     public string pregunta;
     public string[] opciones;

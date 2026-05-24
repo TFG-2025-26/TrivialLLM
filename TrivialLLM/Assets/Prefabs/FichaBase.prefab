@@ -285,7 +285,7 @@ MonoBehaviour:
   actualSquare: {fileID: 0}
   aiService: {fileID: 0}
   speed: 40
-  turnoIndex: 0
+  indexTurn: 0
 --- !u!114 &2397344247026894794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,14 +298,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc9a512c58dda4c48890102fb12de29c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  q_verde: {fileID: 4395717665030291430}
-  q_azul: {fileID: 1184905852983473875}
-  q_amarillo: {fileID: 4096247085424822496}
-  q_morado: {fileID: 9108104974572174489}
-  q_naranja: {fileID: 2147288016735875432}
-  q_rosa: {fileID: 7429022364951041564}
-  esMarcadorUI: 0
-  luzTurno: {fileID: 8106426641202385558}
+  green_wedge: {fileID: 4395717665030291430}
+  blue_wedge: {fileID: 1184905852983473875}
+  yellow_wedge: {fileID: 4096247085424822496}
+  purple_wedge: {fileID: 9108104974572174489}
+  orange_wedge: {fileID: 2147288016735875432}
+  pink_wedge: {fileID: 7429022364951041564}
+  isUIscoreboard: 0
+  turnLight: {fileID: 8106426641202385558}
 --- !u!1 &4096247085424822496
 GameObject:
   m_ObjectHideFlags: 0
