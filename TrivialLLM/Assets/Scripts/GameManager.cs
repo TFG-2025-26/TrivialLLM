@@ -463,67 +463,67 @@ public class GameManager : MonoBehaviour
             confirmText.gameObject.SetActive(false);
         }
     }
-    public void RemoveHuman()
-    {
-        if (humansCount > 0)
-        {
-            int i = playerDescriptor.Count - 1;
-            bool enc = false;
-            while(!enc && i >= 0) {
-                if (playerDescriptor[i].isHuman)
-                {
-                    enc = true;
-                    playerDescriptor.RemoveAt(i);
-                    gameObject.GetComponent<AudioSource>().Play();
-                    humansCount--;
-                    playersCount--;
-                    numHumansText.text= humansCount.ToString();
+    //public void RemoveHuman()
+    //{
+    //    if (humansCount > 0)
+    //    {
+    //        int i = playerDescriptor.Count - 1;
+    //        bool enc = false;
+    //        while(!enc && i >= 0) {
+    //            if (playerDescriptor[i].isHuman)
+    //            {
+    //                enc = true;
+    //                playerDescriptor.RemoveAt(i);
+    //                gameObject.GetComponent<AudioSource>().Play();
+    //                humansCount--;
+    //                playersCount--;
+    //                numHumansText.text= humansCount.ToString();
 
-                    CheckStartButton();
-                }
-                else
-                {
-                    i--;
-                }
-            }
-        }
-    }
-    public void RemoveLLM()
-    {
-        if (LLMsCount > 0)
-        {
-            int i = playerDescriptor.Count - 1;
-            bool enc = false;
-            while (!enc && i >= 0)
-            {
-                if (!playerDescriptor[i].isHuman)
-                {
-                    enc = true;
-                    playerDescriptor.RemoveAt(i);
-                    gameObject.GetComponent<AudioSource>().Play();
-                    LLMsCount--;
-                    playersCount--;
-                    numLLMsText.text= LLMsCount.ToString();
-                    if (LLMsCount <= 0)
-                    {
-                        panelLLM.SetActive(false);
-                    }
+    //                CheckStartButton();
+    //            }
+    //            else
+    //            {
+    //                i--;
+    //            }
+    //        }
+    //    }
+    //}
+    //public void RemoveLLM()
+    //{
+    //    if (LLMsCount > 0)
+    //    {
+    //        int i = playerDescriptor.Count - 1;
+    //        bool enc = false;
+    //        while (!enc && i >= 0)
+    //        {
+    //            if (!playerDescriptor[i].isHuman)
+    //            {
+    //                enc = true;
+    //                playerDescriptor.RemoveAt(i);
+    //                gameObject.GetComponent<AudioSource>().Play();
+    //                LLMsCount--;
+    //                playersCount--;
+    //                numLLMsText.text= LLMsCount.ToString();
+    //                if (LLMsCount <= 0)
+    //                {
+    //                    panelLLM.SetActive(false);
+    //                }
 
-                    CheckStartButton();
-                }
-                else
-                {
-                    i--;
-                }
-            }
-            if(!enc &&  LLMsCount > 0)
-            {
-                LLMsCount = 0;
-                numLLMsText.text = LLMsCount.ToString();
-                panelLLM.SetActive(false);
-            }
-        }
-    }
+    //                CheckStartButton();
+    //            }
+    //            else
+    //            {
+    //                i--;
+    //            }
+    //        }
+    //        if(!enc &&  LLMsCount > 0)
+    //        {
+    //            LLMsCount = 0;
+    //            numLLMsText.text = LLMsCount.ToString();
+    //            panelLLM.SetActive(false);
+    //        }
+    //    }
+    //}
 
     public int GetHumansCount()
     {

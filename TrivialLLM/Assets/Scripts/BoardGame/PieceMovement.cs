@@ -24,7 +24,6 @@ public class PieceMovement : MonoBehaviour
     private bool isMoving = false;
 
     private bool dstShown = false;
-    private bool dstSelected = false;
     List<SquareNode> posibilities = new List<SquareNode>();
     List<PathInfo> posiblePaths= new List<PathInfo>();
 
@@ -123,14 +122,42 @@ public class PieceMovement : MonoBehaviour
         //}
         // Pruebas con input
 
-        //if(Input.GetKeyDown(KeyCode.F))
-        //{
-        //    UIController uiController = FindFirstObjectByType<UIController>();
-        //    if (uiController != null)
-        //    {
-        //        uiController.StartFinalRound();
-        //    }
-        //}
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            UIController uiController = FindFirstObjectByType<UIController>();
+            if (uiController != null)
+            {
+                uiController.StartFinalRound();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            SquareNode[] allNodes = FindObjectsByType<SquareNode>(FindObjectsSortMode.None);
+            SquareNode nodoCentro = null;
+
+            foreach (var n in allNodes)
+            {
+                if (n.category == TrivialCategories.Final)
+                {
+                    nodoCentro = n;
+                    break;
+                }
+            }
+            if (nodoCentro != null && !isMoving)
+            {
+                // Limpiamos los destinos iluminados por si acababas de tirar el dado
+                GameManager.GetInstance().CleanDstBoard();
+
+                // Creamos un camino directo y forzamos el movimiento
+                List<SquareNode> pathAlCentro = new List<SquareNode> { nodoCentro };
+                StartCoroutine(MovePiece(pathAlCentro));
+            }
+            else if (nodoCentro == null)
+            {
+                Debug.LogWarning("No se ha encontrado ninguna casilla con el topic FinalCentro en la escena.");
+            }
+        }
         // Comprobar el input y si la casilla actual tiene una conexion en esa direccion
         /*if(Input.GetKeyDown(KeyCode.W) && actualSquare.centre != null)
         {
