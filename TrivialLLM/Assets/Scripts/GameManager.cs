@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     private static GameManager instance;
 
     [Header ("UI del Menu")]
+    public Button addHumansButton;
+    public Button addLLMsButton;
     public TextMeshProUGUI numHumansText;
     public TextMeshProUGUI numLLMsText;
     public TextMeshProUGUI confirmText;
@@ -22,6 +24,8 @@ public class GameManager : MonoBehaviour
     public TMP_InputField promptText;
     public TMP_InputField nameInput;
     public Button startGameButton;
+
+    private bool isRegisteringPlayer = false;
 
     [Header ("Variables de jugadores")]
     private int turn;
@@ -214,6 +218,8 @@ public class GameManager : MonoBehaviour
     }
     public void AddHuman()
     {
+        if (isRegisteringPlayer) return;
+
         if (playersCount >= 6)
         {
            // Debug.Log("No se pueden añadir más de 6 jugadores");
@@ -247,6 +253,8 @@ public class GameManager : MonoBehaviour
 
     public void RegisterHuman()
     {
+        if (isRegisteringPlayer) return;
+
         if (playersCount >= 6)
         {
            // Debug.Log("No se pueden añadir más de 6 jugadores");
@@ -298,6 +306,8 @@ public class GameManager : MonoBehaviour
     }
     public void AddLLM()
     {
+        if (isRegisteringPlayer) return;
+
         if (playersCount >= 6)
         {
             //Debug.Log("No se pueden añadir más de 6 jugadores");
@@ -335,6 +345,8 @@ public class GameManager : MonoBehaviour
 
     public void RegisterLLM()
     {
+        if (isRegisteringPlayer) return;
+
         if (playersCount >= 6)
         {
            // Debug.Log("No se pueden añadir más de 6 jugadores");
@@ -359,6 +371,9 @@ public class GameManager : MonoBehaviour
 
         string role = promptText.text;
 
+        isRegisteringPlayer = true;
+        SetMenuInteractable(false);
+
         ShowLoadingMessage("Registrando jugador. Puede tardar unos segundos.");
 
         StartCoroutine(
@@ -366,7 +381,11 @@ public class GameManager : MonoBehaviour
             .GetComponent<AIService>()
             .RequestProfile(role, (profile) =>
             {
-                if(profile == null)
+                isRegisteringPlayer = false;
+                SetMenuInteractable(true);
+                UpdateVisualPiecesButtons();
+
+                if (profile == null)
                 {
                     Debug.LogError("Perfil nulo, LLM no registrado");
                     ShowMessage("Error al registrar LLM");
@@ -463,68 +482,7 @@ public class GameManager : MonoBehaviour
             confirmText.gameObject.SetActive(false);
         }
     }
-    //public void RemoveHuman()
-    //{
-    //    if (humansCount > 0)
-    //    {
-    //        int i = playerDescriptor.Count - 1;
-    //        bool enc = false;
-    //        while(!enc && i >= 0) {
-    //            if (playerDescriptor[i].isHuman)
-    //            {
-    //                enc = true;
-    //                playerDescriptor.RemoveAt(i);
-    //                gameObject.GetComponent<AudioSource>().Play();
-    //                humansCount--;
-    //                playersCount--;
-    //                numHumansText.text= humansCount.ToString();
-
-    //                CheckStartButton();
-    //            }
-    //            else
-    //            {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //}
-    //public void RemoveLLM()
-    //{
-    //    if (LLMsCount > 0)
-    //    {
-    //        int i = playerDescriptor.Count - 1;
-    //        bool enc = false;
-    //        while (!enc && i >= 0)
-    //        {
-    //            if (!playerDescriptor[i].isHuman)
-    //            {
-    //                enc = true;
-    //                playerDescriptor.RemoveAt(i);
-    //                gameObject.GetComponent<AudioSource>().Play();
-    //                LLMsCount--;
-    //                playersCount--;
-    //                numLLMsText.text= LLMsCount.ToString();
-    //                if (LLMsCount <= 0)
-    //                {
-    //                    panelLLM.SetActive(false);
-    //                }
-
-    //                CheckStartButton();
-    //            }
-    //            else
-    //            {
-    //                i--;
-    //            }
-    //        }
-    //        if(!enc &&  LLMsCount > 0)
-    //        {
-    //            LLMsCount = 0;
-    //            numLLMsText.text = LLMsCount.ToString();
-    //            panelLLM.SetActive(false);
-    //        }
-    //    }
-    //}
-
+     
     public int GetHumansCount()
     {
         return humansCount;
@@ -688,5 +646,25 @@ public class GameManager : MonoBehaviour
     public void SetSelectedStatus(bool status)
     {
         selectedMove = status;
+    }
+
+    private void SetMenuInteractable(bool interactable)
+    {
+        if (addHumansButton != null) addHumansButton.interactable = interactable;
+        if (addLLMsButton != null) addLLMsButton.interactable = interactable;
+        if (answerModel != null) answerModel.interactable = interactable;
+        if (questionModel != null) questionModel.interactable = interactable;
+        if (promptText != null) promptText.interactable = interactable;
+        if (nameInput != null) nameInput.interactable = interactable;
+        if (startGameButton != null) startGameButton.interactable = interactable;
+
+        if(piecesButtons != null)
+        {
+            foreach(Button button in piecesButtons)
+            {
+                if (button != null)
+                    button.interactable = interactable;
+            }
+        }
     }
 }

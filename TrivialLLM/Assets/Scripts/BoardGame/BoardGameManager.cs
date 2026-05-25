@@ -2,16 +2,19 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 
+/// <summary>
+/// Se encarga de gestionar las fichas, el tablero  y los marcadores
+/// </summary>
 public class BoardGameManager : MonoBehaviour
 {
-    public UIController uiController;
+    public UIController uiController;   // Referencia al controlador de la UI
 
     [Header("Marcadores UI")]
-    public TrivialPiece[] scoreboards;
+    public TrivialPiece[] scoreboards;  // Referencia a los marcadores de la UI
 
     [Header("Nodos de inicio (en la escena)")]
     [Tooltip("Arrastra los 6 nodos centrales de la escena en el mismo orden que los prefabs de las fichas")]
-    public SquareNode[] outgoingNodes;
+    public SquareNode[] outgoingNodes;  // Referncia a los nodos de salida del tablero
 
     void Start()
     {
@@ -21,12 +24,15 @@ public class BoardGameManager : MonoBehaviour
         }
     }
 
+    // Gestiona el inicio de la partida
     void StartGame()
     {
         GameManager gm = GameManager.GetInstance();
         int totalPlayers = gm.playerDescriptor.Count;
 
+        // Almacena las piezas instanciadas
         List<TrivialPiece> instantiatedPieces = new List<TrivialPiece>();
+        // Almacena los marcadores que estaran activos
         List<TrivialPiece> activeScoreboards = new List<TrivialPiece>();
 
         // Desactivar todos los marcadores por seguridad
@@ -35,11 +41,13 @@ public class BoardGameManager : MonoBehaviour
             if (scoreboard != null) scoreboard.gameObject.SetActive(false);
         }
 
+        // Para cada jugador
         for (int i = 0; i < totalPlayers; i++)
         {
+            // Obtener sus datos
             PlayerDescriptor data = gm.playerDescriptor[i];
 
-            // Prefab
+            // Prefab de la ficha que se le ha asignado
             GameObject piecePrefab = gm.piecesPrefabs[data.indexPiece];
 
             // Obtener nodo real de la escena basandose en el indice de la ficha
@@ -60,7 +68,7 @@ public class BoardGameManager : MonoBehaviour
                 PieceMovement pmInstance = newPiece.GetComponent<PieceMovement>();
                 if(pmInstance != null)
                 {
-                    pmInstance.actualSquare = startNode;
+                    pmInstance.currentSquare = startNode;
                     pmInstance.indexTurn = i;
                 }
 
@@ -76,7 +84,7 @@ public class BoardGameManager : MonoBehaviour
                 Debug.LogError($"Falta asignar el nodo de salida en el indice {data.indexPiece} del BoardGameManager.");
             }
 
-            // Marcadores interfaz
+            // Marcadores de la interfaz
             if (data.indexPiece >= 0 && data.indexPiece < scoreboards.Length)
             {
                 // Buscar marcador que corresponde a esta ficha

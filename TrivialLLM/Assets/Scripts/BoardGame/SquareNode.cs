@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Script que sirve para informar a Unity que casillas estan conectadas entre sí y su tematica
+/// Script que sirve para informar a Unity que casillas estan conectadas entre si y su tematica
 /// </summary>
 /// 
 // Lista cerrada con las posibles opciones de las categorias de las casillas
@@ -21,27 +21,25 @@ public enum TrivialCategories
 public class SquareNode : MonoBehaviour
 {
     [Header("Categoria de la casilla")]
-    public TrivialCategories category;
+    public TrivialCategories category;  // Categoria de la casilla
 
-    [Header("Conexiones normales(Arrastra aqui otras casillas)")]
-    // Casilla hacia el centro
-    public SquareNode centre;
-    // Casilla alejandose del centro
-    public SquareNode outwards;
-    // Siguiente casilla a la izquierda en el anillo exterior
-    public SquareNode left;
-    // Siguiente casilla a la derecha en el anillo exterior
-    public SquareNode right;
+    [Header("Conexiones normales(Arrastra aqui otras casillas)")]                      
+    public SquareNode centre;           // Casilla hacia el centro   
+    public SquareNode outwards;         // Casilla alejandose del centro   
+    public SquareNode left;             // Siguiente casilla a la izquierda en el anillo exterior    
+    public SquareNode right;            // Siguiente casilla a la derecha en el anillo exterior
 
     [Header("Conexiones extra(Solo para la casilla central)")]
     [Tooltip("Agrega aqui los 6 inicios de los caminos si esta es la casilla central")]
     public List<SquareNode> extraNodes = new List<SquareNode>();
 
-    // Recopila todas las casillas conectadas a esta de forma limpia
-    public List<SquareNode> ObtenerVecinos()
+    // Recopila todas las casillas conectadas a esta
+    public List<SquareNode> GetNeighbours()
     {
+        // Obtener los vecinos
         List<SquareNode> neighbours = new List<SquareNode>();
 
+        // Si existen, se agregan a la lista
         if(centre != null) neighbours.Add(centre);
         if (outwards != null) neighbours.Add(outwards);
         if (left != null) neighbours.Add(left);
@@ -55,7 +53,7 @@ public class SquareNode : MonoBehaviour
         return neighbours;
     }
     // Obtiene la opcion seleccionada y lo convierte a string
-    public string getTopicString()
+    public string GetCategoryString()
     {
         switch (category)
         {

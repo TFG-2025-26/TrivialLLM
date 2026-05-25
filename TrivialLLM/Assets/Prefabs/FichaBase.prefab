@@ -282,7 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37450453d283fa943a650a4ef74a5f41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actualSquare: {fileID: 0}
+  currentSquare: {fileID: 5264441254306335747, guid: 9506658ea62c2bf438fd54f4f37c0c33, type: 3}
   aiService: {fileID: 0}
   speed: 40
   indexTurn: 0

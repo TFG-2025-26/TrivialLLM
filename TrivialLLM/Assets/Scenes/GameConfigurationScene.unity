@@ -7730,6 +7730,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55e70792c6f42554c8ac5a26fabae7d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  addHumansButton: {fileID: 2097390066}
+  addLLMsButton: {fileID: 1986715721}
   numHumansText: {fileID: 216466569}
   numLLMsText: {fileID: 1988220297}
   confirmText: {fileID: 2042755808}

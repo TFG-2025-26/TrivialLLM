@@ -1,9 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
-
+/// <summary>
+/// Se encarga del movimiento de las fichas en el tablero
+/// </summary>
 public class PathInfo
 {
     public SquareNode destination;
@@ -11,30 +12,29 @@ public class PathInfo
 }
 public class PieceMovement : MonoBehaviour
 {
-
-    public SquareNode actualSquare;
+    public SquareNode currentSquare;    // Casilla actual donde se encuentra la ficha
     [SerializeField]
-    private AIService aiService;
+    private AIService aiService;        // Referencia a AIService
 
-    [SerializeField]
-    private float speed = 30f;
+    [SerializeField]    
+    private float speed = 30f;          // Velocidad del movimiento
 
-    public int indexTurn;
-    private bool edgeReached = false;
-    private bool isMoving = false;
+    public int indexTurn;               // Indice del turno
+    private bool edgeReached = false;   // Indica si ha alcanzdo la circunferencia exterior del tablero
+    private bool isMoving = false;      // Indica si se esta moviendo
 
     private bool dstShown = false;
     List<SquareNode> posibilities = new List<SquareNode>();
     List<PathInfo> posiblePaths= new List<PathInfo>();
 
-    TrivialPiece trivialPiece;
+    TrivialPiece trivialPiece;          // Referencia a la pieza
 
     void Start()
     {
         // Colocar la ficha exactamente en la casilla inicial al darle a Play
-        if(actualSquare != null)
+        if(currentSquare != null)
         {
-            Vector3 iniPos = new Vector3(actualSquare.transform.position.x, transform.position.y, actualSquare.transform.position.z);
+            Vector3 iniPos = new Vector3(currentSquare.transform.position.x, transform.position.y, currentSquare.transform.position.z);
             transform.position = iniPos;
         }
 
@@ -49,7 +49,7 @@ public class PieceMovement : MonoBehaviour
 
         if(!dstShown&&GameManager.GetInstance().IsDiceThrown()) {
             int movesLeft = GameManager.GetInstance().GetRemainingMoves();
-            GetPossibleDestinations(actualSquare, movesLeft);
+            GetPossibleDestinations(currentSquare, movesLeft);
             
             SaveDestinations(posibilities);
             GameManager.GetInstance().ShowPosibleDestinations();
@@ -91,35 +91,13 @@ public class PieceMovement : MonoBehaviour
                     return;
                 }
             }
-            //int i = 0;
-            //while (i<posiblePaths.Count && target != posiblePaths[i].destination)
-            //{
-            //    i++;
-            //}
+
+            // Mueve la ficha
             StartCoroutine(MovePiece(selectedPath));
             return;
         }
 
-        //if(posibilities.Count>=1&& Input.GetKeyDown(KeyCode.Alpha1))
-        //{
-        //    StartCoroutine(MovePiece(posiblePaths[0].path));
-        //    GameManager.GetInstance().cleanDstBoard();
-        //}
-        //else if (posibilities.Count >= 2 && Input.GetKeyDown(KeyCode.Alpha2))
-        //{
-        //    StartCoroutine(MovePiece(posiblePaths[1].path));
-        //    GameManager.GetInstance().cleanDstBoard();
-        //}
-        //else if (posibilities.Count >= 3 && Input.GetKeyDown(KeyCode.Alpha3))
-        //{
-        //    StartCoroutine(MovePiece(posiblePaths[2].path));
-        //    GameManager.GetInstance().cleanDstBoard();
-        //}
-        //else if (posibilities.Count >= 4 && Input.GetKeyDown(KeyCode.Alpha4))
-        //{
-        //    StartCoroutine(MovePiece(posiblePaths[3].path));
-        //    GameManager.GetInstance().cleanDstBoard();
-        //}
+        
         // Pruebas con input
 
         if(Input.GetKeyDown(KeyCode.F))
@@ -158,38 +136,13 @@ public class PieceMovement : MonoBehaviour
                 Debug.LogWarning("No se ha encontrado ninguna casilla con el topic FinalCentro en la escena.");
             }
         }
-        // Comprobar el input y si la casilla actual tiene una conexion en esa direccion
-        /*if(Input.GetKeyDown(KeyCode.W) && actualSquare.centre != null)
-        {
-            StartCoroutine(MovePiece(actualSquare.centre));
-        }
-        else if (Input.GetKeyDown(KeyCode.S) && actualSquare.outwards != null)
-        {
-            StartCoroutine(MovePiece(actualSquare.outwards));
-        }
-        else if(Input.GetKeyDown(KeyCode.A) && actualSquare.left != null)
-        {
-            StartCoroutine(MovePiece(actualSquare.left));
-        }
-        else if(Input.GetKeyDown(KeyCode.D) && actualSquare.right != null)
-        {
-            StartCoroutine(MovePiece(actualSquare.right));
-        }*/
-
     }
 
+    // Mueve la ficha
     IEnumerator MovePiece(List<SquareNode> targetPath)
     {
-
-
-        //if (movesLeft > 0)
-        //{
-        //GameManager.GetInstance().wasteMovement();
-        //GameManager.GetInstance().showPosibleDestinations();
         foreach (SquareNode actNod in targetPath)
         {
-            //isMoving = true;
-
             // Calcular la posicion destino manteniendo la altura (Y) original de la ficha
             Vector3 targetPos = new Vector3(actNod.transform.position.x, transform.position.y, actNod.transform.position.z);
 
@@ -202,28 +155,27 @@ public class PieceMovement : MonoBehaviour
 
             // Ajustar al final 
             transform.position = targetPos;
-            actualSquare = actNod;
+            currentSquare = actNod;
         }
         isMoving = false;
         dstShown = false;
-        clearPaths();
+        ClearPaths();
         GameManager.GetInstance().WasteMovement();
-
-        //borrar lista de caminos
 
         // Comprobar si se ha llegado al radio exterior por primera vez desde la casilla de salida central
         // Si la casilla tiene conexiones a los lados
-        if (actualSquare.left != null || actualSquare.right != null)
+        if (currentSquare.left != null || currentSquare.right != null)
         {
             edgeReached = true;
         }
 
         // Si ha caido en la casilla de los dados
-        if (actualSquare.category == TrivialCategories.Dados)
+        if (currentSquare.category == TrivialCategories.Dados)
         {
             DiceThrow diceUI = FindFirstObjectByType<DiceThrow>();
             if (diceUI != null)
             {
+                // Se vuelve a lanzar los dados de forma automatica
                 diceUI.SquareThrowAgain();
             }
 
@@ -239,14 +191,15 @@ public class PieceMovement : MonoBehaviour
             // Abortar corrutina y no pedir pregunta
             yield break;
         }
+
         // Enviar peticion de la pregunta dependiendo de la casilla
         if (aiService != null)
         {
-            
-            string questionCategory = actualSquare.getTopicString();
+            // Categoria de la casilla actual
+            string questionCategory = currentSquare.GetCategoryString();
 
             // Si ha caido en el centro
-            if (actualSquare.category == TrivialCategories.Final)
+            if (currentSquare.category == TrivialCategories.Final)
             {
                 // Si tiene todos los quesitos, empieza la ronda final
                 if (trivialPiece != null && trivialPiece.HaveAllWedges())
@@ -265,25 +218,30 @@ public class PieceMovement : MonoBehaviour
                     questionCategory = categories[UnityEngine.Random.Range(0, categories.Length)];
                     Debug.Log("Tema aleatorio elegido: " + questionCategory);
                 }
-
             }
 
             // Obtener datos del jugador actual
             PlayerDescriptor currentPlayer = GameManager.GetInstance().GetPlayerCurrentTurn();
 
+            // Obtener el modelo que pregunta y el que responde
             AIService.Models questionModel = currentPlayer.questionModel;
             AIService.Models answerModel = currentPlayer.answerModel;
 
-            Debug.Log($"La ficha de {currentPlayer.name} ha caido en {actualSquare.category}. Solicitando pregunta a {questionModel}...");
+            Debug.Log($"La ficha de {currentPlayer.name} ha caido en {currentSquare.category}. Solicitando pregunta a {questionModel}...");
+           
+            // Elegir dificultad de la pregunta de forma aleatoria
             string[] difficulties = { "Facil", "Media", "Dificil"};
             string questionDifficulty = difficulties[UnityEngine.Random.Range(0, difficulties.Length)];
             Debug.Log("Dificultad aleatoria elegida: " + questionDifficulty);
 
             UIController ui = FindFirstObjectByType<UIController>();
+            // Mostrar texto de cargando
             if (ui != null )
             {
                 ui.ShowTextLoading();
             }
+
+            // Pedir la pregunta al modelo correspondiente, con la categoria y dificultad correspondientes
             aiService.RequestQuestion(questionModel, answerModel, questionCategory, questionDifficulty);
         }
         else
@@ -298,8 +256,6 @@ public class PieceMovement : MonoBehaviour
             GameManager.GetInstance().AddToPosibleDestination(dst);
        }
     }
-
-   
 
     //Funciones para el movimiento imaginario 
     //BFS para que busque las casillas a x distancia
@@ -332,7 +288,6 @@ public class PieceMovement : MonoBehaviour
 
     void SearchDestinations(SquareNode current, int movesLeft, HashSet<SquareNode> visited, List<SquareNode> actPath)
     {
-       // Debug.Log($"Visitando: {current.gameObject.name} | Pasos restantes: {movesLeft}");
         visited.Add(current);
         List<SquareNode> pathAtm = new List<SquareNode>(actPath);
         pathAtm.Add(current);
@@ -349,7 +304,7 @@ public class PieceMovement : MonoBehaviour
         ////Posibles casillas adyacentes (a falta de la casilla central)
         //SquareNode[] neighbors = { current.centre, current.outwards, current.left, current.right };
         // Obtiene todos los vecinos
-        List<SquareNode> neighbors = current.ObtenerVecinos();
+        List<SquareNode> neighbors = current.GetNeighbours();
         foreach (SquareNode nei in neighbors)
         {
 
@@ -368,7 +323,7 @@ public class PieceMovement : MonoBehaviour
         visited.Remove(current);
     }
 
-    void clearPaths()
+    void ClearPaths()
     {
         posiblePaths.Clear();
         posibilities.Clear();

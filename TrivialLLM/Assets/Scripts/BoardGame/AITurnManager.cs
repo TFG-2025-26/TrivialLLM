@@ -9,16 +9,16 @@ using UnityEngine;
 /// </summary>
 public class AITurnManager : MonoBehaviour
 {
-    private GameManager gameManager;
-    private PieceMovement currentAIPiece;
-    private DiceThrow diceController;
 
-    // private bool isAITurnActive = false;
-    private bool diceThrown = false;
-    private bool isChoosingDestination = false;
-    private int currentTurnTicket = -1;
+    private GameManager gameManager;                    // Referencia al GameManager
+    private PieceMovement currentAIPiece;               // Referencia al PieceMovement de la ficha
+    private DiceThrow diceController;                   // Referencia al controlador del dado
 
-    [SerializeField] private SquareNode centralNode;
+    private bool diceThrown = false;                    // Indica si se ha lanzado el dedo
+    private bool isChoosingDestination = false;         // Indica si se ha seleccionado una casilla de destino
+    private int currentTurnTicket = -1;                 // Almacena el ID del turno absoluto para detectar cuando cambia y reiniciar la IA
+
+    [SerializeField] private SquareNode centralNode;    // Referencia al Nodo del centro del tablero
 
     void Start()
     {
@@ -52,7 +52,7 @@ public class AITurnManager : MonoBehaviour
             if(!diceThrown && !gameManager.IsDiceThrown())
             {
                 diceThrown = true;
-                StartCoroutine(StartAITurn(currentPlayer));
+                StartCoroutine(StartAITurn());
             }
 
             // Elegir el destino
@@ -60,15 +60,14 @@ public class AITurnManager : MonoBehaviour
             if (diceThrown && gameManager.IsDiceThrown() && !gameManager.GetSelectedStatus() && !isChoosingDestination)
             {
                 isChoosingDestination = true;
-                StartCoroutine(ChooseDestination(currentPlayer));
+                StartCoroutine(ChooseDestination());
             }
         }
     }
 
-    IEnumerator StartAITurn(PlayerDescriptor jugIA)
+    // Inicia el turno de la IA
+    IEnumerator StartAITurn()
     {
-        //Debug.Log($"Iniciando turno de IA: {jugIA.nombre}");
-
         // Bloquear boton del dado
         if (diceController != null && diceController.throwButton != null)
         {
@@ -84,7 +83,8 @@ public class AITurnManager : MonoBehaviour
         }
     }
 
-    IEnumerator ChooseDestination(PlayerDescriptor jugIA)
+    // Elige destino entre las casillas posibles 
+    IEnumerator ChooseDestination()
     {
         // Esperar a que PieceMovement calcule las casillas posibles
         yield return new WaitForSeconds(1.5f);
@@ -94,12 +94,13 @@ public class AITurnManager : MonoBehaviour
 
         if (currentAIPiece != null)
         {
-            List<SquareNode> possibleDestinations = currentAIPiece.GetPossibleDestinations(currentAIPiece.actualSquare, gameManager.GetRemainingMoves());
+            // Lista con los posibles destinos
+            List<SquareNode> possibleDestinations = currentAIPiece.GetPossibleDestinations(currentAIPiece.currentSquare, gameManager.GetRemainingMoves());
 
             if (possibleDestinations.Count > 0)
             {
                 // Logica inteligente para elegir destino
-                SquareNode bestDestination = ChooseSmartDestination(currentAIPiece.actualSquare, possibleDestinations, currentAIPiece.GetComponent<TrivialPiece>());
+                SquareNode bestDestination = ChooseSmartDestination(currentAIPiece.currentSquare, possibleDestinations, currentAIPiece.GetComponent<TrivialPiece>());
                 gameManager.ReceiveSelectedNode(bestDestination);
             }
             else
@@ -111,10 +112,10 @@ public class AITurnManager : MonoBehaviour
                 gameManager.NextTurn();
             }
         }
-
-       // isChoosingDestination = false;
     }
-    private SquareNode ChooseSmartDestination(SquareNode currentSquare, List<SquareNode> options, TrivialPiece fichaStatus)
+
+    // Logica inteligente para elegir destino
+    private SquareNode ChooseSmartDestination(SquareNode currentSquare, List<SquareNode> options, TrivialPiece pieceStatus)
     {
         // Al principio salir del centro al radio exterior
         if (currentSquare.category == TrivialCategories.Final && currentSquare.centre == null)
@@ -123,7 +124,7 @@ public class AITurnManager : MonoBehaviour
         }
 
         // Si la IA ya tiene todos los quesitos, su objetivo es ir hacia el centro
-        if (fichaStatus != null && fichaStatus.HaveAllWedges())
+        if (pieceStatus != null && pieceStatus.HaveAllWedges())
         {
             SquareNode nearestNode = null;
             float minDistance = float.MaxValue;
@@ -131,7 +132,7 @@ public class AITurnManager : MonoBehaviour
             // Comprobacion de seguridad
             if(centralNode == null)
             {
-                Debug.LogError("Falta asignar la casilla centran en AITurnManager");
+                Debug.LogError("Falta asignar la casilla central en AITurnManager");
                 return options[0];
             }
 
@@ -141,14 +142,14 @@ public class AITurnManager : MonoBehaviour
                 // Si alguna opcion es la casilla final (centro), ir directamente
                 if (node.category == TrivialCategories.Final)
                 {
-                    Debug.Log("La IA tiene todos los quesitos y llega EXACTA al centro.");
+                    //Debug.Log("La IA tiene todos los quesitos y llega EXACTA al centro.");
                     return node; // Se queda con la primera casilla que le falte
                 }
 
                 // Logica para acercarse al centro si no llega en este turno
                 float currentDistance = Vector3.Distance(node.transform.position, centralNode.transform.position);
 
-                // Si esta opcion esta mas cerca que las anteriores
+                // Si esta opcion esta mas cerca que las anteriores se elige
                 if (currentDistance < minDistance)
                 {
                     minDistance = currentDistance;
@@ -164,10 +165,11 @@ public class AITurnManager : MonoBehaviour
             }
         }
 
+        // Si le faltan quesitos
         SquareNode selectedNode = options[0]; // Por defecto, coger el primero
 
-        // Priorizar las casillas las que aun no se tiene el quesito
-        if (fichaStatus != null)
+        // Priorizar las casillas que aun no tiene el quesito
+        if (pieceStatus != null)
         {
             // Lista para guardar destinos validos (que no sean dados)
             List<SquareNode> validDestinations = new List<SquareNode>();
@@ -187,8 +189,8 @@ public class AITurnManager : MonoBehaviour
                 {
                     validDestinations.Add(node);
 
-                    string topic = node.getTopicString();
-                    if(!fichaStatus.HaveWedge(topic))
+                    string topic = node.GetCategoryString();
+                    if(!pieceStatus.HaveWedge(topic))
                     {
                         // Prioridad si no tiene el quesito
                         return node;
@@ -214,9 +216,9 @@ public class AITurnManager : MonoBehaviour
         return selectedNode;
     }
 
+    // Encontrar la pieza del turno actual en la escena
     private PieceMovement FindAIPiece(int index)
     {
-        // Encontrar la pieza del turno actual en la escena
         PieceMovement[] allPieces = FindObjectsByType<PieceMovement>(FindObjectsSortMode.None);
         foreach (var piece in allPieces)
         {
@@ -229,6 +231,6 @@ public class AITurnManager : MonoBehaviour
     public void AllowNewMovement()
     {
         isChoosingDestination = false;
-        Debug.Log("La IA ha caido en dados. Desbloqueando nueva eleccion de destino");
+        //Debug.Log("La IA ha caido en dados. Desbloqueando nueva eleccion de destino");
     }
 }

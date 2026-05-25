@@ -7,10 +7,10 @@ using UnityEngine.Networking;
 public class AIService : MonoBehaviour
 {
     // LOCAL
-    //private const string BASE_URL = "http://127.0.0.1:8000";
+    private const string BASE_URL = "http://127.0.0.1:8000";
 
     // SERVIDOR AZURE
-    private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";
+    //private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";
 
     private string urlTrivial => BASE_URL + "/trivial";
     private string urlProfile => BASE_URL + "/profile";

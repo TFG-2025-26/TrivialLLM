@@ -1,7 +1,9 @@
-//using Unity.Android.Gradle.Manifest;
 using UnityEngine;
-using UnityEngine.UI;
 
+/// <summary>
+/// Se encarga de gestionar los quesitos de la ficha
+/// Sirve para los marcadores de la UI y las fichas en el tablero
+/// </summary>
 public class TrivialPiece : MonoBehaviour
 {
     // Arrastrar aqui los quesitos desde el Inspector
@@ -13,9 +15,10 @@ public class TrivialPiece : MonoBehaviour
     public GameObject orange_wedge;
     public GameObject pink_wedge;
 
+    
     [Header("Indicador de turno")]
-    public bool isUIscoreboard = false;
-    public GameObject turnLight;
+    public bool isUIscoreboard = false; // Indica si es marcador de UI
+    public GameObject turnLight;        // Si es la ficha en el tablero, tiene asociada una luz
 
     private CanvasGroup canvasGroup;
 
@@ -30,6 +33,7 @@ public class TrivialPiece : MonoBehaviour
     // Funcion llamada cuando un jugador gana una categoria
     public void WinWedge(string category)
     {
+        // Activa el questio de la categoria correspondiente
         switch (category.ToLower())
         {
             case "ciencias":
@@ -57,9 +61,10 @@ public class TrivialPiece : MonoBehaviour
         }
     }
 
-    // Metodo para apagar/encender el resaltado
+    // Metodo para apagar/encender el resaltado del turno
     public void SetActiveTurn(bool activo)
     {
+        // En la interfaz 
         if (isUIscoreboard)
         {
             // Opaco en su turno, transparente si no
@@ -72,9 +77,10 @@ public class TrivialPiece : MonoBehaviour
                 if (canvasGroup != null) canvasGroup.alpha = 0.5f; // 50% transparente
             }
         }
+        // En el tablero
         else
         {
-            // Encende/ apagar la luz
+            // Encender / apagar la luz
             if (turnLight != null)
             {
                 turnLight.SetActive(activo);
@@ -120,6 +126,7 @@ public class TrivialPiece : MonoBehaviour
 
     }
 
+    // Devuelve el numero total de quesitos ganados
     public int GetCountWedges()
     {
         int count = 0;
