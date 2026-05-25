@@ -3,7 +3,7 @@ Trabajo de Fin de Grado curso 2025-2026. Grado en Desarrollo de Videojuegos, Fac
 Enfréntate a Gemini, ChatGPT y Copilot en una partida de Trivial.
 
 ## Manual de usuario
-Para probar el proyecto descarga el ejecutable en . Una vez instalado debe
+Para probar el proyecto descarga el ejecutable en https://github.com/TFG-2025-26/TrivialLLM/releases/tag/v1.0. Una vez instalado debe
 clicarse el archivo _.exe_ para poder ejecutarlo. El proyecto se inicia en el menú principal. Desde esta pantalla, el usuario puede
 comenzar una nueva partida seleccionando la opción _Jugar_.
 
