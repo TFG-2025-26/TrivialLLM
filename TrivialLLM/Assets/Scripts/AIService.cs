@@ -11,9 +11,9 @@ public class AIService : MonoBehaviour
 {
     // Comentar/descomentar segun cual se quiera acceder
 
-    private const string BASE_URL = "http://127.0.0.1:8000";  // URL base del backend cuando se ejecuta en LOCAL
+    //private const string BASE_URL = "http://127.0.0.1:8000";  // URL base del backend cuando se ejecuta en LOCAL
 
-    //private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";   // URL base del backend desplegado en el SERVIDOR AZURE
+    private const string BASE_URL = "https://tfg-trivial-backend-cvgkbaehb5bse0gf.westeurope-01.azurewebsites.net";   // URL base del backend desplegado en el SERVIDOR AZURE
 
     private string urlTrivial => BASE_URL + "/trivial";     // Endpoint del backend encargado de generar preguntas y responderlas
 
@@ -80,8 +80,14 @@ public class AIService : MonoBehaviour
         return
             $@"Actúa como un experto creador de peguntas para el clásico juego de mesa Trivial Pursuit.
 
-            Tema: {category}
+            Categoría: {category}
             Dificultad: {difficulty}
+            Usa la semilla de variación: {seed}
+
+            Criterios de dificultad:
+                - Fácil: pregunta de cultura general conocida.
+                - Media: pregunta que requiere conocimiento específico, pero no excesivamente especializado.
+                - Difícil: pregunta específica y con distracciones plausibles. No debe poder responderse solo por intuición básica.
 
             Instrucciones OBLIGATORIAS:
                 - Estilo Trivial: La pregunta debe seguir el estilo clásico de un juego de mesa. Sé conciso y no te vayas por las ramas con introducciones largas.
@@ -90,8 +96,9 @@ public class AIService : MonoBehaviour
                 - Originalidad: Genera UNA pregunta original y única, no repitas preguntas comunes.
                 - La pregunta debe ser relevante para la categoría y la dificultad.
                 - Varía el estilo: puede ser de opción múltiple directa, de deducción, de comparación, curiosidades...
-                - Añade un toque creativo o curioso para que no se repita.
-                - Usa la semilla de variación: {seed}
+                - La respuesta correcta no debe destacar por longitud.
+                - No repitas preguntas generadas anteriormente.
+                - No coloques la respuesta correcta siempre en la misma opción. 
                 
 
             Devuélveme SOLO un JSON valido con este formato exacto:
@@ -107,22 +114,23 @@ public class AIService : MonoBehaviour
                  ""respuesta_correcta"": INDICE_CORRECTO
             }}
 
-            No añadas comentarios, explicaciones ni texto fuera del JSON.";
+            REGLAS IMPORTANTES:
+            - El campo ""pregunta"" debe contener SOLO la pregunta
+            - NO incluyas la categoría dentro del texto de la pregunta.
+            - NO incluyas la dificultad dentro del texto de la pregunta.
+            - NO empieces la pregunta con textos como: ""Historia - Categoría..."", ""Categoría:"", ""Dificultad:"", ""Tema:"" o similares.
+            - La pregunta debe empezar directamente con el enunciado.
+
+            No añadas comentarios, explicaciones ni texto fuerda del JSON.";
     }
 
     // Solicita al backend que un modelo responda una pregunta segun el perfil del jugador
     public void ReplyQuestion(Models model, PlayerProfile profile, string question, string difficulty, System.Action<int> callback)
     {
-
         if (profile != null)
         {
             string strong = profile.strongCategories != null ? string.Join(", ", profile.strongCategories) : "Ninguno";
             string weak = profile.weakCategories != null ? string.Join(", ", profile.weakCategories) : "Ninguno";
-
-            Debug.Log($"<color=cyan>[COMPROBACIÓN DE ROL IA]</color> Tema de la pregunta: <b>{currentCategory}</b>");
-            Debug.Log($"<color=green>Temas Fuertes:</color> {strong}");
-            Debug.Log($"<color=red>Temas Débiles:</color> {weak}");
-            Debug.Log($"Nivel de Inteligencia (Accuracy): {profile.accuracyBase}");
         }
 
         // Se crea el contexto del rol para que el modelo responda de forma coherente con el perfil
@@ -152,7 +160,7 @@ public class AIService : MonoBehaviour
             PERFIL DEL JUGADOR:
             - Nivel de inteligencia general: {profile.accuracyBase} (0.0 es ignorante, 1.0 es experto)
             - Temas que domina: {strong}
-            - Temas débiles y que desconoce por completo: {weak}
+            - Temas débiles: {weak}
             - Años de conocimiento: Desde {profile.knowledgeStart} hasta {profile.knowledgeCutoff}
             - Nivel de caos: {profile.randomness}
 
@@ -160,19 +168,21 @@ public class AIService : MonoBehaviour
             - Tema: {currentCategory}
             - Dificultad de la pregunta actual: {difficulty}
 
-
             INSTRUCCIONES DE RAZONAMIENTO (OBLIGATORIAS):
             Tu objetivo principal es simular un comportamiento humano realista basándote en tu perfil.
+            No debes responder siempre como un asistente perfecto.
+            Debes adaptar tu probabilidad de acierto al perfil, al tema y a la dificultad.
             Debes decidir qué responder aplicando estas reglas paso a paso:
 
-            1. Si el tema actual ({currentCategory}) coincide o está relacionado con tus temas dominados ({strong}), DEBES ELEGIR LA RESPUESTA CORRECTA OBLIGATORIAMENTE, sin importar tu nivel de inteligencia ni la dificultad.
-            2. Si el tema actual ({currentCategory}) coincide o está relacionado con tus temas desconocidos ({weak}), DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE, sin importar tu nivel de inteligencia ni la dificultad.
-            3. Si la pregunta menciona eventos, hechos, obras (películas, libros o series) o personas anteriores al año  {profile.knowledgeStart} o posteriores al año  {profile.knowledgeCutoff}, DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE.
-            4. Evaluación de dificultad e inteligencia (Si no cumple lo anterior):
-            - Si la dificultad es 'Fácil', intenta acertar.
-            - Si la dificultad es 'Difícil', y tu nivel de inteligencia ({profile.accuracyBase}) es menor a 0.7, DEBES ELEGIR UNA RESPUESTA INCORRECTA.
-            - Si tu nivel de inteligencia ({profile.accuracyBase}) es menor a 0.3, DEBES ELEGIR UNA RESPUESTA INCORRECTA casi siempre.
-            5. Si tu nivel de caos ({profile.randomness}) es mayor a 0.7, elige una respuesta totalmente AL AZAR ignorando todo lo demás.
+            1. Si el tema actual ({currentCategory}) coincide o está relacionado con tus temas dominados ({strong}), debes responder correctamente.
+            2. Si el tema actual ({currentCategory}) coincide o está relacionado con tus temas desconocidos ({weak}), no deberías acertar, pero puedes acertar si la pregunta es fácil.
+            3. Si la dificultad es 'Fácil', deberías acertar.
+            4. Si la dificultad es 'Difícil', y el tema actual ({currentCategory}) coincide o está relacionado con tus temas desconocidos ({weak}), deberías fallar.
+            5. Si la dificultad es 'Difícil', y el tema actual ({currentCategory})  coincide o está relacionado con tus temas dominados ({strong}), deberías acertar.
+            6. Si la pregunta menciona eventos, hechos, obras (películas, libros o series) o personas anteriores al año  {profile.knowledgeStart} o posteriores al año  {profile.knowledgeCutoff}, DEBES ELEGIR UNA RESPUESTA INCORRECTA DELIBERADAMENTE.
+            7. Si la dificultad es 'Difícil', y tu nivel de inteligencia ({profile.accuracyBase}) es menor a 0.7, DEBES ELEGIR UNA RESPUESTA INCORRECTA.
+            8. Si tu nivel de inteligencia ({profile.accuracyBase}) es menor a 0.3, DEBES ELEGIR UNA RESPUESTA INCORRECTA casi siempre.
+            9. Si tu nivel de caos ({profile.randomness}) es mayor a 0.7, puedes eligir alguna respuesta AL AZAR.
 
             Responde SOLO con el índice (0-3).
             ";
@@ -290,7 +300,7 @@ public class AIService : MonoBehaviour
                 // Si no era Copilot, se reintenta con Copilot como modelo de respaldo
                 if (model != Models.Copilot)
                 {
-                    //Debug.LogWarning($"Fallo de API (Ej. Cuota excedida) con {model}. Reintentando automáticamente con Copilot...");
+                    Debug.LogWarning($"Fallo de API (Ej. Cuota excedida) con {model}. Reintentando automáticamente con Copilot...");
                     yield return StartCoroutine(SendPrompt(Models.Copilot, prompt, isQuestion, callback));
                 }
                 yield break;

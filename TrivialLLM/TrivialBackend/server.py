@@ -394,6 +394,8 @@ def use_chatgpt(prompt: str, isAnswering: bool):
                 "Eres un generador de preguntas de trivial. "
                 "Devuelve únicamente un JSON válido."
                 "Las opciones deben ser texto limpio, sin prefijos como A), B), C), D), ni numeración."
+                "NO incluyas la categoría, tema, dificultad dentro del texto de la pregunta."
+                "NO empieces la pregunta con textos como: ""Historia - Categoría..."", ""Categoría:"", ""Dificultad:"", ""Tema:"" o similares."
             ),
             "input": prompt,
             "reasoning": {

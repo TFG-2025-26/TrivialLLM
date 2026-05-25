@@ -96,46 +96,6 @@ public class PieceMovement : MonoBehaviour
             StartCoroutine(MovePiece(selectedPath));
             return;
         }
-
-        
-        // Pruebas con input
-
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            UIController uiController = FindFirstObjectByType<UIController>();
-            if (uiController != null)
-            {
-                uiController.StartFinalRound();
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            SquareNode[] allNodes = FindObjectsByType<SquareNode>(FindObjectsSortMode.None);
-            SquareNode nodoCentro = null;
-
-            foreach (var n in allNodes)
-            {
-                if (n.category == TrivialCategories.Final)
-                {
-                    nodoCentro = n;
-                    break;
-                }
-            }
-            if (nodoCentro != null && !isMoving)
-            {
-                // Limpiamos los destinos iluminados por si acababas de tirar el dado
-                GameManager.GetInstance().CleanDstBoard();
-
-                // Creamos un camino directo y forzamos el movimiento
-                List<SquareNode> pathAlCentro = new List<SquareNode> { nodoCentro };
-                StartCoroutine(MovePiece(pathAlCentro));
-            }
-            else if (nodoCentro == null)
-            {
-                Debug.LogWarning("No se ha encontrado ninguna casilla con el topic FinalCentro en la escena.");
-            }
-        }
     }
 
     // Mueve la ficha
@@ -216,7 +176,7 @@ public class PieceMovement : MonoBehaviour
                     // Si aun no tiene todos, se hace una pregunta aleatoria
                     string[] categories = { "Ciencias", "Geografia", "Historia", "Arte y Literatura", "Deportes y Pasatiempos", "Entretenimiento" };
                     questionCategory = categories[UnityEngine.Random.Range(0, categories.Length)];
-                    Debug.Log("Tema aleatorio elegido: " + questionCategory);
+                    // Debug.Log("Tema aleatorio elegido: " + questionCategory);
                 }
             }
 
@@ -227,12 +187,12 @@ public class PieceMovement : MonoBehaviour
             AIService.Models questionModel = currentPlayer.questionModel;
             AIService.Models answerModel = currentPlayer.answerModel;
 
-            Debug.Log($"La ficha de {currentPlayer.name} ha caido en {currentSquare.category}. Solicitando pregunta a {questionModel}...");
+            // Debug.Log($"La ficha de {currentPlayer.name} ha caido en {currentSquare.category}. Solicitando pregunta a {questionModel}...");
            
             // Elegir dificultad de la pregunta de forma aleatoria
             string[] difficulties = { "Facil", "Media", "Dificil"};
             string questionDifficulty = difficulties[UnityEngine.Random.Range(0, difficulties.Length)];
-            Debug.Log("Dificultad aleatoria elegida: " + questionDifficulty);
+            // Debug.Log("Dificultad aleatoria elegida: " + questionDifficulty);
 
             UIController ui = FindFirstObjectByType<UIController>();
             // Mostrar texto de cargando

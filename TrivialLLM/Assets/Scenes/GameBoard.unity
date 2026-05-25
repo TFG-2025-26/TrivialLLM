@@ -9066,7 +9066,13 @@ MonoBehaviour:
   outwards: {fileID: 0}
   left: {fileID: 0}
   right: {fileID: 0}
-  extraNodes: []
+  extraNodes:
+  - {fileID: 964437517}
+  - {fileID: 34287597}
+  - {fileID: 1699224300}
+  - {fileID: 1646970850}
+  - {fileID: 2087079527}
+  - {fileID: 1307885326}
 --- !u!4 &2003410589
 Transform:
   m_ObjectHideFlags: 0

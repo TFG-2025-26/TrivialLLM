@@ -138,7 +138,7 @@ public class UIController : MonoBehaviour
     // Espera para dar tiempo a leer la pregunta. Tras la espera, se envia la pregunta para que responda
     private IEnumerator WaitAndReplyAI()
     {
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(6.0f);
         SendQuestion();
     }
 
@@ -352,7 +352,7 @@ public class UIController : MonoBehaviour
 
         // Obtiene la informacion del jugador actual
         PlayerDescriptor player = GameManager.GetInstance().GetPlayerCurrentTurn();
-        Debug.Log($"Ronda Final ({currentQuestionFinal + 1}/6) para {player.name}: Tema {category}, Dificultad {questionDifficulty}");
+        //Debug.Log($"Ronda Final ({currentQuestionFinal + 1}/6) para {player.name}: Tema {category}, Dificultad {questionDifficulty}");
 
         // Pide la pregunta al modelo correspondiente, con la categoria y dificultad que toca 
         ai.RequestQuestion(player.questionModel, player.answerModel, category, questionDifficulty);

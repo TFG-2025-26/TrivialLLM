@@ -11,13 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenuScene.unity
     guid: 63ea23b66159e67449fdc6b6d342c2d6
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/StartScene.unity
     guid: 39be0c13121d05844870972d1f4aafa1
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/IAGameScene.unity
     guid: 6a99ff3342cfb11429e205dacfcf1df6
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/HumanGameScene.unity
     guid: 6a90bb10a5743f042852d4872d81d93e
   - enabled: 1
